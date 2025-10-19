@@ -24,7 +24,7 @@ fun NotDjinniNavController(
         enterTransition = { fadeIn(tween(ANIMATION_DURATION)) },
         exitTransition = { fadeOut(tween(ANIMATION_DURATION)) }
     ) {
-        splashRoute()
+        splashRoute(controller = controller)
         authRoute()
     }
 }

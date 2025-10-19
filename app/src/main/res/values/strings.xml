@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">NotDjinni</string>
+
+    <!--General-->
+    <string name="default_placeholder">Enter text</string>
+
+    <!--Auth-->
+    <string name="general_auth_title">Welcome!</string>
+    <string name="email_field_placeholder">Enter email</string>
+    <string name="password_field_placeholder">Enter password</string>
+
+    <string name="sign_in">Sign In</string>
+    <string name="alternative_way_for_sign_in">Or sign in with</string>
+    <string name="switch_to_sign_up">Don\'t have an account? Sign up</string>
+
+    <string name="sign_up">Sign Up</string>
+    <string name="switch_to_sign_in">Already have an account? Sign in</string>
+
 </resources>

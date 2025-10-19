@@ -10,72 +10,62 @@ import androidx.compose.ui.unit.sp
 import not.djinni.R
 import not.djinni.presentation.core.DeviceSizeType
 
-private val promptFontFamily = FontFamily(
+private val eUkraineFontFamily = FontFamily(
     Font(
-        resId = R.font.prompt_regular,
+        resId = R.font.e_ukraine_ultra_light,
+        weight = FontWeight.Thin
+    ),
+    Font(
+        resId = R.font.e_ukraine_light,
+        weight = FontWeight.Light
+    ),
+    Font(
+        resId = R.font.e_ukraine_regular,
         weight = FontWeight.Normal
     ),
     Font(
-        resId = R.font.prompt_italic,
-        weight = FontWeight.Normal,
-        style = FontStyle.Italic
-    ),
-    Font(
-        resId = R.font.prompt_medium,
+        resId = R.font.e_ukraine_medium,
         weight = FontWeight.Medium,
     ),
     Font(
-        resId = R.font.prompt_semibold,
-        weight = FontWeight.SemiBold
-    ),
-    Font(
-        resId = R.font.prompt_bold,
+        resId = R.font.e_ukraine_bold,
         weight = FontWeight.Bold
     ),
-    Font(
-        resId = R.font.prompt_bold_italic,
-        weight = FontWeight.Bold,
-        style = FontStyle.Italic
-    ),
-    Font(
-        resId = R.font.prompt_light,
-        weight = FontWeight.Light
-    )
 )
 
 data class NotDjinniTypography(
     val title1: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 36.sp,
         lineHeight = 42.sp,
     ),
     val title1Bold: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
         lineHeight = 40.sp,
     ),
     val title2: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 24.sp,
         lineHeight = 32.sp,
     ),
     val title3: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 22.sp,
         lineHeight = 28.sp,
     ),
     val title4: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 20.sp,
         lineHeight = 28.sp,
     ),
     val title: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp
     ),
@@ -83,49 +73,49 @@ data class NotDjinniTypography(
         fontWeight = FontWeight.Bold
     ),
     val body1: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 17.sp,
         lineHeight = 24.sp,
     ),
     val body1Bold: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 17.sp,
         lineHeight = 22.sp,
     ),
     val body2: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 22.sp,
     ),
     val body3: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         lineHeight = 20.sp,
     ),
     val caption1: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 13.sp,
         lineHeight = 16.sp,
     ),
     val caption2: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 16.sp,
     ),
     val footnote: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 10.sp,
     ),
 
     val body1Semibold: TextStyle = TextStyle(
-        fontFamily = promptFontFamily,
+        fontFamily = eUkraineFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         lineHeight = 22.sp,
