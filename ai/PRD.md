@@ -372,10 +372,45 @@ launch(loadingEnabled = true) {
 - Routes are created using `ConfigRouteCreator`
 - Navigation handled by `NotDjinniNavController`
 
-### 10.2 Adding New Route
-1. Add screen to `Screens` sealed interface
-2. Create route in appropriate route file
-3. Register in navigation graph
+### 10.2 Navigation Destination Creation
+
+Each screen requires a dedicated route file that defines the navigation destination and route builder function.
+
+**Location:** `app/src/main/kotlin/not/djinni/presentation/navigation/controller/{Feature}Route.kt`
+
+**Steps to create a new navigation destination:**
+
+1. **Create Route File** (e.g., `AuthRoute.kt`):
+```kotlin
+package not.djinni.presentation.navigation.controller
+
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import kotlinx.serialization.Serializable
+import not.djinni.presentation.screens.auth.AuthScreen
+
+@Serializable
+data object Auth : Screens
+
+fun NavGraphBuilder.authRoute() {
+    composable<Auth> { AuthScreen() }
+}
+```
+
+2. **Register Route in Navigation Graph** (`NotDjinniNavController.kt`):
+   - Import the route builder function: `import not.djinni.presentation.navigation.controller.authRoute`
+   - Add route to NavHost builder: `authRoute()`
+
+3. **Pattern Details:**
+   - Use `@Serializable` annotation for type-safe navigation
+   - Create `data object` that extends `Screens` sealed interface
+   - Name the route builder function with `Route` suffix in lowercase: `authRoute()`, `authRoute()`
+   - Each route should be in its own file named `{FeatureName}Route.kt`
+
+### 10.3 Adding New Route
+1. Add screen to `Screens` sealed interface (via `@Serializable data object` in route file)
+2. Create route file with screen definition and route builder function
+3. Import and register route builder in `NotDjinniNavController.kt`
 4. Use `NavController` extensions for type-safe navigation
 
 ---
