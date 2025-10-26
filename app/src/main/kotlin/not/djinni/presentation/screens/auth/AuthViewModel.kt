@@ -3,6 +3,7 @@ package not.djinni.presentation.screens.auth
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import not.djinni.core.extension.mutableSideEffect
+import not.djinni.core.logging.error
 import not.djinni.domain.usecase.auth.SignInUseCase
 import not.djinni.domain.usecase.auth.SignUpUseCase
 import not.djinni.presentation.core.StateViewModel
@@ -28,6 +29,7 @@ internal class AuthViewModel(
                 _sideEffect.emit(AuthSideEffect.NavigateHome)
             }.onFailure { throwable ->
                 mutableState.update { it.copy(errorMessage = throwable.message.toTextData()) }
+                error("AuthViewModel", throwable) { "Error in onLogin: ${throwable.message}" }
             }
         }
     }

@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import not.djinni.presentation.navigation.controller.Screens
 import not.djinni.presentation.navigation.controller.authRoute
+import not.djinni.presentation.navigation.controller.mainRoute
 import not.djinni.presentation.navigation.controller.splashRoute
 
 @Composable
@@ -25,7 +26,8 @@ fun NotDjinniNavController(
         exitTransition = { fadeOut(tween(ANIMATION_DURATION)) }
     ) {
         splashRoute(controller = controller)
-        authRoute()
+        authRoute(controller = controller)
+        mainRoute()
     }
 }
 

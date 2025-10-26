@@ -30,7 +30,7 @@ import not.djinni.presentation.theme.NotDjinniTheme
 fun PasswordTextField(
     modifier: Modifier = Modifier,
     state: TextFieldState,
-    textStyle: TextStyle = NotDjinniTheme.typography.body3.copy(
+    textStyle: TextStyle = NotDjinniTheme.typography.body1.copy(
         color = NotDjinniTheme.colors.onSurface,
     ),
     cursorBrush: SolidColor = SolidColor(NotDjinniTheme.colors.onSurface),
@@ -45,6 +45,7 @@ fun PasswordTextField(
         decorator = buildDefaultTextFieldDecorator(
             state = state,
             placeholder = placeholder,
+            textStyle = textStyle,
             endIcon = {
                 VisibilityIcon(
                     isHidden = isHidden,

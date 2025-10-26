@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import not.djinni.R
@@ -26,6 +27,7 @@ import not.djinni.presentation.core.components.base.VerticalSpacer
 import not.djinni.presentation.core.components.base.buildFullscreenColumnPadding
 import not.djinni.presentation.core.components.base.model.ButtonData
 import not.djinni.presentation.core.extension.clickableNoRipple
+import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.core.extension.toTextData
 import not.djinni.presentation.screens.auth.components.PasswordTextField
 import not.djinni.presentation.screens.auth.extension.isEmailValid
@@ -33,7 +35,9 @@ import not.djinni.presentation.screens.auth.extension.isPasswordValid
 import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
-fun AuthScreen() {
+fun AuthScreen(
+    onNavigateToMain: () -> Unit,
+) {
     Screen<AuthViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -42,6 +46,12 @@ fun AuthScreen() {
             onLogin = viewModel::onLogin,
             onTypeSwitch = viewModel::onAuthTypeChange,
         )
+
+        viewModel.sideEffect.collectAsEffect { effect ->
+            when (effect) {
+                AuthSideEffect.NavigateHome -> onNavigateToMain()
+            }
+        }
     }
 }
 
@@ -126,8 +136,9 @@ private fun Content(
             NotDjinniText(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 data = state.errorMessage,
+                textAlign = TextAlign.Center,
                 style = NotDjinniTheme.typography.body1,
-                color = Color(0xFFFF0000),
+                color = NotDjinniTheme.colors.error,
             )
         }
     }

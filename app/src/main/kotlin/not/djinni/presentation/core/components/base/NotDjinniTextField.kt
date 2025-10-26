@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
@@ -54,7 +55,8 @@ fun NotDjinniTextField(
         textStyle = textStyle,
         decorator = decorator ?: buildDefaultTextFieldDecorator(
             state = state,
-            placeholder = placeholder
+            placeholder = placeholder,
+            textStyle = textStyle
         ),
         lineLimits = lineLimits,
         cursorBrush = cursorBrush,
@@ -69,6 +71,7 @@ fun NotDjinniTextField(
 fun buildDefaultTextFieldDecorator(
     state: TextFieldState,
     placeholder: TextData,
+    textStyle: TextStyle,
     endIcon: @Composable (() -> Unit)? = null,
 ) = TextFieldDecorator { innerTextField ->
     Row(
@@ -79,7 +82,7 @@ fun buildDefaultTextFieldDecorator(
                 shape = NotDjinniTheme.shapes.small,
             )
             .background(
-                color = NotDjinniTheme.colors.primary.copy(alpha = 0.7f),
+                color = NotDjinniTheme.colors.primary.copy(alpha = 0.3f),
                 shape = NotDjinniTheme.shapes.small,
             )
             .padding(
@@ -92,7 +95,7 @@ fun buildDefaultTextFieldDecorator(
             if (state.text.isEmpty()) {
                 NotDjinniText(
                     data = placeholder,
-                    style = NotDjinniTheme.typography.body1,
+                    style = textStyle,
                     color = NotDjinniTheme.colors.onSurface.copy(alpha = 0.5f),
                 )
             }

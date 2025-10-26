@@ -90,7 +90,7 @@ fun OutlinedNotDjinniButton(
         contentPadding = contentPadding,
         border = BorderStroke(
             width = 1.dp,
-            color = NotDjinniTheme.colors.actionColor
+            color = NotDjinniTheme.colors.primary
         ),
     ) {
         ButtonContent(
@@ -164,7 +164,7 @@ private fun ButtonImage(
 fun buildButtonColors(
     contentColor: Color = Color.White,
     containerColor: Color = NotDjinniTheme.colors.primary,
-    disabledContentColor: Color = NotDjinniTheme.colors.onPrimaryContainer.copy(alpha = 0.5f),
+    disabledContentColor: Color = NotDjinniTheme.colors.onPrimary.copy(alpha = 0.5f),
     disabledContainerColor: Color = NotDjinniTheme.colors.primary.copy(alpha = 0.5f)
 ): ButtonColors = ButtonDefaults.buttonColors(
     contentColor = contentColor,

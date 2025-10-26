@@ -16,4 +16,7 @@
     <string name="sign_up">Sign Up</string>
     <string name="switch_to_sign_in">Already have an account? Sign in</string>
 
+    <!--Onboarding-->
+    <string name="continue_button">Continue</string>
+
 </resources>
