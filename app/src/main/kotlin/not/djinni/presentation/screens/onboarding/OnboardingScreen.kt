@@ -19,6 +19,7 @@ import not.djinni.presentation.core.components.base.FullscreenColumn
 import not.djinni.presentation.core.components.base.NotDjinniButton
 import not.djinni.presentation.core.components.base.buildFullscreenColumnPadding
 import not.djinni.presentation.core.components.base.model.ButtonData
+import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.core.extension.toTextData
 import not.djinni.presentation.screens.onboarding.components.CompletedStep
 import not.djinni.presentation.screens.onboarding.components.PersonalInfoStep
@@ -26,14 +27,20 @@ import not.djinni.presentation.screens.onboarding.components.WorkPreferencesStep
 import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
-fun OnboardingScreen() {
+fun OnboardingScreen(
+    onMain: () -> Unit,
+) {
     Screen<OnboardingViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         Content(
             state = state,
-            onAction = {},
+            onAction = viewModel::onAction,
         )
+
+        viewModel.sideEffect.collectAsEffect { effect ->
+            if (effect is OnboardingSideEffect.NavigateToMain) onMain()
+        }
     }
 }
 
@@ -45,7 +52,7 @@ private fun Content(
     FullscreenColumn(
         contentPadding = buildFullscreenColumnPadding(
             vertical = NotDjinniTheme.offsets.medium,
-            horizontal = NotDjinniTheme.offsets.large,
+            horizontal = NotDjinniTheme.offsets.empty,
         ),
     ) {
         AnimatedContent(
@@ -57,19 +64,15 @@ private fun Content(
             label = "OnboardingStepAnimation"
         ) { step ->
             when (step) {
-                Step.PERSONAL_INFORMATION -> PersonalInfoStep()
+                Step.PERSONAL_INFORMATION -> PersonalInfoStep(onAction = onAction)
                 Step.JOB_PREFERENCES -> WorkPreferencesStep()
                 Step.COMPLETED -> CompletedStep()
             }
         }
-
         Spacer(modifier = Modifier.weight(1f))
-
         NotDjinniButton(
             modifier = Modifier.fillMaxWidth(),
-            data = ButtonData(
-                text = R.string.continue_button.toTextData(),
-            ),
+            data = state.buttonData,
             onClick = { onAction(OnboardingAction.Continue) },
         )
     }

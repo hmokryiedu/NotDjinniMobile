@@ -7,9 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import not.djinni.presentation.navigation.controller.Onboarding
 import not.djinni.presentation.navigation.controller.Screens
 import not.djinni.presentation.navigation.controller.authRoute
 import not.djinni.presentation.navigation.controller.mainRoute
+import not.djinni.presentation.navigation.controller.onboardingRoute
 import not.djinni.presentation.navigation.controller.splashRoute
 
 @Composable
@@ -21,12 +23,13 @@ fun NotDjinniNavController(
     NavHost(
         modifier = modifier,
         navController = controller,
-        startDestination = startDestination,
+        startDestination = Onboarding,
         enterTransition = { fadeIn(tween(ANIMATION_DURATION)) },
         exitTransition = { fadeOut(tween(ANIMATION_DURATION)) }
     ) {
         splashRoute(controller = controller)
         authRoute(controller = controller)
+        onboardingRoute(controller = controller)
         mainRoute()
     }
 }

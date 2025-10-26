@@ -332,6 +332,57 @@ fun ExampleScreen(onNavigate: () -> Unit) {
 - Use `Screen<T>` generic function for ViewModel injection
 - Pattern: `Screen<ViewModelType> { viewModel -> /* UI */ }`
 
+### 6.4 Code Formatting and Constants
+
+#### Spacing Rules
+- Do NOT add unnecessary blank lines between UI component calls in Composable functions
+- Keep composable code compact and readable without extra vertical spacing
+- Only add blank lines between logical sections when absolutely necessary
+
+**Example:**
+```kotlin
+@Composable
+fun Content() {
+    Column {
+        NotDjinniText(data = title)
+        VerticalSpacer(offset)
+        NotDjinniTextField(state = state)
+        VerticalSpacer(offset)
+        NotDjinniButton(onClick = {})
+    }
+}
+```
+
+#### Magic Numbers and Constants
+- **Extract all magic numbers to constants** to avoid hard-coded values in composable code
+- Constants should have descriptive names in UPPER_SNAKE_CASE
+- In **Composable files**, constants MUST be placed at the **bottom of the file**, after all composable functions
+- Use `private const val` for file-level constants
+
+**Example:**
+```kotlin
+@Composable
+fun PersonalInfoStep() {
+    val state = rememberTextFieldState()
+    NotDjinniTextField(
+        state = state,
+        lineLimits = TextFieldLineLimits.MultiLine(
+            minHeightInLines = ABOUT_ME_MIN_LINES,
+            maxHeightInLines = ABOUT_ME_MAX_LINES
+        ),
+    )
+}
+
+@Composable
+@Preview
+private fun Preview() {
+    NotDjinniTheme { PersonalInfoStep() }
+}
+
+private const val ABOUT_ME_MIN_LINES = 4
+private const val ABOUT_ME_MAX_LINES = 6
+```
+
 ---
 
 ## 7. Best Practices

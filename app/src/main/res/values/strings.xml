@@ -18,5 +18,10 @@
 
     <!--Onboarding-->
     <string name="continue_button">Continue</string>
+    <string name="personal_info_title">Personal Information</string>
+    <string name="full_name_label">Full Name</string>
+    <string name="full_name_placeholder">Enter your full name</string>
+    <string name="about_me_label">About Me</string>
+    <string name="about_me_placeholder">Tell us about yourself</string>
 
 </resources>

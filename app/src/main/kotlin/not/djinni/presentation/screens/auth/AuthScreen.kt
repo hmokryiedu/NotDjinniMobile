@@ -37,6 +37,7 @@ import not.djinni.presentation.theme.NotDjinniTheme
 @Composable
 fun AuthScreen(
     onNavigateToMain: () -> Unit,
+    onNavigateToOnboarding: () -> Unit,
 ) {
     Screen<AuthViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -49,7 +50,8 @@ fun AuthScreen(
 
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
-                AuthSideEffect.NavigateHome -> onNavigateToMain()
+                AuthSideEffect.NavigateToMain -> onNavigateToMain()
+                AuthSideEffect.NavigateToOnboarding -> onNavigateToOnboarding()
             }
         }
     }

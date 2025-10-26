@@ -13,7 +13,8 @@ data object Auth : Screens
 fun NavGraphBuilder.authRoute(controller: NavController) {
     composable<Auth> {
         AuthScreen(
-            onNavigateToMain = { controller.navigateSingleTop(Main) }
+            onNavigateToMain = { controller.navigateSingleTop(Main) },
+            onNavigateToOnboarding = { controller.navigateSingleTop(Onboarding) }
         )
     }
 }

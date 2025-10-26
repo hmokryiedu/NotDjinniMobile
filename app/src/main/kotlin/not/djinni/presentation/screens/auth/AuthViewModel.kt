@@ -26,7 +26,10 @@ internal class AuthViewModel(
                 SIGN_IN -> signInUseCase(SignInUseCase.Params(email = email, password = password))
                 SIGN_UP -> signUpUseCase(SignUpUseCase.Params(email = email, password = password))
             }.onSuccess {
-                _sideEffect.emit(AuthSideEffect.NavigateHome)
+                when (mutableState.value.type) {
+                    SIGN_IN -> _sideEffect.emit(AuthSideEffect.NavigateToMain)
+                    SIGN_UP -> _sideEffect.emit(AuthSideEffect.NavigateToOnboarding)
+                }
             }.onFailure { throwable ->
                 mutableState.update { it.copy(errorMessage = throwable.message.toTextData()) }
                 error("AuthViewModel", throwable) { "Error in onLogin: ${throwable.message}" }

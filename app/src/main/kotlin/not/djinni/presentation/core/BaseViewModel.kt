@@ -40,7 +40,7 @@ abstract class BaseViewModel : ViewModel() {
                 if (loadingEnabled) addLoading(actionId)
                 block()
             } catch (throwable: Throwable) {
-                if(throwable is CancellationException) return@launch
+                if (throwable is CancellationException) return@launch
                 error("BaseViewModel", throwable) { "Error in action: $actionId" }
             } finally {
                 removeLoading(actionId)
@@ -80,4 +80,8 @@ abstract class StateViewModel<S>(
 ) : BaseViewModel() {
     protected val mutableState = MutableStateFlow(initialState)
     val state = mutableState.asStateFlow()
+
+    protected inline fun updateState(block: S.() -> S) {
+        mutableState.update(block)
+    }
 }
