@@ -41,6 +41,8 @@ not.djinni/
 │   └── usecase/                   # Use case implementations
 │       ├── core/                  # Base use case interfaces
 │       └── {feature}/             # Feature-specific use cases
+├── model/                         # Domain entities
+│   └── {ModelName}.kt             # Business models (Location, EmploymentType, etc.)
 ├── presentation/                  # UI layer
 │   ├── core/                      # Core presentation components
 │   │   ├── components/            # Reusable UI components
@@ -50,6 +52,34 @@ not.djinni/
 │   │   └── {screen_name}/         # Each screen in its own package
 │   └── theme/                     # Theme configuration
 └── di/                            # Dependency injection
+```
+
+### 1.2 Model Organization
+- **Location:** `app/src/main/kotlin/not/djinni/model/`
+- All business models, domain entities, and data transfer objects should be placed in the `model/` package
+
+**Example:**
+```kotlin
+package not.djinni.model
+
+import kotlinx.serialization.Serializable
+import not.djinni.R
+import not.djinni.presentation.core.components.base.model.TextData
+import not.djinni.presentation.core.extension.toTextData
+
+@Serializable
+enum class EmploymentType(val displayName: TextData) {
+    FULL_TIME(R.string.employment_type_full_time_display.toTextData()),
+    PART_TIME(R.string.employment_type_part_time_display.toTextData()),
+    CONTRACT(R.string.employment_type_contract_display.toTextData()),
+    FREELANCE(R.string.employment_type_freelance_display.toTextData())
+}
+
+@Serializable
+data class Location(
+    val id: String,
+    val name: String
+)
 ```
 
 ---
@@ -385,15 +415,161 @@ private const val ABOUT_ME_MAX_LINES = 6
 
 ---
 
-## 7. Best Practices
+## 7. Dialogs and Alerts
 
-### 7.1 Code Organization
+### 7.1 Alert/Dialog Component Organization
+- Each alert or dialog must be in its own separate file
+- Location: `presentation/screens/{feature}/components/{AlertName}.kt`
+- Use `Dialog` from `androidx.compose.ui.window.Dialog` instead of `AlertDialog`
+- Alerts should be composable functions that handle their own state management
+
+### 7.2 Alert Implementation Pattern
+Alerts should follow this structure:
+1. Use `Dialog` composable as the root
+2. Custom layout using `Column` with background and shape
+3. Use id-based selection (track selected id/name, not index)
+4. Use `items(items, key = { ... })` in LazyColumn with proper keys
+5. Use `clickableNoRipple` for all clickable elements
+6. Use `clickableNoRipple` for dialog buttons (Cancel/Apply), NOT TextButton
+7. Pass full models to composables, not indices
+
+**Example:**
+```kotlin
+@Composable
+fun LocationSelectionAlert(
+    locations: List<Location>,
+    selected: Location?,
+    onDismiss: () -> Unit,
+    onApply: (Location) -> Unit
+) {
+    var selectedId by remember { mutableStateOf(selected?.id) }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = NotDjinniTheme.colors.surface,
+                    shape = RoundedCornerShape(NotDjinniTheme.shapes.medium.topStart)
+                )
+                .padding(NotDjinniTheme.offsets.medium)
+        ) {
+            NotDjinniText(
+                data = R.string.work_location_dialog_title.toTextData(),
+                style = NotDjinniTheme.typography.title2,
+                color = NotDjinniTheme.colors.onSurface,
+            )
+            VerticalSpacer(NotDjinniTheme.offsets.medium)
+            LazyColumn {
+                items(items = locations, key = { it.id }) { location ->
+                    SelectionItem(
+                        location = location,
+                        isSelected = location.id == selectedId,
+                        onSelect = { selectedId = location.id }
+                    )
+                }
+            }
+            VerticalSpacer(NotDjinniTheme.offsets.medium)
+            Row(modifier = Modifier.align(Alignment.End)) {
+                NotDjinniText(
+                    modifier = Modifier
+                        .clickableNoRipple(onClick = onDismiss)
+                        .padding(NotDjinniTheme.offsets.small),
+                    data = R.string.cancel.toTextData(),
+                    style = NotDjinniTheme.typography.body2,
+                    color = NotDjinniTheme.colors.onSurface,
+                )
+                HorizontalSpacer(NotDjinniTheme.offsets.small)
+                NotDjinniText(
+                    modifier = Modifier
+                        .clickableNoRipple(
+                            enabled = selectedId != null,
+                            onClick = {
+                                selectedId?.let { id ->
+                                    locations.find { it.id == id }?.let(onApply)
+                                }
+                            }
+                        )
+                        .padding(NotDjinniTheme.offsets.small),
+                    data = R.string.apply.toTextData(),
+                    style = NotDjinniTheme.typography.body2,
+                    color = if (selectedId != null) {
+                        NotDjinniTheme.colors.onSurface
+                    } else {
+                        NotDjinniTheme.colors.onSurface.copy(alpha = 0.5f)
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SelectionItem(
+    location: Location,
+    isSelected: Boolean,
+    onSelect: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickableNoRipple(onClick = onSelect)
+            .padding(vertical = NotDjinniTheme.offsets.small),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(
+            selected = isSelected,
+            onClick = null,
+            colors = RadioButtonDefaults.colors(
+                selectedColor = NotDjinniTheme.colors.onSurface,
+                unselectedColor = NotDjinniTheme.colors.onSurface.copy(alpha = 0.6f)
+            )
+        )
+        HorizontalSpacer(NotDjinniTheme.offsets.small)
+        NotDjinniText(
+            data = location.name.toTextData(),
+            style = NotDjinniTheme.typography.body2,
+            color = NotDjinniTheme.colors.onSurface,
+        )
+    }
+}
+```
+
+### 7.3 Key Requirements for Alerts
+**CRITICAL:**
+- Always use **id-based selection**, never index-based
+- Always provide **key** parameter in `items()` function for LazyColumn
+- Always use **clickableNoRipple** for buttons and selections, NOT TextButton or other Material3 buttons
+- Always pass **full models** to composables, never just indices
+- Track selection state using id/name strings, NOT integers
+
+**For enums:** Use `name` property as the identifier
+```kotlin
+var selectedName by remember { mutableStateOf(selected?.name) }
+items(items = types, key = { it.name }) { type ->
+    // ...
+}
+```
+
+**For data classes:** Use id property as the identifier
+```kotlin
+var selectedId by remember { mutableStateOf(selected?.id) }
+items(items = locations, key = { it.id }) { location ->
+    // ...
+}
+```
+
+---
+
+## 8. Best Practices
+
+### 8.1 Code Organization
 - Keep files focused on single responsibility
 - Group related functionality in feature packages
 - Use private visibility for internal composables
 - Extract reusable components to `presentation/core/components/`
 
-### 7.2 State Updates
+### 8.2 State Updates
 ```kotlin
 // In ViewModel
 mutableState.update { currentState ->
@@ -401,7 +577,7 @@ mutableState.update { currentState ->
 }
 ```
 
-### 7.3 Use Case Invocation
+### 8.3 Use Case Invocation
 ```kotlin
 // In ViewModel
 launch {
@@ -410,7 +586,7 @@ launch {
 }
 ```
 
-### 7.4 Loading States
+### 8.4 Loading States
 ```kotlin
 // In ViewModel
 launch(loadingEnabled = true) {
@@ -418,14 +594,14 @@ launch(loadingEnabled = true) {
 }
 ```
 
-### 7.5 Error Handling
+### 8.5 Error Handling
 - Errors are automatically caught by `BaseViewModel.launch()`
 - Use `showSnackBar()` to display error messages to users
 - Logging is handled automatically
 
 ---
 
-## 8. File Creation Checklist
+## 9. File Creation Checklist
 
 ### New Stateless Screen
 - [ ] Create package: `presentation/screens/{screen_name}/`
@@ -458,13 +634,13 @@ launch(loadingEnabled = true) {
 
 ---
 
-## 9. Common Extensions
+## 10. Common Extensions
 
-### 9.1 Extension Locations
+### 10.1 Extension Locations
 - **Core extensions:** `core/extension/` (e.g., List, Flow, Date, Number, Boolean)
 - **Presentation extensions:** `presentation/core/extension/` (e.g., TextData, ImageData, Modifier)
 
-### 9.2 Creating Extensions
+### 10.2 Creating Extensions
 - Group extensions by type in dedicated files
 - Use descriptive function names
 - Document complex extensions with KDoc
@@ -472,14 +648,14 @@ launch(loadingEnabled = true) {
 
 ---
 
-## 10. Navigation
+## 11. Navigation
 
-### 10.1 Navigation Setup
+### 11.1 Navigation Setup
 - Screens are defined in `presentation/navigation/controller/Screens.kt`
 - Routes are created using `ConfigRouteCreator`
 - Navigation handled by `NotDjinniNavController`
 
-### 10.2 Navigation Destination Creation
+### 11.2 Navigation Destination Creation
 
 Each screen requires a dedicated route file that defines the navigation destination and route builder function.
 
@@ -514,7 +690,7 @@ fun NavGraphBuilder.authRoute() {
    - Name the route builder function with `Route` suffix in lowercase: `authRoute()`, `authRoute()`
    - Each route should be in its own file named `{FeatureName}Route.kt`
 
-### 10.3 Adding New Route
+### 11.3 Adding New Route
 1. Add screen to `Screens` sealed interface (via `@Serializable data object` in route file)
 2. Create route file with screen definition and route builder function
 3. Import and register route builder in `NotDjinniNavController.kt`

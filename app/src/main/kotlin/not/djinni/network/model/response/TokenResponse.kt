@@ -1,4 +1,4 @@
-package not.djinni.network.auth.model
+package not.djinni.network.model.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

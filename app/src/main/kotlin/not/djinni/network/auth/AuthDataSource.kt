@@ -1,7 +1,7 @@
 package not.djinni.network.auth
 
-import not.djinni.network.auth.model.TokenResponse
 import not.djinni.network.common.response.NetworkResponse
+import not.djinni.network.model.response.TokenResponse
 
 interface AuthDataSource {
 

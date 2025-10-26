@@ -5,11 +5,11 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.resources.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import not.djinni.network.auth.model.LoginRequest
-import not.djinni.network.auth.model.TokenResponse
 import not.djinni.network.auth.resource.Auth
 import not.djinni.network.common.response.ErrorResponse
 import not.djinni.network.common.response.NetworkResponse
+import not.djinni.network.model.request.LoginRequest
+import not.djinni.network.model.response.TokenResponse
 import org.koin.core.annotation.Single
 
 @Single(binds = [AuthDataSource::class])

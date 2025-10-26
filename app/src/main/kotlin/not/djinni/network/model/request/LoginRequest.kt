@@ -1,4 +1,4 @@
-package not.djinni.network.auth.model
+package not.djinni.network.model.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -8,5 +8,5 @@ data class LoginRequest(
     @SerialName("email")
     val email: String,
     @SerialName("password")
-    val password: String
+    val password: String,
 )
