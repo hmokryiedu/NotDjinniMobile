@@ -34,7 +34,10 @@ import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
 fun ChooseRoleScreen(
-    onMain: (Role) -> Unit,
+    onSeekerCreateProfile: () -> Unit,
+    onSeekerMain: () -> Unit,
+    onEmployerCreateProfile: () -> Unit,
+    onEmployerMain: () -> Unit,
 ) {
     Screen<ChooseRoleViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -46,7 +49,10 @@ fun ChooseRoleScreen(
 
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
-                is ChooseRoleSideEffect.NavigateMain -> onMain(effect.role)
+                ChooseRoleSideEffect.NavigateSeekerCreateProfile -> onSeekerCreateProfile()
+                ChooseRoleSideEffect.NavigateSeekerMain -> onSeekerMain()
+                ChooseRoleSideEffect.NavigateEmployerCreateProfile -> onEmployerCreateProfile()
+                ChooseRoleSideEffect.NavigateEmployerMain -> onEmployerMain()
             }
         }
     }

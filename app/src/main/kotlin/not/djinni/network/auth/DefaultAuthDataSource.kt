@@ -8,11 +8,12 @@ import not.djinni.network.common.extension.networkResponse
 import not.djinni.network.common.response.NetworkResponse
 import not.djinni.network.model.request.LoginRequest
 import not.djinni.network.model.response.AuthResponse
+import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
 @Single(binds = [AuthDataSource::class])
 internal class DefaultAuthDataSource(
-    private val httpClient: HttpClient
+    @Named("public") private val httpClient: HttpClient
 ) : AuthDataSource {
 
     override suspend fun signIn(email: String, password: String): NetworkResponse<AuthResponse> {
