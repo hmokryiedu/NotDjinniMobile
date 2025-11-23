@@ -1,5 +1,8 @@
 package not.djinni.presentation.screens.auth
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -36,8 +38,7 @@ import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
 fun AuthScreen(
-    onNavigateToMain: () -> Unit,
-    onNavigateToOnboarding: () -> Unit,
+    onNext: () -> Unit,
 ) {
     Screen<AuthViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -49,10 +50,7 @@ fun AuthScreen(
         )
 
         viewModel.sideEffect.collectAsEffect { effect ->
-            when (effect) {
-                AuthSideEffect.NavigateToMain -> onNavigateToMain()
-                AuthSideEffect.NavigateToOnboarding -> onNavigateToOnboarding()
-            }
+            if (effect is AuthSideEffect.NavigateNext) onNext()
         }
     }
 }
@@ -65,6 +63,7 @@ private fun Content(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val fullNameFieldState = rememberTextFieldState()
     val emailFieldState = rememberTextFieldState()
     val passwordFieldState = rememberTextFieldState()
     val isSignInEnabled by remember(emailFieldState, passwordFieldState) {
@@ -93,6 +92,20 @@ private fun Content(
             color = NotDjinniTheme.colors.onSurface,
         )
         VerticalSpacer(NotDjinniTheme.offsets.medium)
+        AnimatedVisibility(
+            visible = state.type == AuthState.AuthType.SIGN_UP,
+            enter = expandVertically(),
+            exit = shrinkVertically()
+        ) {
+            NotDjinniTextField(
+                modifier = Modifier
+                    .padding(bottom = NotDjinniTheme.offsets.medium)
+                    .fillMaxWidth(),
+                state = fullNameFieldState,
+                placeholder = R.string.full_name_placeholder.toTextData(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+            )
+        }
         NotDjinniTextField(
             modifier = Modifier.fillMaxWidth(),
             state = emailFieldState,

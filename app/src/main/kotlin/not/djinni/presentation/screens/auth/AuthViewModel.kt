@@ -8,7 +8,8 @@ import not.djinni.domain.usecase.auth.SignInUseCase
 import not.djinni.domain.usecase.auth.SignUpUseCase
 import not.djinni.presentation.core.StateViewModel
 import not.djinni.presentation.core.extension.toTextData
-import not.djinni.presentation.screens.auth.AuthState.AuthType.*
+import not.djinni.presentation.screens.auth.AuthState.AuthType.SIGN_IN
+import not.djinni.presentation.screens.auth.AuthState.AuthType.SIGN_UP
 import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
@@ -26,10 +27,7 @@ internal class AuthViewModel(
                 SIGN_IN -> signInUseCase(SignInUseCase.Params(email = email, password = password))
                 SIGN_UP -> signUpUseCase(SignUpUseCase.Params(email = email, password = password))
             }.onSuccess {
-                when (mutableState.value.type) {
-                    SIGN_IN -> _sideEffect.emit(AuthSideEffect.NavigateToMain)
-                    SIGN_UP -> _sideEffect.emit(AuthSideEffect.NavigateToOnboarding)
-                }
+                _sideEffect.emit(AuthSideEffect.NavigateNext)
             }.onFailure { throwable ->
                 mutableState.update { it.copy(errorMessage = throwable.message.toTextData()) }
                 error("AuthViewModel", throwable) { "Error in onLogin: ${throwable.message}" }

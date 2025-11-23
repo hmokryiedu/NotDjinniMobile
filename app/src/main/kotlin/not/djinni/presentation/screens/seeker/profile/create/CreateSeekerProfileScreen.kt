@@ -1,0 +1,40 @@
+package not.djinni.presentation.screens.seeker.profile.create
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import not.djinni.presentation.core.Screen
+import not.djinni.presentation.core.extension.collectAsEffect
+import not.djinni.presentation.theme.NotDjinniTheme
+
+@Composable
+internal fun CreateSeekerProfileScreen(
+    onHome: () -> Unit,
+) {
+    Screen<CreateSeekerProfileViewModel> { viewModel ->
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        Content(state = state)
+
+        viewModel.sideEffect.collectAsEffect { effect ->
+            when (effect) {
+                CreateSeekerProfileSideEffect.NavigateToHome -> onHome()
+            }
+        }
+    }
+}
+
+@Composable
+private fun Content(state: CreateSeekerProfileState) {
+    // TODO: Implement seeker profile creation UI
+}
+
+@Composable
+@Preview
+private fun Preview() {
+    NotDjinniTheme {
+        val state = CreateSeekerProfileState()
+        Content(state = state)
+    }
+}

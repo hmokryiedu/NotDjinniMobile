@@ -8,6 +8,7 @@
 
     <!--Auth-->
     <string name="general_auth_title">Welcome!</string>
+    <string name="full_name_field_placeholder">Enter full name</string>
     <string name="email_field_placeholder">Enter email</string>
     <string name="password_field_placeholder">Enter password</string>
 
