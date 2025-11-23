@@ -1,3 +1,61 @@
 <resources>
     <string name="app_name">NotDjinni</string>
+
+    <!--General-->
+    <string name="default_placeholder">Enter text</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply">Apply</string>
+
+    <!--Auth-->
+    <string name="general_auth_title">Welcome!</string>
+    <string name="full_name_field_placeholder">Enter full name</string>
+    <string name="email_field_placeholder">Enter email</string>
+    <string name="password_field_placeholder">Enter password</string>
+
+    <string name="sign_in">Sign In</string>
+    <string name="alternative_way_for_sign_in">Or sign in with</string>
+    <string name="switch_to_sign_up">Don\'t have an account? Sign up</string>
+
+    <string name="sign_up">Sign Up</string>
+    <string name="switch_to_sign_in">Already have an account? Sign in</string>
+
+    <!--Onboarding-->
+    <string name="continue_button">Continue</string>
+    <string name="personal_info_title">Personal Information</string>
+    <string name="full_name_label">Full Name</string>
+    <string name="full_name_placeholder">Enter your full name</string>
+    <string name="about_me_label">About Me</string>
+    <string name="about_me_placeholder">Tell us about yourself</string>
+
+    <string name="work_preferences_title">Work Preferences</string>
+    <string name="job_category_label">Job Category</string>
+    <string name="job_category_placeholder">Select job category</string>
+    <string name="job_category_dialog_title">Select Job Category</string>
+    <string name="years_of_experience_label">Years of Experience</string>
+    <string name="years_of_experience_placeholder">Enter years of experience</string>
+    <string name="employment_type_label">Employment Type</string>
+    <string name="employment_type_placeholder">Select employment type</string>
+    <string name="employment_type_dialog_title">Select Employment Type</string>
+    <string name="work_location_label">Work Location Preference</string>
+    <string name="work_location_placeholder">Select work location</string>
+    <string name="work_location_dialog_title">Select Work Location</string>
+    <string name="salary_expectations_label">Salary Expectations</string>
+    <string name="salary_expectations_placeholder">Enter expected salary</string>
+
+    <string name="job_category_software_engineer">Software Engineer</string>
+    <string name="job_category_designer">Designer</string>
+    <string name="job_category_product_manager">Product Manager</string>
+    <string name="job_category_data_scientist">Data Scientist</string>
+    <string name="job_category_devops_engineer">DevOps Engineer</string>
+    <string name="job_category_qa_engineer">QA Engineer</string>
+
+    <string name="employment_type_full_time">Full-time</string>
+    <string name="employment_type_part_time">Part-time</string>
+    <string name="employment_type_contract">Contract</string>
+    <string name="employment_type_freelance">Freelance</string>
+
+    <string name="work_location_remote">Remote</string>
+    <string name="work_location_hybrid">Hybrid</string>
+    <string name="work_location_onsite">On-site</string>
+
 </resources>

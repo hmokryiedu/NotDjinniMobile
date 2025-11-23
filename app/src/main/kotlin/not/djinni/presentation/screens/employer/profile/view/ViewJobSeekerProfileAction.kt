@@ -1,0 +1,3 @@
+package not.djinni.presentation.screens.employer.viewjobseekerprofile
+
+internal sealed interface ViewJobSeekerProfileAction

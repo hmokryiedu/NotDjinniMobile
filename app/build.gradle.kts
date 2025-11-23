@@ -1,7 +1,3 @@
-import org.gradle.kotlin.dsl.implementation
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -75,9 +71,12 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
     debugImplementation(libs.androidx.ui.tooling)
+
+    implementation(libs.navigation.ui)
+    implementation(libs.navigation.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.collections.immutable)

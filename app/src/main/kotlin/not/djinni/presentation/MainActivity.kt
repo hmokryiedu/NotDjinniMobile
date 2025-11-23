@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.compose.rememberNavController
-import not.djinni.presentation.navigation.NotDjinniNavController
-import not.djinni.presentation.navigation.controller.Splash
+import not.djinni.presentation.navigation.NavigationController.Companion.rememberNavigationController
+import not.djinni.presentation.navigation.NotDjinniNavDisplay
+import not.djinni.presentation.navigation.controller.Screens
 import not.djinni.presentation.theme.NotDjinniTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -34,23 +34,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge(navigationBarStyle = systemBarStyle)
         setContent {
             NotDjinniTheme {
-                val navController = rememberNavController()
+                val controller = rememberNavigationController(Screens.ChooseRole)
 
-                NotDjinniNavController(
+                NotDjinniNavDisplay(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(NotDjinniTheme.colors.background),
-                    startDestination = Splash,
-                    controller = navController
+                    controller = controller
                 )
             }
         }
     }
 
     override fun attachBaseContext(newBase: Context?) {
-        val newOverride = Configuration(newBase?.resources?.configuration).apply {
-            fontScale = 1f
-        }
+        val newOverride = Configuration(newBase?.resources?.configuration).apply { fontScale = 1f }
         applyOverrideConfiguration(newOverride)
         super.attachBaseContext(newBase)
     }
