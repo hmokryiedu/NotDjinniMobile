@@ -1,6 +1,6 @@
 package not.djinni.domain.repository
 
-import not.djinni.model.role.profile.EmployerProfile
+import not.djinni.model.employer.EmployerProfile
 
 interface EmployerRepository {
 

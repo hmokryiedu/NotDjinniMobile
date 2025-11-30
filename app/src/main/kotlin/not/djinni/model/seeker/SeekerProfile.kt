@@ -1,4 +1,4 @@
-package not.djinni.model.role.profile
+package not.djinni.model.seeker
 
 data class SeekerProfile(
     val id: Long,

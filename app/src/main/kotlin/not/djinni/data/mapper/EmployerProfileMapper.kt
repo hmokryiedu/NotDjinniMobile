@@ -1,11 +1,12 @@
 package not.djinni.data.mapper
 
-import not.djinni.model.role.profile.EmployerProfile
-import not.djinni.network.model.response.EmployerProfileResponse
+import not.djinni.model.employer.EmployerProfile
+import not.djinni.network.employer.response.EmployerProfileResponse
 
 internal fun EmployerProfileResponse.toDomain(): EmployerProfile {
     return EmployerProfile(
         id = id,
-        companyId = companyId
+        role = role,
+        company = company.toDomain()
     )
 }

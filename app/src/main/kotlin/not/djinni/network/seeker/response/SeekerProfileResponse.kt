@@ -9,8 +9,8 @@ data class SeekerProfileResponse(
     val id: Long,
     @SerialName("about_me")
     val aboutMe: String?,
-    @SerialName("specialty")
-    val specialty: String,
+    @SerialName("speciality")
+    val speciality: String,
     @SerialName("desired_salary")
     val desiredSalary: Int,
     @SerialName("experience_years")

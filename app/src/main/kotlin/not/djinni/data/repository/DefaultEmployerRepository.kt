@@ -2,7 +2,7 @@ package not.djinni.data.repository
 
 import not.djinni.data.mapper.toDomain
 import not.djinni.domain.repository.EmployerRepository
-import not.djinni.model.role.profile.EmployerProfile
+import not.djinni.model.employer.EmployerProfile
 import not.djinni.network.common.response.NetworkResponse
 import not.djinni.network.employer.EmployerDataSource
 import org.koin.core.annotation.Single

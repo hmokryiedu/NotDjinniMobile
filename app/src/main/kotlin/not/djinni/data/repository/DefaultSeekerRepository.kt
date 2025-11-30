@@ -2,7 +2,7 @@ package not.djinni.data.repository
 
 import not.djinni.data.mapper.toDomain
 import not.djinni.domain.repository.SeekerRepository
-import not.djinni.model.role.profile.SeekerProfile
+import not.djinni.model.seeker.SeekerProfile
 import not.djinni.network.common.response.NetworkResponse
 import not.djinni.network.seeker.SeekerDataSource
 import org.koin.core.annotation.Single

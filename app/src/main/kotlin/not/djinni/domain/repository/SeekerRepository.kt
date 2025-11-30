@@ -1,6 +1,6 @@
 package not.djinni.domain.repository
 
-import not.djinni.model.role.profile.SeekerProfile
+import not.djinni.model.seeker.SeekerProfile
 
 interface SeekerRepository {
 
