@@ -5,7 +5,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import not.djinni.core.extension.mutableSideEffect
 import not.djinni.domain.usecase.auth.CheckIsLoggedInUseCase
 import not.djinni.presentation.core.BaseViewModel
-import not.djinni.presentation.screens.splash.SplashSideEffect.*
+import not.djinni.presentation.screens.splash.SplashSideEffect.NavigateToAuth
+import not.djinni.presentation.screens.splash.SplashSideEffect.NavigateToMain
 import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
@@ -23,7 +24,7 @@ class SplashViewModel(
     private fun initialize() {
         launch {
             delay(2000L) // TODO: Remove fake delay later
-            val effect = if (checkIsLoggedInUseCase()) NavigateToMain else NavigateToAuth
+            val effect = if (false && checkIsLoggedInUseCase()) NavigateToMain else NavigateToAuth
             _sideEffect.tryEmit(effect)
         }
     }

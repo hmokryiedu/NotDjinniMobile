@@ -21,21 +21,47 @@ internal class AuthViewModel(
     private val _sideEffect = mutableSideEffect<AuthSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    fun onLogin(email: String, password: String) {
-        launch {
-            when (mutableState.value.type) {
-                SIGN_IN -> signInUseCase(SignInUseCase.Params(email = email, password = password))
-                SIGN_UP -> signUpUseCase(SignUpUseCase.Params(email = email, password = password))
-            }.onSuccess {
-                _sideEffect.emit(AuthSideEffect.NavigateNext)
-            }.onFailure { throwable ->
-                mutableState.update { it.copy(errorMessage = throwable.message.toTextData()) }
-                error("AuthViewModel", throwable) { "Error in onLogin: ${throwable.message}" }
+    fun sendAction(action: AuthAction) {
+        when (action) {
+            AuthAction.SwitchAuthType -> switchAuthType()
+            is AuthAction.AuthButtonClicked -> when (state.value.type) {
+                SIGN_IN -> signIn(
+                    email = action.state.email,
+                    password = action.state.password
+                )
+
+                SIGN_UP -> signUp(
+                    name = action.state.name,
+                    email = action.state.email,
+                    password = action.state.password
+                )
             }
         }
     }
 
-    fun onAuthTypeChange() {
+    private fun signIn(email: String, password: String) {
+        launch {
+            signInUseCase(SignInUseCase.Params(email = email, password = password))
+                .onSuccess { _sideEffect.emit(AuthSideEffect.NavigateNext) }
+                .onFailure { throwable ->
+                    mutableState.update { it.copy(errorMessage = throwable.message.toTextData()) }
+                    error("AuthViewModel", throwable) { "Error in signIn: ${throwable.message}" }
+                }
+        }
+    }
+
+    private fun signUp(name: String, email: String, password: String) {
+        launch {
+            signUpUseCase(SignUpUseCase.Params(name = name, email = email, password = password))
+                .onSuccess { _sideEffect.emit(AuthSideEffect.NavigateNext) }
+                .onFailure { throwable ->
+                    mutableState.update { it.copy(errorMessage = throwable.message.toTextData()) }
+                    error("AuthViewModel", throwable) { "Error in signUp: ${throwable.message}" }
+                }
+        }
+    }
+
+    private fun switchAuthType() {
         val type = if (mutableState.value.type == SIGN_IN) SIGN_UP else SIGN_IN
         mutableState.update { it.copy(type = type, errorMessage = null) }
     }

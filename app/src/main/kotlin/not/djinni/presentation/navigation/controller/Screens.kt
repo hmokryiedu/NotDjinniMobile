@@ -40,18 +40,18 @@ sealed interface Screens : NavKey {
     sealed interface Employer : Screens {
 
         @Serializable
-        data object Main : Seeker
+        data object Main : Employer
 
         @Serializable
-        data object CreateProfile : Seeker
+        data object CreateProfile : Employer
 
         @Serializable
-        data object ViewProfile : Seeker
+        data object ViewProfile : Employer
 
         @Serializable
-        data object VacancyDetails : Seeker
+        data object VacancyDetails : Employer
 
         @Serializable
-        data object CreateVacancy : Seeker
+        data object CreateVacancy : Employer
     }
 }
