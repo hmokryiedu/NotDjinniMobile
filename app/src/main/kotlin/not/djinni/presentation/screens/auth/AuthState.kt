@@ -7,8 +7,8 @@ import not.djinni.presentation.core.extension.toTextData
 
 @Immutable
 internal data class AuthState(
+    val errorMessage: TextData? = null,
     val type: AuthType = AuthType.SIGN_IN,
-    val errorMessage: TextData? = null
 ) {
     enum class AuthType(
         val titleText: TextData,

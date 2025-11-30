@@ -1,4 +1,4 @@
-package not.djinni.di
+package not.djinni.di.client
 
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
@@ -15,11 +15,9 @@ import kotlinx.serialization.json.Json
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-object HttpClientFactory {
+open class BaseClientBuilder {
 
-    private const val TIMEOUT_SECONDS = 10
-
-    fun create(): HttpClient {
+    open fun create(): HttpClient {
         return HttpClient(OkHttp) {
             setupEngine()
             installContentNegotiation()
@@ -28,7 +26,7 @@ object HttpClientFactory {
         }
     }
 
-    private fun HttpClientConfig<OkHttpConfig>.setupEngine() {
+    protected fun HttpClientConfig<OkHttpConfig>.setupEngine() {
         val duration = TIMEOUT_SECONDS.toDuration(DurationUnit.SECONDS)
         engine {
             config {
@@ -39,20 +37,24 @@ object HttpClientFactory {
         }
     }
 
-    private fun HttpClientConfig<*>.installDefaultRequest() {
+    protected fun HttpClientConfig<*>.installDefaultRequest() {
         install(DefaultRequest) {
-            host = "192.168.31.155"
+            host = "192.168.0.8"
             port = 8080
             url { protocol = URLProtocol.HTTP }
             contentType(ContentType.Application.Json)
         }
     }
 
-    private fun HttpClientConfig<*>.installContentNegotiation() {
+    protected fun HttpClientConfig<*>.installContentNegotiation() {
         val json = Json {
             ignoreUnknownKeys = true
             prettyPrint = false
         }
         install(ContentNegotiation) { json(json) }
+    }
+
+    private companion object {
+        const val TIMEOUT_SECONDS = 10
     }
 }

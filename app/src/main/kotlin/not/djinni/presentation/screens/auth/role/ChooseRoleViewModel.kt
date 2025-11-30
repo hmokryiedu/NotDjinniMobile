@@ -2,12 +2,21 @@ package not.djinni.presentation.screens.auth.role
 
 import kotlinx.coroutines.flow.asSharedFlow
 import not.djinni.core.extension.mutableSideEffect
+import not.djinni.domain.repository.EmployerRepository
+import not.djinni.domain.repository.SeekerRepository
 import not.djinni.model.role.Role
 import not.djinni.presentation.core.StateViewModel
+import not.djinni.presentation.screens.auth.role.ChooseRoleSideEffect.NavigateEmployerCreateProfile
+import not.djinni.presentation.screens.auth.role.ChooseRoleSideEffect.NavigateEmployerMain
+import not.djinni.presentation.screens.auth.role.ChooseRoleSideEffect.NavigateSeekerCreateProfile
+import not.djinni.presentation.screens.auth.role.ChooseRoleSideEffect.NavigateSeekerMain
 import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
-internal class ChooseRoleViewModel : StateViewModel<ChooseRoleState>(ChooseRoleState()) {
+internal class ChooseRoleViewModel(
+    private val seekerRepository: SeekerRepository,
+    private val employerRepository: EmployerRepository,
+) : StateViewModel<ChooseRoleState>(ChooseRoleState()) {
 
     private val _sideEffect = mutableSideEffect<ChooseRoleSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
@@ -24,9 +33,18 @@ internal class ChooseRoleViewModel : StateViewModel<ChooseRoleState>(ChooseRoleS
     }
 
     fun proceedToMain() {
-        launch {
+        launch(loadingEnabled = true) {
             val role = state.value.selectedRole ?: return@launch
-            _sideEffect.emit(ChooseRoleSideEffect.NavigateMain(role))
+            val event = when (role) {
+                Role.SEEKER -> seekerRepository.getProfile()
+                    ?.let { NavigateSeekerCreateProfile }
+                    ?: NavigateSeekerMain
+
+                Role.EMPLOYER -> employerRepository.getProfile()
+                    ?.let { NavigateEmployerCreateProfile }
+                    ?: NavigateEmployerMain
+            }
+            _sideEffect.tryEmit(event)
         }
     }
 }
