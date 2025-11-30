@@ -29,8 +29,8 @@ class AuthenticatedClientBuilder(
         install(Auth) {
             bearer {
                 loadTokens {
-                    val accessToken = sessionDataStore.getSessionToken() ?: return@loadTokens null
-                    BearerTokens(accessToken = accessToken, refreshToken = null)
+                    val token = sessionDataStore.getAccessSessionToken() ?: return@loadTokens null
+                    BearerTokens(accessToken = token, refreshToken = null)
                 }
             }
         }

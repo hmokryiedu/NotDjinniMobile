@@ -39,7 +39,7 @@ open class BaseClientBuilder {
 
     protected fun HttpClientConfig<*>.installDefaultRequest() {
         install(DefaultRequest) {
-            host = "192.168.31.155"
+            host = "192.168.0.8"
             port = 8080
             url { protocol = URLProtocol.HTTP }
             contentType(ContentType.Application.Json)

@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -20,7 +22,7 @@ android {
 
     applicationVariants.all {
         outputs.all {
-            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val output = this as BaseVariantOutputImpl
             output.outputFileName = "not-djinni-${name}-${versionName}-${versionCode}.apk"
         }
     }

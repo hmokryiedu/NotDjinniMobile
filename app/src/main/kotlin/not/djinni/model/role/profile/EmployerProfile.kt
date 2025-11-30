@@ -1,4 +1,4 @@
-package not.djinni.model
+package not.djinni.model.role.profile
 
 data class EmployerProfile(
     val id: Long,

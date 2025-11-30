@@ -31,10 +31,13 @@ class MainActivity : ComponentActivity() {
             setOnExitAnimationListener { it.remove() }
             setKeepOnScreenCondition { false }
         }
-        enableEdgeToEdge(navigationBarStyle = systemBarStyle)
+        enableEdgeToEdge(
+            statusBarStyle = systemBarStyle,
+            navigationBarStyle = systemBarStyle
+        )
         setContent {
             NotDjinniTheme {
-                val controller = rememberNavigationController(Screens.ChooseRole)
+                val controller = rememberNavigationController(Screens.Splash)
 
                 NotDjinniNavDisplay(
                     modifier = Modifier

@@ -2,8 +2,8 @@ package not.djinni.presentation.screens.auth.role
 
 import kotlinx.coroutines.flow.asSharedFlow
 import not.djinni.core.extension.mutableSideEffect
-import not.djinni.domain.usecase.profile.GetEmployerProfileUseCase
-import not.djinni.domain.usecase.profile.GetSeekerProfileUseCase
+import not.djinni.domain.repository.EmployerRepository
+import not.djinni.domain.repository.SeekerRepository
 import not.djinni.model.role.Role
 import not.djinni.presentation.core.StateViewModel
 import not.djinni.presentation.screens.auth.role.ChooseRoleSideEffect.NavigateEmployerCreateProfile
@@ -14,8 +14,8 @@ import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
 internal class ChooseRoleViewModel(
-    private val getSeekerProfileUseCase: GetSeekerProfileUseCase,
-    private val getEmployerProfileUseCase: GetEmployerProfileUseCase
+    private val seekerRepository: SeekerRepository,
+    private val employerRepository: EmployerRepository,
 ) : StateViewModel<ChooseRoleState>(ChooseRoleState()) {
 
     private val _sideEffect = mutableSideEffect<ChooseRoleSideEffect>()
@@ -35,21 +35,16 @@ internal class ChooseRoleViewModel(
     fun proceedToMain() {
         launch(loadingEnabled = true) {
             val role = state.value.selectedRole ?: return@launch
-            when (role) {
-                Role.SEEKER -> {
-                    val event = getSeekerProfileUseCase()
-                        ?.let { NavigateSeekerCreateProfile }
-                        ?: NavigateSeekerMain
-                    _sideEffect.tryEmit(event)
-                }
+            val event = when (role) {
+                Role.SEEKER -> seekerRepository.getProfile()
+                    ?.let { NavigateSeekerCreateProfile }
+                    ?: NavigateSeekerMain
 
-                Role.EMPLOYER -> {
-                    val event = getEmployerProfileUseCase()
-                        ?.let { NavigateEmployerCreateProfile }
-                        ?: NavigateEmployerMain
-                    _sideEffect.tryEmit(event)
-                }
+                Role.EMPLOYER -> employerRepository.getProfile()
+                    ?.let { NavigateEmployerCreateProfile }
+                    ?: NavigateEmployerMain
             }
+            _sideEffect.tryEmit(event)
         }
     }
 }
