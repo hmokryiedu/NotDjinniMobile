@@ -49,7 +49,7 @@ sealed interface Screens : NavKey {
         data object ViewProfile : Employer
 
         @Serializable
-        data object VacancyDetails : Employer
+        data class VacancyDetails(val vacancyId: Long) : Employer
 
         @Serializable
         data object CreateVacancy : Employer

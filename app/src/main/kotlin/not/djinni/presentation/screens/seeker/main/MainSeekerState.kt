@@ -1,7 +1,7 @@
 package not.djinni.presentation.screens.seeker.main
 
 import androidx.compose.runtime.Immutable
-import not.djinni.presentation.screens.seeker.main.model.VacancyCardData
+import not.djinni.presentation.core.components.base.model.VacancyCardData
 import not.djinni.presentation.screens.seeker.main.model.VacancyTab
 
 @Immutable

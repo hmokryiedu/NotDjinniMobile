@@ -18,7 +18,7 @@ import not.djinni.model.seeker.vacancy.Vacancy
 import not.djinni.presentation.core.StateViewModel
 import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.toTextData
-import not.djinni.presentation.screens.seeker.main.model.VacancyCardData
+import not.djinni.presentation.core.components.base.model.VacancyCardData
 import not.djinni.presentation.screens.seeker.main.model.VacancyTab
 import not.djinni.utils.string.StringProvider
 import org.koin.android.annotation.KoinViewModel

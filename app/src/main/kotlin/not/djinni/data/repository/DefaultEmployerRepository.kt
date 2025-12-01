@@ -3,9 +3,12 @@ package not.djinni.data.repository
 import not.djinni.data.mapper.toDomain
 import not.djinni.domain.repository.EmployerRepository
 import not.djinni.model.employer.EmployerProfile
+import not.djinni.model.seeker.vacancy.Vacancy
+import not.djinni.model.seeker.vacancy.toDomain
 import not.djinni.network.common.response.NetworkResponse
 import not.djinni.network.employer.EmployerDataSource
 import not.djinni.network.employer.request.CreateEmployerProfileRequest
+import not.djinni.network.vacancy.response.VacancyDetailsResponse
 import org.koin.core.annotation.Single
 
 @Single(binds = [EmployerRepository::class])
@@ -25,6 +28,13 @@ class DefaultEmployerRepository(
         return when (val response = remoteDataSource.createProfile(request)) {
             is NetworkResponse.Success -> response.data.toDomain()
             is NetworkResponse.Error -> throw Exception("Failed to create profile")
+        }
+    }
+
+    override suspend fun getEmployerVacancies(): Result<List<Vacancy>> = runCatching {
+        when (val response = remoteDataSource.getVacancies()) {
+            is NetworkResponse.Success -> response.data.vacancies.map(VacancyDetailsResponse::toDomain)
+            is NetworkResponse.Error -> throw Exception("Failed to load vacancies")
         }
     }
 }

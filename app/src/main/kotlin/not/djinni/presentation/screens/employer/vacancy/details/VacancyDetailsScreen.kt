@@ -1,4 +1,4 @@
-package not.djinni.presentation.screens.employer.vacancydetails
+package not.djinni.presentation.screens.employer.vacancy.details
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -6,11 +6,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import not.djinni.presentation.core.Screen
 import not.djinni.presentation.core.extension.collectAsEffect
+import not.djinni.presentation.screens.employer.vacancydetails.VacancyDetailsState
 import not.djinni.presentation.theme.NotDjinniTheme
+import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun VacancyDetailsScreen() {
-    Screen<VacancyDetailsViewModel> { viewModel ->
+internal fun VacancyDetailsScreen(vacancyId: Long) {
+    Screen<VacancyDetailsViewModel>(
+        parameters = { parametersOf(vacancyId) }
+    ) { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         Content(state = state)

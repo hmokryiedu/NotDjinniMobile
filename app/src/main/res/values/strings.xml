@@ -136,4 +136,8 @@
     <string name="vacancy_years_required">%d+ years experience</string>
     <string name="vacancy_no_experience_required">No experience required</string>
 
+    <!--Employer Main Screen-->
+    <string name="employer_vacancies_title">My Vacancies</string>
+    <string name="employer_no_vacancies">No vacancies yet</string>
+
 </resources>

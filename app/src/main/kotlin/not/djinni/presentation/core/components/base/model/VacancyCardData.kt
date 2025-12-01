@@ -1,6 +1,4 @@
-package not.djinni.presentation.screens.seeker.main.model
-
-import not.djinni.presentation.core.components.base.model.TextData
+package not.djinni.presentation.core.components.base.model
 
 data class VacancyCardData(
     val id: Long,

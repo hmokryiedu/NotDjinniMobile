@@ -9,6 +9,7 @@ import not.djinni.network.common.response.NetworkResponse
 import not.djinni.network.employer.request.CreateEmployerProfileRequest
 import not.djinni.network.employer.resource.Employer
 import not.djinni.network.employer.response.EmployerProfileResponse
+import not.djinni.network.vacancy.response.VacancyListResponse
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
@@ -27,5 +28,14 @@ internal class DefaultEmployerDataSource(
         return httpClient
             .post(Employer.Profile()) { setBody(request) }
             .networkResponse<EmployerProfileResponse>()
+    }
+
+    override suspend fun getVacancies(
+        limit: Int,
+        offset: Int,
+    ): NetworkResponse<VacancyListResponse> {
+        return httpClient
+            .get(Employer.Vacancies(limit = limit, offset = offset))
+            .networkResponse<VacancyListResponse>()
     }
 }

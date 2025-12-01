@@ -1,4 +1,4 @@
-package not.djinni.presentation.screens.seeker.main.component
+package not.djinni.presentation.core.components.base
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,11 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import not.djinni.presentation.core.components.base.HorizontalSpacer
-import not.djinni.presentation.core.components.base.NotDjinniText
-import not.djinni.presentation.core.components.base.VerticalSpacer
+import not.djinni.presentation.core.components.base.model.VacancyCardData
 import not.djinni.presentation.core.extension.clickableNoRipple
-import not.djinni.presentation.screens.seeker.main.model.VacancyCardData
 import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
