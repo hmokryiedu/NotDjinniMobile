@@ -2,8 +2,9 @@ package not.djinni.model.seeker
 
 data class SeekerProfile(
     val id: Long,
+    val aboutMe: String?,
     val speciality: String,
-    val experienceYears: Int,
     val desiredSalary: Int,
-    val aboutMe: String?
+    val experienceYears: Int,
+    val workExperience: List<WorkExperience> = emptyList()
 )

@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
@@ -92,6 +91,7 @@ fun buildDefaultTextFieldDecorator(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(modifier = Modifier.weight(1f)) {
+            innerTextField()
             if (state.text.isEmpty()) {
                 NotDjinniText(
                     data = placeholder,
@@ -99,7 +99,6 @@ fun buildDefaultTextFieldDecorator(
                     color = NotDjinniTheme.colors.onSurface.copy(alpha = 0.5f),
                 )
             }
-            innerTextField()
         }
         endIcon?.let {
             HorizontalSpacer(NotDjinniTheme.offsets.small)

@@ -58,4 +58,48 @@
     <string name="work_location_hybrid">Hybrid</string>
     <string name="work_location_onsite">On-site</string>
 
+    <!--Create Seeker Profile-->
+    <string name="create_seeker_profile_title">Create Your Seeker Profile</string>
+    <string name="seeker_speciality_title">Speciality</string>
+    <string name="seeker_speciality_hint">Enter speciality</string>
+
+    <string name="seeker_desired_salary_title">Desired Salary</string>
+    <string name="seeker_desired_salary_hint">2000$</string>
+
+    <string name="seeker_experience_title">Years experience</string>
+    <string name="seeker_experience_hint">1</string>
+
+    <string name="seeker_about_me_title">About Me</string>
+    <string name="seeker_about_me_hint">Enter about Me</string>
+
+    <string name="seeker_work_experience">Work experience</string>
+    <string name="seeker_add_work_experience">Add work experience</string>
+
+    <string name="seeker_work_experience_company_name">Enter company name</string>
+    <string name="seeker_work_experience_company_name_title">Company name</string>
+
+    <string name="seeker_work_experience_position">Enter position</string>
+    <string name="seeker_work_experience_position_title">Position</string>
+
+    <string name="seeker_work_experience_date_range_placeholder">Select date range</string>
+    <string name="seeker_work_experience_date_range">Date range</string>
+
+    <string name="add">Add</string>
+
+    <string name="seeker_work_experience_description">Enter description</string>
+    <string name="seeker_work_experience_description_title">Description</string>
+
+    <string name="seeker_work_experience_no_description_placeholder">No description</string>
+
+    <string name="position_should_not_be_empty">Position must not be empty</string>
+    <string name="company_name_should_not_be_empty">Company name must not be empty</string>
+    <string name="date_range_has_to_selected">Date range has to be selected</string>
+    <string name="end_date_has_to_be_after_start_date">End date has to after start date</string>
+
+    <string name="speciality_should_not_be_empty">Speciality must not be empty</string>
+    <string name="desired_salary_should_not_be_empty">Desired salary must not be empty</string>
+    <string name="years_of_experience_should_not_be_empty">Years of experience must not be empty</string>
+
+    <string name="create_profile_button">Create Profile</string>
+
 </resources>

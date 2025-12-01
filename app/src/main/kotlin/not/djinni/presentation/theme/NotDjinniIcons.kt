@@ -1,14 +1,18 @@
 package not.djinni.presentation.theme
 
+import not.djinni.presentation.theme.icons.BackIcon
 import not.djinni.presentation.theme.icons.CaseIcon
 import not.djinni.presentation.theme.icons.EyeIcon
 import not.djinni.presentation.theme.icons.FilledEyeIcon
+import not.djinni.presentation.theme.icons.PlusIcon
 import not.djinni.presentation.theme.icons.ZoomIcon
 
 object NotDjinniIcons {
 
+    val back = BackIcon
     val case = CaseIcon
     val eye = EyeIcon
     val filledEye = FilledEyeIcon
+    val plus = PlusIcon
     val zoom = ZoomIcon
 }

@@ -1,6 +1,7 @@
 package not.djinni.data.repository
 
 import not.djinni.data.mapper.toDomain
+import not.djinni.data.mapper.toRequest
 import not.djinni.domain.repository.SeekerRepository
 import not.djinni.model.seeker.SeekerProfile
 import not.djinni.network.common.response.NetworkResponse
@@ -16,6 +17,13 @@ class DefaultSeekerRepository(
         return when (val response = remoteDataSource.getProfile()) {
             is NetworkResponse.Success -> response.data.toDomain()
             is NetworkResponse.Error -> null
+        }
+    }
+
+    override suspend fun createProfile(profile: SeekerProfile): SeekerProfile {
+        return when (val response = remoteDataSource.createProfile(profile.toRequest())) {
+            is NetworkResponse.Success -> response.data.toDomain()
+            is NetworkResponse.Error -> throw Exception("Failed to create profile")
         }
     }
 }

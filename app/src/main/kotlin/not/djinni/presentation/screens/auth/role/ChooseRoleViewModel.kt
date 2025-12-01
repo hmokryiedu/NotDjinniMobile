@@ -37,12 +37,12 @@ internal class ChooseRoleViewModel(
             val role = state.value.selectedRole ?: return@launch
             val event = when (role) {
                 Role.SEEKER -> seekerRepository.getProfile()
-                    ?.let { NavigateSeekerCreateProfile }
-                    ?: NavigateSeekerMain
+                    ?.let { NavigateSeekerMain }
+                    ?: NavigateSeekerCreateProfile
 
                 Role.EMPLOYER -> employerRepository.getProfile()
-                    ?.let { NavigateEmployerCreateProfile }
-                    ?: NavigateEmployerMain
+                    ?.let { NavigateEmployerMain }
+                    ?: NavigateEmployerCreateProfile
             }
             _sideEffect.tryEmit(event)
         }

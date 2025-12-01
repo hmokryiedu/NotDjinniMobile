@@ -13,6 +13,7 @@ compose-material-icons-extended = "1.7.8"
 compose-constraintlayout = "1.1.1"
 appcompat = "1.7.1"
 material = "1.13.0"
+datetime = "0.7.1"
 
 navigation-core = "1.0.0"
 lifecycle-runtime = "2.10.0"
@@ -37,6 +38,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "collections-immutable" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 
 navigation-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation-core" }
 navigation-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation-core" }
@@ -111,5 +113,5 @@ ktor = [
     "ktor-client-logging",
     "ktor-client-resources",
     "ktor-serialization-kotlinx-json",
-    "ktor-client-auth"
+    "ktor-client-auth",
 ]

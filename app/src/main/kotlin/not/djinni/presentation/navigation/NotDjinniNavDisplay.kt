@@ -31,6 +31,10 @@ fun NotDjinniNavDisplay(
         transitionSpec = {
             fadeIn(tween(ANIMATION_DURATION)) togetherWith
                     fadeOut(tween(ANIMATION_DURATION))
+        },
+        popTransitionSpec = {
+            fadeIn(tween(ANIMATION_DURATION)) togetherWith
+                    fadeOut(tween(ANIMATION_DURATION))
         }
     )
 }

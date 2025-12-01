@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.navigation.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation)
 
+    implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.collections.immutable)
 
