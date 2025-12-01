@@ -4,6 +4,8 @@ package not.djinni.data.mapper
 
 import not.djinni.model.seeker.SeekerProfile
 import not.djinni.model.seeker.WorkExperience
+import not.djinni.model.seeker.vacancy.toDomain
+import not.djinni.model.seeker.vacancy.toResponse
 import not.djinni.network.seeker.request.CreateSeekerProfileRequest
 import not.djinni.network.seeker.request.CreateWorkExperienceRequest
 import not.djinni.network.seeker.response.SeekerProfileResponse
@@ -15,7 +17,8 @@ internal fun SeekerProfileResponse.toDomain(): SeekerProfile {
         speciality = speciality,
         experienceYears = experienceYears,
         desiredSalary = desiredSalary,
-        aboutMe = aboutMe
+        aboutMe = aboutMe,
+        jobCategory = jobCategory.toDomain()
     )
 }
 
@@ -25,6 +28,7 @@ internal fun SeekerProfile.toRequest(): CreateSeekerProfileRequest {
         experienceYears = experienceYears,
         desiredSalary = desiredSalary,
         aboutMe = aboutMe,
+        jobCategory = jobCategory.toResponse(),
         workExperience = workExperience.map(WorkExperience::toRequest)
     )
 }

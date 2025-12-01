@@ -2,11 +2,15 @@
 
 package not.djinni.presentation.screens.seeker.profile.create
 
+import not.djinni.model.seeker.vacancy.JobCategoryCode
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 internal sealed interface CreateSeekerProfileAction {
     data object ShowAddWorkExperienceAlert : CreateSeekerProfileAction
+    data object ShowSelectJobCategoryAlert : CreateSeekerProfileAction
+
+    data class SelectJobCategory(val category: JobCategoryCode) : CreateSeekerProfileAction
 
     data class CreateProfile(
         val speciality: String,

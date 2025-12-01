@@ -38,10 +38,10 @@ internal class DefaultAuthRepository(
         }
     }
 
-    override suspend fun refreshToken() {
+    override suspend fun refreshToken() = runCatching {
         val request = sessionDataStore.getRefreshSessionToken()
             ?.let(::RefreshTokenRequest)
-            ?: return
+            ?: throw Exception("No refresh token available")
         when (val response = authDataSource.refresh(request)) {
             is NetworkResponse.Success -> {
                 sessionDataStore.setRefreshSessionToken(response.data.refreshToken)

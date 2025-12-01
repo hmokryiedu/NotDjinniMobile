@@ -42,12 +42,18 @@
     <string name="salary_expectations_label">Salary Expectations</string>
     <string name="salary_expectations_placeholder">Enter expected salary</string>
 
-    <string name="job_category_software_engineer">Software Engineer</string>
-    <string name="job_category_designer">Designer</string>
-    <string name="job_category_product_manager">Product Manager</string>
-    <string name="job_category_data_scientist">Data Scientist</string>
-    <string name="job_category_devops_engineer">DevOps Engineer</string>
-    <string name="job_category_qa_engineer">QA Engineer</string>
+    <string name="job_category_software_dev">Software Development</string>
+    <string name="job_category_data_science">Data Science</string>
+    <string name="job_category_devops">DevOps</string>
+    <string name="job_category_qa">QA</string>
+    <string name="job_category_product_mgmt">Product Management</string>
+    <string name="job_category_design">Design</string>
+    <string name="job_category_marketing">Marketing</string>
+    <string name="job_category_sales">Sales</string>
+    <string name="job_category_hr">HR</string>
+    <string name="job_category_finance">Finance</string>
+    <string name="job_category_operations">Operations</string>
+    <string name="job_category_support">Support</string>
 
     <string name="employment_type_full_time">Full-time</string>
     <string name="employment_type_part_time">Part-time</string>
@@ -101,6 +107,10 @@
     <string name="speciality_should_not_be_empty">Speciality must not be empty</string>
     <string name="desired_salary_should_not_be_empty">Desired salary must not be empty</string>
     <string name="years_of_experience_should_not_be_empty">Years of experience must not be empty</string>
+    <string name="job_category_should_not_be_empty">Job category must be selected</string>
+    <string name="seeker_job_category_title">Job Category</string>
+    <string name="seeker_job_category_hint">Select job category</string>
+    <string name="seeker_select_job_category">Select Job Category</string>
 
     <string name="create_profile_button">Create Profile</string>
 

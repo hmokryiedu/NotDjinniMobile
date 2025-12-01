@@ -35,10 +35,19 @@ class AuthenticatedClientBuilder(
                     BearerTokens(accessToken = token, refreshToken = null)
                 }
                 refreshTokens {
-                    authRepository.refreshToken()
-                    val newToken =
-                        sessionDataStore.getAccessSessionToken() ?: return@refreshTokens null
-                    BearerTokens(accessToken = newToken, refreshToken = null)
+                    authRepository.refreshToken().fold(
+                        onSuccess = {
+                            val newToken = sessionDataStore.getAccessSessionToken()
+                            BearerTokens(
+                                accessToken = newToken ?: return@refreshTokens null,
+                                refreshToken = null
+                            )
+                        },
+                        onFailure = {
+                            sessionDataStore.clearTokens()
+                            null
+                        }
+                    )
                 }
             }
         }

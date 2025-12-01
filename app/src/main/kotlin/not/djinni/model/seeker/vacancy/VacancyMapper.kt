@@ -62,3 +62,18 @@ fun VacancyStatusCodeResponse.toDomain(): VacancyStatusCode = when (this) {
     VacancyStatusCodeResponse.CLOSED -> VacancyStatusCode.CLOSED
     VacancyStatusCodeResponse.EXPIRED -> VacancyStatusCode.EXPIRED
 }
+
+fun JobCategoryCode.toResponse(): JobCategoryCodeResponse = when (this) {
+    JobCategoryCode.SOFTWARE_DEV -> JobCategoryCodeResponse.SOFTWARE_DEV
+    JobCategoryCode.DATA_SCIENCE -> JobCategoryCodeResponse.DATA_SCIENCE
+    JobCategoryCode.DEVOPS -> JobCategoryCodeResponse.DEVOPS
+    JobCategoryCode.QA -> JobCategoryCodeResponse.QA
+    JobCategoryCode.PRODUCT_MGMT -> JobCategoryCodeResponse.PRODUCT_MGMT
+    JobCategoryCode.DESIGN -> JobCategoryCodeResponse.DESIGN
+    JobCategoryCode.MARKETING -> JobCategoryCodeResponse.MARKETING
+    JobCategoryCode.SALES -> JobCategoryCodeResponse.SALES
+    JobCategoryCode.HR -> JobCategoryCodeResponse.HR
+    JobCategoryCode.FINANCE -> JobCategoryCodeResponse.FINANCE
+    JobCategoryCode.OPERATIONS -> JobCategoryCodeResponse.OPERATIONS
+    JobCategoryCode.SUPPORT -> JobCategoryCodeResponse.SUPPORT
+}

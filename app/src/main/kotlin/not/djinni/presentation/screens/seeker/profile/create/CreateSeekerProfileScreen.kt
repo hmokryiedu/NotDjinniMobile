@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.OutputTransformation
@@ -49,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import not.djinni.R
 import not.djinni.core.extension.toFormatterMonthYearDate
 import not.djinni.core.extension.toInstant
+import not.djinni.model.seeker.vacancy.JobCategoryCode
 import not.djinni.presentation.core.Screen
 import not.djinni.presentation.core.components.base.FullscreenColumn
 import not.djinni.presentation.core.components.base.HorizontalSpacer
@@ -82,20 +85,31 @@ internal fun CreateSeekerProfileScreen(
         val aboutMeFieldState = rememberTextFieldState()
 
         AnimatedContent(
-            targetState = state.currentAlert == CreateProfileAlert.ADD_WORK_EXPERIENCE,
+            targetState = state.currentAlert,
             transitionSpec = { fadeIn() togetherWith fadeOut() }
-        ) { isAlertVisible ->
-            if (isAlertVisible) {
-                AddWorkExperienceContent(onAction = viewModel::sendAction)
-            } else {
-                Content(
-                    state = state,
-                    specialityFieldState = specialityFieldState,
-                    desiredSalaryFieldState = desiredSalaryFieldState,
-                    experienceFieldState = experienceFieldState,
-                    aboutMeFieldState = aboutMeFieldState,
-                    onAction = viewModel::sendAction,
-                )
+        ) { currentAlert ->
+            when (currentAlert) {
+                CreateProfileAlert.ADD_WORK_EXPERIENCE -> {
+                    AddWorkExperienceContent(onAction = viewModel::sendAction)
+                }
+
+                CreateProfileAlert.SELECT_JOB_CATEGORY -> {
+                    SelectJobCategoryContent(
+                        selectedCategory = state.selectedJobCategory,
+                        onAction = viewModel::sendAction
+                    )
+                }
+
+                null -> {
+                    Content(
+                        state = state,
+                        specialityFieldState = specialityFieldState,
+                        desiredSalaryFieldState = desiredSalaryFieldState,
+                        experienceFieldState = experienceFieldState,
+                        aboutMeFieldState = aboutMeFieldState,
+                        onAction = viewModel::sendAction,
+                    )
+                }
             }
         }
 
@@ -115,7 +129,7 @@ internal fun CreateSeekerProfileScreen(
             }
         }
 
-        BackHandler(enabled = state.currentAlert == CreateProfileAlert.ADD_WORK_EXPERIENCE) {
+        BackHandler(enabled = state.currentAlert != null) {
             viewModel.sendAction(CreateSeekerProfileAction.HideAlert)
         }
     }
@@ -169,6 +183,17 @@ private fun Content(
                     placeholder = R.string.seeker_desired_salary_hint.toTextData(),
                 )
             }
+            VerticalSpacer(NotDjinniTheme.offsets.medium)
+            NotDjinniText(
+                data = R.string.seeker_job_category_title.toTextData(),
+                style = NotDjinniTheme.typography.body3,
+                color = NotDjinniTheme.colors.onBackground,
+            )
+            VerticalSpacer(NotDjinniTheme.offsets.tiny)
+            JobCategorySelectionBox(
+                selectedCategory = state.selectedJobCategory,
+                onClick = { onAction(CreateSeekerProfileAction.ShowSelectJobCategoryAlert) }
+            )
             VerticalSpacer(NotDjinniTheme.offsets.medium)
             ProfileDataInput(
                 state = aboutMeFieldState,
@@ -515,6 +540,144 @@ private fun DateRangePickerState.toFormatterMonthYearDate(): String {
 private fun Long?.toFormatterMonthYearDate(): String {
     return this?.toInstant()?.toFormatterMonthYearDate() ?: "..."
 }
+
+@Composable
+private fun JobCategorySelectionBox(
+    modifier: Modifier = Modifier,
+    selectedCategory: JobCategoryCode?,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = NotDjinniTheme.colors.onSurface,
+                shape = NotDjinniTheme.shapes.small,
+            )
+            .background(
+                color = NotDjinniTheme.colors.primary.copy(alpha = 0.3f),
+                shape = NotDjinniTheme.shapes.small,
+            )
+            .clickableNoRipple(onClick = onClick)
+            .padding(
+                horizontal = NotDjinniTheme.offsets.medium,
+                vertical = NotDjinniTheme.offsets.small,
+            ),
+    ) {
+        NotDjinniText(
+            data = selectedCategory?.toTextData()
+                ?: R.string.seeker_job_category_hint.toTextData(),
+            style = NotDjinniTheme.typography.body1,
+            color = if (selectedCategory != null) {
+                NotDjinniTheme.colors.onSurface
+            } else {
+                NotDjinniTheme.colors.onSurface.copy(alpha = 0.5f)
+            },
+        )
+    }
+}
+
+@Composable
+private fun SelectJobCategoryContent(
+    modifier: Modifier = Modifier,
+    selectedCategory: JobCategoryCode?,
+    onAction: (CreateSeekerProfileAction) -> Unit,
+) {
+    FullscreenColumn(modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                modifier = Modifier.clickableNoRipple {
+                    onAction(CreateSeekerProfileAction.HideAlert)
+                },
+                imageVector = NotDjinniIcons.back,
+                tint = NotDjinniTheme.colors.onBackground,
+                contentDescription = null,
+            )
+            HorizontalSpacer(NotDjinniTheme.offsets.small)
+            NotDjinniText(
+                data = R.string.seeker_select_job_category.toTextData(),
+                color = NotDjinniTheme.colors.onBackground,
+                style = NotDjinniTheme.typography.title2
+            )
+        }
+        VerticalSpacer(NotDjinniTheme.offsets.average)
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(NotDjinniTheme.offsets.tiny)
+        ) {
+            items(items = JobCategoryCode.entries, key = { it.name }) { category ->
+                JobCategoryItem(
+                    modifier = Modifier.animateItem(),
+                    category = category,
+                    isSelected = category == selectedCategory,
+                    onClick = { onAction(CreateSeekerProfileAction.SelectJobCategory(category)) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun JobCategoryItem(
+    modifier: Modifier = Modifier,
+    category: JobCategoryCode,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = if (isSelected) {
+                    NotDjinniTheme.colors.primary
+                } else {
+                    NotDjinniTheme.colors.onSurface
+                },
+                shape = NotDjinniTheme.shapes.small,
+            )
+            .background(
+                color = if (isSelected) {
+                    NotDjinniTheme.colors.primary.copy(alpha = 0.5f)
+                } else {
+                    NotDjinniTheme.colors.primary.copy(alpha = 0.3f)
+                },
+                shape = NotDjinniTheme.shapes.small,
+            )
+            .clickableNoRipple(onClick = onClick)
+            .padding(
+                horizontal = NotDjinniTheme.offsets.medium,
+                vertical = NotDjinniTheme.offsets.small,
+            ),
+    ) {
+        NotDjinniText(
+            data = category.toTextData(),
+            style = NotDjinniTheme.typography.body1,
+            color = NotDjinniTheme.colors.onBackground,
+        )
+    }
+}
+
+private fun JobCategoryCode.toTextData(): TextData = TextData.Resource(
+    when (this) {
+        JobCategoryCode.SOFTWARE_DEV -> R.string.job_category_software_dev
+        JobCategoryCode.DATA_SCIENCE -> R.string.job_category_data_science
+        JobCategoryCode.DEVOPS -> R.string.job_category_devops
+        JobCategoryCode.QA -> R.string.job_category_qa
+        JobCategoryCode.PRODUCT_MGMT -> R.string.job_category_product_mgmt
+        JobCategoryCode.DESIGN -> R.string.job_category_design
+        JobCategoryCode.MARKETING -> R.string.job_category_marketing
+        JobCategoryCode.SALES -> R.string.job_category_sales
+        JobCategoryCode.HR -> R.string.job_category_hr
+        JobCategoryCode.FINANCE -> R.string.job_category_finance
+        JobCategoryCode.OPERATIONS -> R.string.job_category_operations
+        JobCategoryCode.SUPPORT -> R.string.job_category_support
+    }
+)
 
 @Composable
 @Preview

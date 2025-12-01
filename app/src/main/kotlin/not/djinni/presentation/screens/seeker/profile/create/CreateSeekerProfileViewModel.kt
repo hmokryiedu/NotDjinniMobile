@@ -42,7 +42,13 @@ internal class CreateSeekerProfileViewModel(
             CreateSeekerProfileAction.ShowAddWorkExperienceAlert -> {
                 updateState { copy(currentAlert = CreateProfileAlert.ADD_WORK_EXPERIENCE) }
             }
-
+            CreateSeekerProfileAction.ShowSelectJobCategoryAlert -> {
+                updateState { copy(currentAlert = CreateProfileAlert.SELECT_JOB_CATEGORY) }
+            }
+            is CreateSeekerProfileAction.SelectJobCategory -> {
+                updateState { copy(selectedJobCategory = action.category) }
+                hideAlert()
+            }
             is CreateSeekerProfileAction.CreateProfile -> createProfile(action)
             is CreateSeekerProfileAction.AddWorkExperience -> addWorkExperience(action)
             CreateSeekerProfileAction.HideAlert -> hideAlert()
@@ -73,12 +79,18 @@ internal class CreateSeekerProfileViewModel(
                 messages.trySend(TextData.Resource(errorResId))
                 return@launch
             }
+            val selectedCategory = state.value.selectedJobCategory
+            if (selectedCategory == null) {
+                messages.trySend(TextData.Resource(R.string.job_category_should_not_be_empty))
+                return@launch
+            }
             val profile = SeekerProfile(
                 id = 0,
                 speciality = data.speciality,
                 desiredSalary = data.desiredSalary.toIntOrNull().orZero(),
                 experienceYears = data.yearsOfExperience.toIntOrNull().orZero(),
                 aboutMe = data.aboutMe,
+                jobCategory = selectedCategory,
                 workExperience = state.value.workExperiences.map {
                     WorkExperience(
                         id = 0,

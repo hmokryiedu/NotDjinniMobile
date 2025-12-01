@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
@@ -61,6 +62,8 @@ private fun Content(
     searchState: TextFieldState = rememberTextFieldState(),
     onAction: (MainSeekerAction) -> Unit,
 ) {
+    val lazyListState = rememberLazyListState()
+
     FullscreenColumn {
         NotDjinniText(
             data = R.string.vacancies_title.toTextData(),
@@ -94,6 +97,7 @@ private fun Content(
             }
             LazyColumn(
                 modifier = Modifier.imePadding(),
+                state = lazyListState,
                 verticalArrangement = Arrangement.spacedBy(NotDjinniTheme.offsets.small)
             ) {
                 items(
@@ -108,6 +112,10 @@ private fun Content(
                 }
             }
         }
+    }
+
+    LaunchedEffect(state.selectedTab) {
+        if (state.vacanciesListState.items.isNotEmpty()) lazyListState.scrollToItem(0)
     }
 }
 

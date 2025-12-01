@@ -2,6 +2,7 @@ package not.djinni.network.seeker.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import not.djinni.network.vacancy.response.JobCategoryCodeResponse
 
 @Serializable
 data class SeekerProfileResponse(
@@ -15,6 +16,8 @@ data class SeekerProfileResponse(
     val desiredSalary: Int,
     @SerialName("experience_years")
     val experienceYears: Int,
+    @SerialName("job_category")
+    val jobCategory: JobCategoryCodeResponse,
     @SerialName("work_experience")
     val workExperience: List<WorkExperienceResponse>
 )
