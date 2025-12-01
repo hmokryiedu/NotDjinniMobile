@@ -102,4 +102,16 @@
 
     <string name="create_profile_button">Create Profile</string>
 
+    <!--Create Employer Profile-->
+    <string name="create_employer_profile_title">Create Your Employer Profile</string>
+    <string name="employer_role_title">Role</string>
+    <string name="employer_role_hint">Enter your role</string>
+    <string name="employer_company_title">Company</string>
+    <string name="employer_company_hint">Select a company</string>
+    <string name="employer_select_company">Select Company</string>
+    <string name="employer_search_company_hint">Search company by name</string>
+    <string name="employer_no_companies_found">No companies found</string>
+    <string name="employer_role_required">Role is required</string>
+    <string name="employer_company_required">Company is required</string>
+
 </resources>
