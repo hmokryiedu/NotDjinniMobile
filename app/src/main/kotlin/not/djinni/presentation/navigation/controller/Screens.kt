@@ -30,7 +30,7 @@ sealed interface Screens : NavKey {
         data object CreateProfile : Seeker
 
         @Serializable
-        data object VacancyDetails : Seeker
+        data class VacancyDetails(val vacancyId: Long) : Seeker
 
         @Serializable
         data object AppliedVacancies : Seeker

@@ -17,7 +17,11 @@ fun EntryProviderScope<Screens>.seekerEntry(
         )
     }
     entry<Screens.Seeker.Main> {
-        MainSeekerScreen()
+        MainSeekerScreen(
+            onVacancyClick = { vacancyId ->
+                controller.navigate(Screens.Seeker.VacancyDetails(vacancyId = vacancyId))
+            }
+        )
     }
     entry<Screens.Seeker.AllVacancies> {
         AllVacanciesScreen()
@@ -25,7 +29,7 @@ fun EntryProviderScope<Screens>.seekerEntry(
     entry<Screens.Seeker.AppliedVacancies> {
         AppliedVacanciesScreen()
     }
-    entry<Screens.Seeker.VacancyDetails> {
-        VacancyDetailsScreen()
+    entry<Screens.Seeker.VacancyDetails> { entry ->
+        VacancyDetailsScreen(vacancyId = entry.vacancyId)
     }
 }

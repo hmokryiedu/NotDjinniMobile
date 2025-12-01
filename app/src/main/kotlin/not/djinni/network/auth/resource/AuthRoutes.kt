@@ -14,4 +14,8 @@ class Auth {
     @Serializable
     @Resource("register")
     class Register(val parent: Auth = Auth())
+
+    @Serializable
+    @Resource("refresh")
+    class Refresh(val parent: Auth = Auth())
 }

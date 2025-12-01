@@ -10,4 +10,13 @@ class Seeker {
     @Serializable
     @Resource("profile")
     class Profile(val parent: Seeker = Seeker())
+
+    @Serializable
+    @Resource("vacancy")
+    class Vacancy(
+        val parent: Seeker = Seeker(),
+        val limit: Int? = null,
+        val offset: Int? = null,
+        val search: String? = null
+    )
 }

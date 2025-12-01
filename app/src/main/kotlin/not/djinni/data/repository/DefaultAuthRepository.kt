@@ -4,6 +4,7 @@ import not.djinni.datastore.session.SessionDataStore
 import not.djinni.domain.repository.AuthRepository
 import not.djinni.network.auth.AuthDataSource
 import not.djinni.network.common.response.NetworkResponse
+import not.djinni.network.token.request.RefreshTokenRequest
 import org.koin.core.annotation.Single
 
 @Single(binds = [AuthRepository::class])
@@ -34,6 +35,20 @@ internal class DefaultAuthRepository(
                 sessionDataStore.setAccessSessionToken(response.data.accessToken)
                 sessionDataStore.setRefreshSessionToken(response.data.refreshToken)
             }
+        }
+    }
+
+    override suspend fun refreshToken() {
+        val request = sessionDataStore.getRefreshSessionToken()
+            ?.let(::RefreshTokenRequest)
+            ?: return
+        when (val response = authDataSource.refresh(request)) {
+            is NetworkResponse.Success -> {
+                sessionDataStore.setRefreshSessionToken(response.data.refreshToken)
+                sessionDataStore.setAccessSessionToken(response.data.accessToken)
+            }
+
+            is NetworkResponse.Error -> throw Exception("Failed to refresh token")
         }
     }
 

@@ -8,10 +8,12 @@ import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.resources.Resources
 import not.djinni.datastore.session.SessionDataStore
+import not.djinni.domain.repository.AuthRepository
 import org.koin.core.annotation.Single
 
 @Single
 class AuthenticatedClientBuilder(
+    private val authRepository: AuthRepository,
     private val sessionDataStore: SessionDataStore,
 ) : BaseClientBuilder() {
 
@@ -31,6 +33,12 @@ class AuthenticatedClientBuilder(
                 loadTokens {
                     val token = sessionDataStore.getAccessSessionToken() ?: return@loadTokens null
                     BearerTokens(accessToken = token, refreshToken = null)
+                }
+                refreshTokens {
+                    authRepository.refreshToken()
+                    val newToken =
+                        sessionDataStore.getAccessSessionToken() ?: return@refreshTokens null
+                    BearerTokens(accessToken = newToken, refreshToken = null)
                 }
             }
         }

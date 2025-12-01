@@ -8,6 +8,9 @@ fun EntryProviderScope<Screens>.splashEntry(
     controller: NavigationController,
 ) {
     entry<Screens.Splash> {
-        SplashScreen(onAuth = { controller.navigate(Screens.Auth) })
+        SplashScreen(
+            onAuth = { controller.replaceAll(Screens.Auth) },
+            onChooseRole = { controller.replaceAll(Screens.ChooseRole) }
+        )
     }
 }

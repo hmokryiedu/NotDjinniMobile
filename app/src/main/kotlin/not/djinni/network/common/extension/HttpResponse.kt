@@ -8,6 +8,9 @@ import not.djinni.network.common.response.NetworkResponse
 suspend inline fun <reified T : Any> HttpResponse.networkResponse(): NetworkResponse<T> {
     return when (status.value) {
         in 200..299 -> NetworkResponse.Success(body<T>())
-        else -> NetworkResponse.Error(body<ErrorResponse>().message)
+        else -> {
+            val message = runCatching { body<ErrorResponse>().message }
+            NetworkResponse.Error(message.getOrDefault("Unknown error"))
+        }
     }
 }

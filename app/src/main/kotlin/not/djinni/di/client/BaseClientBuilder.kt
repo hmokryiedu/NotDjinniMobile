@@ -35,6 +35,7 @@ open class BaseClientBuilder {
     protected fun HttpClientConfig<OkHttpConfig>.setupEngine() {
         val duration = TIMEOUT_SECONDS.toDuration(DurationUnit.SECONDS)
         engine {
+            preconfigured = okhttp3.OkHttpClient.Builder().build()
             config {
                 connectTimeout(duration)
                 readTimeout(duration)

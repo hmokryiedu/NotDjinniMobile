@@ -9,6 +9,7 @@ import not.djinni.network.common.extension.networkResponse
 import not.djinni.network.common.response.NetworkResponse
 import not.djinni.network.model.request.auth.SignInRequest
 import not.djinni.network.model.request.auth.SignUpRequest
+import not.djinni.network.token.request.RefreshTokenRequest
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
@@ -32,6 +33,12 @@ internal class DefaultAuthDataSource(
         val request = SignUpRequest(name = name, email = email, password = password)
         return httpClient
             .post(Auth.Register()) { setBody(request) }
+            .networkResponse<AuthResponse>()
+    }
+
+    override suspend fun refresh(request: RefreshTokenRequest): NetworkResponse<AuthResponse> {
+        return httpClient
+            .post(Auth.Refresh()) { setBody(request) }
             .networkResponse<AuthResponse>()
     }
 

@@ -52,6 +52,8 @@
     <string name="employment_type_full_time">Full-time</string>
     <string name="employment_type_part_time">Part-time</string>
     <string name="employment_type_contract">Contract</string>
+    <string name="employment_type_temporary">Temporary</string>
+    <string name="employment_type_internship">Internship</string>
     <string name="employment_type_freelance">Freelance</string>
 
     <string name="work_location_remote">Remote</string>
@@ -113,5 +115,15 @@
     <string name="employer_no_companies_found">No companies found</string>
     <string name="employer_role_required">Role is required</string>
     <string name="employer_company_required">Company is required</string>
+
+    <!--Seeker Main Screen / Vacancies-->
+    <string name="vacancies_title">Vacancies</string>
+    <string name="vacancy_tab_all">All</string>
+    <string name="vacancy_tab_recommended">Recommended</string>
+    <string name="vacancy_search_placeholder">Search vacancies…</string>
+    <string name="vacancy_no_results">No vacancies found</string>
+    <string name="vacancy_salary_range">$%d - $%d</string>
+    <string name="vacancy_years_required">%d+ years experience</string>
+    <string name="vacancy_no_experience_required">No experience required</string>
 
 </resources>

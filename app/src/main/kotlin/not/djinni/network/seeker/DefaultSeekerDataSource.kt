@@ -9,6 +9,7 @@ import not.djinni.network.common.response.NetworkResponse
 import not.djinni.network.seeker.request.CreateSeekerProfileRequest
 import not.djinni.network.seeker.resource.Seeker
 import not.djinni.network.seeker.response.SeekerProfileResponse
+import not.djinni.network.vacancy.response.VacancyListResponse
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
@@ -27,5 +28,15 @@ internal class DefaultSeekerDataSource(
         return httpClient
             .post(Seeker.Profile()) { setBody(request) }
             .networkResponse<SeekerProfileResponse>()
+    }
+
+    override suspend fun getRecommendedVacancies(
+        limit: Int,
+        offset: Int,
+        search: String?
+    ): NetworkResponse<VacancyListResponse> {
+        return httpClient
+            .get(Seeker.Vacancy(limit = limit, offset = offset, search = search))
+            .networkResponse<VacancyListResponse>()
     }
 }

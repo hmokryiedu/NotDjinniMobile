@@ -11,7 +11,9 @@ import not.djinni.presentation.screens.seeker.vacancydetails.VacancyDetailsViewM
 import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
-internal fun VacancyDetailsScreen() {
+internal fun VacancyDetailsScreen(
+    vacancyId: Long,
+) {
     Screen<VacancyDetailsViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
 

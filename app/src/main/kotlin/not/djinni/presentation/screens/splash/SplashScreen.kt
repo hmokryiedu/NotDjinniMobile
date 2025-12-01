@@ -22,6 +22,7 @@ import not.djinni.presentation.theme.NotDjinniTheme
 @Composable
 fun SplashScreen(
     onAuth: () -> Unit,
+    onChooseRole: () -> Unit
 ) {
     Screen<SplashViewModel> { viewModel ->
         Content()
@@ -29,7 +30,7 @@ fun SplashScreen(
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
                 SplashSideEffect.NavigateToAuth -> onAuth()
-                SplashSideEffect.NavigateToMain -> TODO()
+                SplashSideEffect.NavigateToChooseRole -> onChooseRole()
             }
         }
     }
