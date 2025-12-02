@@ -1,3 +1,5 @@
-package not.djinni.presentation.screens.employer.vacancydetails
+package not.djinni.presentation.screens.employer.vacancy.details
 
-internal sealed interface VacancyDetailsSideEffect
+internal sealed interface VacancyDetailsSideEffect {
+    data object NavigateBack : VacancyDetailsSideEffect
+}

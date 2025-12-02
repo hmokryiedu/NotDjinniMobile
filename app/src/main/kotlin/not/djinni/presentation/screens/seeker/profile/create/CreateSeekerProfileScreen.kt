@@ -65,6 +65,7 @@ import not.djinni.presentation.core.components.base.model.ButtonData
 import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.clickableNoRipple
 import not.djinni.presentation.core.extension.collectAsEffect
+import not.djinni.presentation.core.extension.toDisplayName
 import not.djinni.presentation.core.extension.toTextData
 import not.djinni.presentation.screens.seeker.profile.create.alert.CreateProfileAlert
 import not.djinni.presentation.screens.seeker.profile.create.model.WorkExperienceData
@@ -566,7 +567,7 @@ private fun JobCategorySelectionBox(
             ),
     ) {
         NotDjinniText(
-            data = selectedCategory?.toTextData()
+            data = selectedCategory?.toDisplayName()
                 ?: R.string.seeker_job_category_hint.toTextData(),
             style = NotDjinniTheme.typography.body1,
             color = if (selectedCategory != null) {
@@ -655,29 +656,12 @@ private fun JobCategoryItem(
             ),
     ) {
         NotDjinniText(
-            data = category.toTextData(),
+            data = category.toDisplayName(),
             style = NotDjinniTheme.typography.body1,
             color = NotDjinniTheme.colors.onBackground,
         )
     }
 }
-
-private fun JobCategoryCode.toTextData(): TextData = TextData.Resource(
-    when (this) {
-        JobCategoryCode.SOFTWARE_DEV -> R.string.job_category_software_dev
-        JobCategoryCode.DATA_SCIENCE -> R.string.job_category_data_science
-        JobCategoryCode.DEVOPS -> R.string.job_category_devops
-        JobCategoryCode.QA -> R.string.job_category_qa
-        JobCategoryCode.PRODUCT_MGMT -> R.string.job_category_product_mgmt
-        JobCategoryCode.DESIGN -> R.string.job_category_design
-        JobCategoryCode.MARKETING -> R.string.job_category_marketing
-        JobCategoryCode.SALES -> R.string.job_category_sales
-        JobCategoryCode.HR -> R.string.job_category_hr
-        JobCategoryCode.FINANCE -> R.string.job_category_finance
-        JobCategoryCode.OPERATIONS -> R.string.job_category_operations
-        JobCategoryCode.SUPPORT -> R.string.job_category_support
-    }
-)
 
 @Composable
 @Preview

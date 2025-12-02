@@ -23,6 +23,7 @@ class AuthenticatedClientBuilder(
             installContentNegotiation()
             install(Resources)
             installDefaultRequest()
+            installLogging()
             installAuth()
         }
     }

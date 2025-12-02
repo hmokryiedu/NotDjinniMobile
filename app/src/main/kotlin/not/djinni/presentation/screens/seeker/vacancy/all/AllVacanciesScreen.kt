@@ -7,7 +7,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import not.djinni.presentation.core.Screen
 import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.screens.seeker.allvacancies.AllVacanciesState
-import not.djinni.presentation.screens.seeker.allvacancies.AllVacanciesViewModel
 import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable

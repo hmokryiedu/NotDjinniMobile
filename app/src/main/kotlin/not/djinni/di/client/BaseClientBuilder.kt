@@ -61,7 +61,7 @@ open class BaseClientBuilder {
         install(ContentNegotiation) { json(json) }
     }
 
-    private fun HttpClientConfig<*>.installLogging() {
+    protected fun HttpClientConfig<*>.installLogging() {
         install(Logging) {
             logger = object : Logger {
                 override fun log(message: String) {

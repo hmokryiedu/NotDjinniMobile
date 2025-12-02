@@ -129,7 +129,8 @@ private fun ButtonContent(
             NotDjinniText(
                 data = data.text,
                 maxLines = maxLines,
-                style = textStyle
+                style = textStyle,
+                color = NotDjinniTheme.colors.onPrimary
             )
             data.endImage?.let {
                 HorizontalSpacer(NotDjinniTheme.offsets.compact)

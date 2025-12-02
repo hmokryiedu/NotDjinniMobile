@@ -2,10 +2,10 @@ package not.djinni.presentation.navigation.controller
 
 import androidx.navigation3.runtime.EntryProviderScope
 import not.djinni.presentation.navigation.NavigationController
-import not.djinni.presentation.screens.seeker.vacancy.all.AllVacanciesScreen
-import not.djinni.presentation.screens.seeker.vacancy.applied.AppliedVacanciesScreen
 import not.djinni.presentation.screens.seeker.main.MainSeekerScreen
 import not.djinni.presentation.screens.seeker.profile.create.CreateSeekerProfileScreen
+import not.djinni.presentation.screens.seeker.vacancy.all.AllVacanciesScreen
+import not.djinni.presentation.screens.seeker.vacancy.applied.AppliedVacanciesScreen
 import not.djinni.presentation.screens.seeker.vacancy.details.VacancyDetailsScreen
 
 fun EntryProviderScope<Screens>.seekerEntry(
@@ -30,6 +30,10 @@ fun EntryProviderScope<Screens>.seekerEntry(
         AppliedVacanciesScreen()
     }
     entry<Screens.Seeker.VacancyDetails> { entry ->
-        VacancyDetailsScreen(vacancyId = entry.vacancyId)
+        VacancyDetailsScreen(
+            vacancyId = entry.vacancyId,
+            onNavigateBack = controller::popBackStack,
+            onApply = { }
+        )
     }
 }

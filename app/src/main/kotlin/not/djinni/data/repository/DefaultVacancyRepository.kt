@@ -18,4 +18,11 @@ class DefaultVacancyRepository(
             is NetworkResponse.Error -> throw Exception("Vacancies are empty or error occurred")
         }
     }
+
+    override suspend fun getVacancyById(id: Long) = runCatching {
+        when (val response = dataSource.getVacancyById(id)) {
+            is NetworkResponse.Success -> response.data.toDomain()
+            is NetworkResponse.Error -> throw Exception("Failed to load vacancy details")
+        }
+    }
 }

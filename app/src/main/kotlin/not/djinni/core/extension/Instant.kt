@@ -13,6 +13,12 @@ fun Instant.toFormatterMonthYearDate(): String {
     return "${date.month.number}/${date.year}"
 }
 
+fun Instant.toFormattedFullDate(): String {
+    val date = toLocalDateTime(TimeZone.currentSystemDefault())
+    val monthName = date.month.name.lowercase().replaceFirstChar { it.uppercase() }.take(3)
+    return "$monthName ${date.dayOfMonth}, ${date.year}"
+}
+
 fun Long.toInstant(): Instant {
     return Instant.fromEpochMilliseconds(this)
 }

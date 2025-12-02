@@ -28,14 +28,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.ParametersHolder
 import not.djinni.presentation.core.components.base.NotDjinniLoader
 import not.djinni.presentation.core.components.base.NotDjinniText
 import not.djinni.presentation.core.components.base.model.SnackBarData
 import not.djinni.presentation.core.extension.clickableNoRipple
 import not.djinni.presentation.core.extension.toTextData
 import not.djinni.presentation.theme.NotDjinniTheme
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.ParametersHolder
 
 @Composable
 inline fun <reified VM : BaseViewModel> Screen(
@@ -50,10 +50,14 @@ inline fun <reified VM : BaseViewModel> Screen(
 
 @Composable
 inline fun <reified VM : BaseViewModel> Screen(
+    key: String? = null,
     noinline parameters: () -> ParametersHolder,
     content: @Composable (VM) -> Unit
 ) {
-    val viewModel = koinViewModel<VM>(parameters = parameters)
+    val viewModel = koinViewModel<VM>(
+        key = key,
+        parameters = parameters
+    )
     Content(
         viewModel = viewModel,
         content = { content(viewModel) }

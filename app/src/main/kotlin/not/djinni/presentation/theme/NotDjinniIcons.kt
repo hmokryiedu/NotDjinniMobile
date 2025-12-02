@@ -2,6 +2,8 @@ package not.djinni.presentation.theme
 
 import not.djinni.presentation.theme.icons.BackIcon
 import not.djinni.presentation.theme.icons.CaseIcon
+import not.djinni.presentation.theme.icons.CheckIcon
+import not.djinni.presentation.theme.icons.CloseIcon
 import not.djinni.presentation.theme.icons.EyeIcon
 import not.djinni.presentation.theme.icons.FilledEyeIcon
 import not.djinni.presentation.theme.icons.PlusIcon
@@ -11,6 +13,8 @@ object NotDjinniIcons {
 
     val back = BackIcon
     val case = CaseIcon
+    val check = CheckIcon
+    val close = CloseIcon
     val eye = EyeIcon
     val filledEye = FilledEyeIcon
     val plus = PlusIcon

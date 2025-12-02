@@ -5,6 +5,7 @@
     <string name="default_placeholder">Enter text</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
+    <string name="retry">Retry</string>
 
     <!--Auth-->
     <string name="general_auth_title">Welcome!</string>
@@ -136,8 +137,32 @@
     <string name="vacancy_years_required">%d+ years experience</string>
     <string name="vacancy_no_experience_required">No experience required</string>
 
+    <!--Vacancy Details-->
+    <string name="vacancy_details_title">Vacancy Details</string>
+    <string name="vacancy_details_apply">Apply Now</string>
+    <string name="vacancy_details_description">Description</string>
+    <string name="vacancy_details_about_company">About Company</string>
+    <string name="vacancy_details_posted">Posted: %s</string>
+    <string name="vacancy_details_updated">Last updated: %s</string>
+    <string name="vacancy_details_error">Failed to load vacancy details</string>
+    <string name="vacancy_cannot_apply">You don\'t meet the experience requirements</string>
+
+    <string name="vacancy_status">Status: </string>
+
+    <!--Eligibility-->
+    <string name="eligibility_experience_match">Your experience matches the requirements</string>
+    <string name="eligibility_experience_mismatch">Vacancy requires more experience than you have</string>
+    <string name="vacancy_salary_below_hint">Salary is below your expectations ($%d)</string>
+
+    <!--Vacancy Status-->
+    <string name="vacancy_status_draft">Draft</string>
+    <string name="vacancy_status_active">Active</string>
+    <string name="vacancy_status_paused">Paused</string>
+    <string name="vacancy_status_closed">Closed</string>
+    <string name="vacancy_status_expired">Expired</string>
+
     <!--Employer Main Screen-->
     <string name="employer_vacancies_title">My Vacancies</string>
-    <string name="employer_no_vacancies">No vacancies yet</string>
+    <string name="employer_no_vacancies">No vacancies yet</string>"
 
 </resources>

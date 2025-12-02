@@ -1,4 +1,4 @@
-package not.djinni.presentation.screens.employer
+package not.djinni.presentation.screens.employer.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,10 +19,6 @@ import not.djinni.presentation.core.components.base.VacancyCard
 import not.djinni.presentation.core.components.base.VerticalSpacer
 import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.core.extension.toTextData
-import not.djinni.presentation.screens.employer.main.MainEmployerSideEffect
-import not.djinni.presentation.screens.employer.main.MainEmployerState
-import not.djinni.presentation.screens.employer.main.MainEmployerViewModel
-import not.djinni.presentation.screens.employer.main.VacanciesListState
 import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
