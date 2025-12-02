@@ -34,6 +34,9 @@ sealed interface Screens : NavKey {
 
         @Serializable
         data object AppliedVacancies : Seeker
+
+        @Serializable
+        data object Profile : Seeker
     }
 
     @Serializable
@@ -53,5 +56,8 @@ sealed interface Screens : NavKey {
 
         @Serializable
         data object CreateVacancy : Employer
+
+        @Serializable
+        data object Profile : Employer
     }
 }

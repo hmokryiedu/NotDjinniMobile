@@ -13,6 +13,7 @@ data class NotDjinniColor(
     val surfaceContainer: Color = Color(0xFF1B1C1E),
     val forcedBlack: Color = Color(0xFF1B1C1E),
     val error: Color = Color(0xFFF54927),
+    val highlightedContainer: Color = Color(0xFF282828),
 )
 
 internal val LocalNotDjinniColor = staticCompositionLocalOf {

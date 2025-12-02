@@ -19,7 +19,7 @@ navigation-core = "1.0.0"
 lifecycle-runtime = "2.10.0"
 material3-adaptive = "1.2.0"
 
-koin = "4.1.1"
+koin = "4.2.0-alpha3"
 koin-annotations = "2.3.1"
 
 activity = "1.12.0"
@@ -75,6 +75,8 @@ koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin"
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 koin-annotations = { group = "io.insert-koin", name = "koin-annotations", version.ref = "koin-annotations" }
 koin-ksp-compiler = { group = "io.insert-koin", name = "koin-ksp-compiler", version.ref = "koin-annotations" }
+koin-navigation = { group = "io.insert-koin", name = "koin-compose-navigation3", version.ref = "koin" }
+koin-compose-view-model = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
@@ -103,8 +105,10 @@ compose = [
 koin = [
     "koin-core",
     "koin-android",
+    "koin-navigation",
     "koin-androidx-compose",
     "koin-annotations",
+    "koin-compose-view-model",
 ]
 ktor = [
     "ktor-client-okhttp",

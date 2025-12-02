@@ -1,6 +1,7 @@
 package not.djinni.presentation.screens.seeker.main
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import not.djinni.presentation.core.components.base.model.VacancyCardData
 import not.djinni.presentation.screens.seeker.main.model.VacancyTab
 
@@ -10,6 +11,7 @@ internal data class MainSeekerState(
     val vacanciesListState: VacanciesListState = VacanciesListState.Empty,
 )
 
+@Stable
 sealed class VacanciesListState {
     data object Empty : VacanciesListState()
     data object Loading : VacanciesListState()

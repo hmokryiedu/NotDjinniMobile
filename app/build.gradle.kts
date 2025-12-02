@@ -43,6 +43,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+    composeCompiler {
+        stabilityConfigurationFiles.add(
+            rootProject.layout.projectDirectory.file("stability_config.conf")
+        )
+    }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_21.toString()
     }

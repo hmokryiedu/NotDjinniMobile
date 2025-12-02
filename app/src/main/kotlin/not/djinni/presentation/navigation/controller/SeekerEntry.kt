@@ -4,6 +4,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import not.djinni.presentation.navigation.NavigationController
 import not.djinni.presentation.screens.seeker.main.MainSeekerScreen
 import not.djinni.presentation.screens.seeker.profile.create.CreateSeekerProfileScreen
+import not.djinni.presentation.screens.seeker.profile.view.SeekerProfileScreen
 import not.djinni.presentation.screens.seeker.vacancy.all.AllVacanciesScreen
 import not.djinni.presentation.screens.seeker.vacancy.applied.AppliedVacanciesScreen
 import not.djinni.presentation.screens.seeker.vacancy.details.VacancyDetailsScreen
@@ -20,7 +21,8 @@ fun EntryProviderScope<Screens>.seekerEntry(
         MainSeekerScreen(
             onVacancyClick = { vacancyId ->
                 controller.navigate(Screens.Seeker.VacancyDetails(vacancyId = vacancyId))
-            }
+            },
+            onProfileClick = { controller.navigate(Screens.Seeker.Profile) }
         )
     }
     entry<Screens.Seeker.AllVacancies> {
@@ -34,6 +36,11 @@ fun EntryProviderScope<Screens>.seekerEntry(
             vacancyId = entry.vacancyId,
             onNavigateBack = controller::popBackStack,
             onApply = { }
+        )
+    }
+    entry<Screens.Seeker.Profile> {
+        SeekerProfileScreen(
+            onChangeRole = { controller.replaceAll(Screens.ChooseRole) }
         )
     }
 }

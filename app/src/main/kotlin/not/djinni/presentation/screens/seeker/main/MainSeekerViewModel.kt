@@ -46,6 +46,9 @@ internal class MainSeekerViewModel(
             is MainSeekerAction.OpenVacancy -> _sideEffect.tryEmit(
                 MainSeekerSideEffect.NavigateToVacancyDetails(action.vacancyId)
             )
+            MainSeekerAction.OpenProfile -> _sideEffect.tryEmit(
+                MainSeekerSideEffect.NavigateToProfile
+            )
         }
     }
 

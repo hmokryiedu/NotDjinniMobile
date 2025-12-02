@@ -148,6 +148,8 @@
     <string name="vacancy_cannot_apply">You don\'t meet the experience requirements</string>
 
     <string name="vacancy_status">Status: </string>
+    <string name="vacancy_posted">Posted: </string>
+    <string name="vacancy_last_updated">Last updated: </string>
 
     <!--Eligibility-->
     <string name="eligibility_experience_match">Your experience matches the requirements</string>
@@ -163,6 +165,23 @@
 
     <!--Employer Main Screen-->
     <string name="employer_vacancies_title">My Vacancies</string>
-    <string name="employer_no_vacancies">No vacancies yet</string>"
+    <string name="employer_no_vacancies">No vacancies yet</string>
+
+    <!--Profile Screen-->
+    <string name="profile_title">Profile</string>
+    <string name="profile_change_role">Change Role</string>
+    <string name="profile_user_section">Account</string>
+    <string name="profile_details_section">Details</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_email">Email</string>
+    <string name="profile_speciality">Speciality</string>
+    <string name="profile_desired_salary">Desired Salary</string>
+    <string name="profile_experience_years">Experience</string>
+    <string name="profile_job_category">Job Category</string>
+    <string name="profile_about_me">About Me</string>
+    <string name="profile_no_about_me">No description provided</string>
+    <string name="profile_role">Role</string>
+    <string name="profile_company">Company</string>
+    <string name="profile_loading_error">Failed to load profile</string>
 
 </resources>

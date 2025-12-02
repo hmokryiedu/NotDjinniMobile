@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,7 +44,6 @@ internal fun VacancyDetailsScreen(
     onApply: () -> Unit,
 ) {
     Screen<VacancyDetailsViewModel>(
-        key = vacancyId.toString(),
         parameters = { parametersOf(vacancyId) }
     ) { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -216,7 +214,7 @@ private fun EligibilitySection(eligibility: EligibilityState) {
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                color = Color(0xFF282828),
+                color = NotDjinniTheme.colors.highlightedContainer,
                 shape = NotDjinniTheme.shapes.small
             )
             .padding(NotDjinniTheme.offsets.medium)

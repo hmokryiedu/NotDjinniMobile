@@ -6,6 +6,7 @@ import not.djinni.presentation.theme.icons.CheckIcon
 import not.djinni.presentation.theme.icons.CloseIcon
 import not.djinni.presentation.theme.icons.EyeIcon
 import not.djinni.presentation.theme.icons.FilledEyeIcon
+import not.djinni.presentation.theme.icons.PersonIcon
 import not.djinni.presentation.theme.icons.PlusIcon
 import not.djinni.presentation.theme.icons.ZoomIcon
 
@@ -17,6 +18,7 @@ object NotDjinniIcons {
     val close = CloseIcon
     val eye = EyeIcon
     val filledEye = FilledEyeIcon
+    val person = PersonIcon
     val plus = PlusIcon
     val zoom = ZoomIcon
 }

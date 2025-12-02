@@ -5,6 +5,7 @@ import not.djinni.presentation.navigation.NavigationController
 import not.djinni.presentation.screens.employer.createvacancy.CreateVacancyScreen
 import not.djinni.presentation.screens.employer.main.MainEmployerScreen
 import not.djinni.presentation.screens.employer.profile.create.CreateEmployerProfileScreen
+import not.djinni.presentation.screens.employer.profile.my.EmployerProfileScreen
 import not.djinni.presentation.screens.employer.profile.view.ViewJobSeekerProfileScreen
 import not.djinni.presentation.screens.employer.vacancy.details.VacancyDetailsScreen
 
@@ -20,7 +21,8 @@ fun EntryProviderScope<Screens>.employerEntry(
         MainEmployerScreen(
             onVacancyClick = { vacancyId ->
                 controller.navigate(Screens.Employer.VacancyDetails(vacancyId = vacancyId))
-            }
+            },
+            onProfileClick = { controller.navigate(Screens.Employer.Profile) }
         )
     }
     entry<Screens.Employer.VacancyDetails> { entry ->
@@ -34,5 +36,10 @@ fun EntryProviderScope<Screens>.employerEntry(
     }
     entry<Screens.Employer.ViewProfile> {
         ViewJobSeekerProfileScreen()
+    }
+    entry<Screens.Employer.Profile> {
+        EmployerProfileScreen(
+            onChangeRole = { controller.replaceAll(Screens.ChooseRole) }
+        )
     }
 }

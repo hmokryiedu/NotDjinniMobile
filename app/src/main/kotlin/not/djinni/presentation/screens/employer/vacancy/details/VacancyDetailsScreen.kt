@@ -225,7 +225,7 @@ private fun DateInfoSection(
     Column(modifier = Modifier.fillMaxWidth()) {
         Row {
             NotDjinniText(
-                data = "Posted: ".toTextData(),
+                data = R.string.vacancy_posted.toTextData(),
                 style = NotDjinniTheme.typography.body2,
                 color = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA)
             )
@@ -238,7 +238,7 @@ private fun DateInfoSection(
         VerticalSpacer(NotDjinniTheme.offsets.tiny)
         Row {
             NotDjinniText(
-                data = "Last updated: ".toTextData(),
+                data = R.string.vacancy_last_updated.toTextData(),
                 style = NotDjinniTheme.typography.body2,
                 color = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA)
             )

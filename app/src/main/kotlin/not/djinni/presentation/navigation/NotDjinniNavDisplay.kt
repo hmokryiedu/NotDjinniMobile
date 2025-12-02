@@ -1,3 +1,5 @@
+@file:OptIn(KoinExperimentalAPI::class)
+
 package not.djinni.presentation.navigation
 
 import androidx.compose.animation.core.tween
@@ -6,12 +8,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import not.djinni.presentation.navigation.controller.authEntry
 import not.djinni.presentation.navigation.controller.employerEntry
 import not.djinni.presentation.navigation.controller.seekerEntry
 import not.djinni.presentation.navigation.controller.splashEntry
+import org.koin.core.annotation.KoinExperimentalAPI
 
 @Composable
 fun NotDjinniNavDisplay(
@@ -23,11 +28,15 @@ fun NotDjinniNavDisplay(
         backStack = controller.stack,
         onBack = controller::popBackStack,
         entryProvider = entryProvider {
-            splashEntry(controller = controller)
             authEntry(controller = controller)
-            seekerEntry(controller = controller)
             employerEntry(controller = controller)
+            seekerEntry(controller = controller)
+            splashEntry(controller = controller)
         },
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
+            rememberViewModelStoreNavEntryDecorator()
+        ),
         transitionSpec = {
             fadeIn(tween(ANIMATION_DURATION)) togetherWith
                     fadeOut(tween(ANIMATION_DURATION))
@@ -35,7 +44,7 @@ fun NotDjinniNavDisplay(
         popTransitionSpec = {
             fadeIn(tween(ANIMATION_DURATION)) togetherWith
                     fadeOut(tween(ANIMATION_DURATION))
-        }
+        },
     )
 }
 

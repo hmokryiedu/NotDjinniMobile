@@ -30,6 +30,9 @@ internal class MainEmployerViewModel(
             is MainEmployerAction.OpenVacancy -> {
                 _sideEffect.tryEmit(MainEmployerSideEffect.NavigateToVacancyDetails(action.vacancyId))
             }
+            MainEmployerAction.OpenProfile -> {
+                _sideEffect.tryEmit(MainEmployerSideEffect.NavigateToProfile)
+            }
         }
     }
 
