@@ -21,17 +21,19 @@ internal class MainEmployerViewModel(
     private val _sideEffect = mutableSideEffect<MainEmployerSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    init {
-        loadVacancies()
-    }
-
     fun sendAction(action: MainEmployerAction) {
         when (action) {
+            is MainEmployerAction.LoadData -> loadVacancies()
             is MainEmployerAction.OpenVacancy -> {
                 _sideEffect.tryEmit(MainEmployerSideEffect.NavigateToVacancyDetails(action.vacancyId))
             }
+
             MainEmployerAction.OpenProfile -> {
                 _sideEffect.tryEmit(MainEmployerSideEffect.NavigateToProfile)
+            }
+
+            MainEmployerAction.CreateVacancy -> {
+                _sideEffect.tryEmit(MainEmployerSideEffect.NavigateToCreateVacancy)
             }
         }
     }

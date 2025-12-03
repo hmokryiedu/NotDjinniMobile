@@ -1,6 +1,7 @@
 package not.djinni.network.vacancy
 
 import not.djinni.network.common.response.NetworkResponse
+import not.djinni.network.vacancy.request.CreateVacancyRequest
 import not.djinni.network.vacancy.response.VacancyDetailsResponse
 import not.djinni.network.vacancy.response.VacancyListResponse
 
@@ -13,4 +14,6 @@ interface VacancyDataSource {
     ): NetworkResponse<VacancyListResponse>
 
     suspend fun getVacancyById(id: Long): NetworkResponse<VacancyDetailsResponse>
+
+    suspend fun createVacancy(request: CreateVacancyRequest): NetworkResponse<VacancyDetailsResponse>
 }

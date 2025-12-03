@@ -28,12 +28,13 @@ class NavigationController private constructor(initialKey: Screens) {
         _stack.add(key)
     }
 
-    fun popUpTo(key: Screens, inclusive: Boolean = false) {
-        val index = _stack.lastIndexOf(key)
+    fun popUpTo(key: Screens, to: Screens, inclusive: Boolean = false) {
+        val index = _stack.lastIndexOf(to)
         if (index != -1) {
             val removeFrom = if (inclusive) index else index + 1
             _stack.removeRange(removeFrom, _stack.size)
         }
+        _stack.add(key)
     }
 
     companion object {

@@ -194,4 +194,26 @@
     <string name="profile_company">Company</string>
     <string name="profile_loading_error">Failed to load profile</string>
 
+    <!--Create Vacancy-->
+    <string name="create_vacancy_title">Create Vacancy</string>
+    <string name="create_vacancy_job_title">Job Title</string>
+    <string name="create_vacancy_job_title_hint">Enter job title</string>
+    <string name="create_vacancy_description">Description</string>
+    <string name="create_vacancy_description_hint">Enter job description</string>
+    <string name="create_vacancy_salary_min">Minimum Salary</string>
+    <string name="create_vacancy_salary_min_hint">0$</string>
+    <string name="create_vacancy_salary_max">Maximum Salary</string>
+    <string name="create_vacancy_salary_max_hint">5000$</string>
+    <string name="create_vacancy_experience_years">Experience Years</string>
+    <string name="create_vacancy_experience_years_hint">Enter required experience years</string>
+    <string name="create_vacancy_employment_type">Employment Type</string>
+    <string name="create_vacancy_employment_type_hint">Select employment type</string>
+    <string name="create_vacancy_category">Category</string>
+    <string name="create_vacancy_category_hint">Select job category</string>
+    <string name="create_vacancy_submit">Create Vacancy</string>
+    <string name="create_vacancy_fill_all_fields">Please fill all required fields</string>
+    <string name="create_vacancy_invalid_numbers">Please enter valid numbers for salary and experience</string>
+    <string name="create_vacancy_select_employment_type">Select Employment Type</string>
+    <string name="create_vacancy_select_category">Select Category</string>
+
 </resources>

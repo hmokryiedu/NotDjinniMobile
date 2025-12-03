@@ -77,3 +77,12 @@ fun JobCategoryCode.toResponse(): JobCategoryCodeResponse = when (this) {
     JobCategoryCode.OPERATIONS -> JobCategoryCodeResponse.OPERATIONS
     JobCategoryCode.SUPPORT -> JobCategoryCodeResponse.SUPPORT
 }
+
+fun EmploymentType.toResponse(): EmploymentTypeResponse = when (this) {
+    EmploymentType.FULL_TIME -> EmploymentTypeResponse.FULL_TIME
+    EmploymentType.PART_TIME -> EmploymentTypeResponse.PART_TIME
+    EmploymentType.CONTRACT -> EmploymentTypeResponse.CONTRACT
+    EmploymentType.TEMPORARY -> EmploymentTypeResponse.TEMPORARY
+    EmploymentType.INTERNSHIP -> EmploymentTypeResponse.INTERNSHIP
+    EmploymentType.FREELANCE -> EmploymentTypeResponse.FREELANCE
+}

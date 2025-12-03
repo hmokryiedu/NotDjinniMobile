@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +35,7 @@ import not.djinni.presentation.theme.NotDjinniTheme
 internal fun MainEmployerScreen(
     onVacancyClick: (Long) -> Unit = {},
     onProfileClick: () -> Unit = {},
+    onCreateVacancyClick: () -> Unit = {},
 ) {
     Screen<MainEmployerViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -49,7 +51,12 @@ internal fun MainEmployerScreen(
                     onVacancyClick(effect.vacancyId)
                 }
                 MainEmployerSideEffect.NavigateToProfile -> onProfileClick()
+                MainEmployerSideEffect.NavigateToCreateVacancy -> onCreateVacancyClick()
             }
+        }
+
+        LaunchedEffect(Unit) {
+            viewModel.sendAction(MainEmployerAction.LoadData)
         }
     }
 }
@@ -70,7 +77,13 @@ private fun Content(
                 style = NotDjinniTheme.typography.title1Bold,
                 color = NotDjinniTheme.colors.onBackground,
             )
-            ProfileButton(onClick = { onAction(MainEmployerAction.OpenProfile) })
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(NotDjinniTheme.offsets.small),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CreateVacancyButton(onClick = { onAction(MainEmployerAction.CreateVacancy) })
+                ProfileButton(onClick = { onAction(MainEmployerAction.OpenProfile) })
+            }
         }
         VerticalSpacer(NotDjinniTheme.offsets.medium)
         Box(
@@ -101,6 +114,25 @@ private fun Content(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CreateVacancyButton(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(PROFILE_BUTTON_SIZE)
+            .clip(CircleShape)
+            .background(NotDjinniTheme.colors.primary)
+            .clickableNoRipple(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            modifier = Modifier.size(PROFILE_ICON_SIZE),
+            imageVector = NotDjinniIcons.plus,
+            contentDescription = null,
+            tint = NotDjinniTheme.colors.onPrimary
+        )
     }
 }
 

@@ -132,6 +132,11 @@ private fun Content(
             }
         }
     }
+
+    LaunchedEffect(state.vacanciesListState.items) {
+        if (state.vacanciesListState.items.isEmpty()) return@LaunchedEffect
+        lazyListState.scrollToItem(0)
+    }
 }
 
 @Composable

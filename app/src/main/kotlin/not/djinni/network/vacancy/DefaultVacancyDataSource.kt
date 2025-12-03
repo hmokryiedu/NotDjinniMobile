@@ -2,8 +2,11 @@ package not.djinni.network.vacancy
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.resources.get
+import io.ktor.client.plugins.resources.post
+import io.ktor.client.request.setBody
 import not.djinni.network.common.extension.networkResponse
 import not.djinni.network.common.response.NetworkResponse
+import not.djinni.network.vacancy.request.CreateVacancyRequest
 import not.djinni.network.vacancy.resource.Vacancy
 import not.djinni.network.vacancy.response.VacancyDetailsResponse
 import not.djinni.network.vacancy.response.VacancyListResponse
@@ -29,5 +32,13 @@ internal class DefaultVacancyDataSource(
         return httpClient
             .get(Vacancy.ById(id = id))
             .networkResponse<VacancyDetailsResponse>()
+    }
+
+    override suspend fun createVacancy(
+        request: CreateVacancyRequest
+    ): NetworkResponse<VacancyDetailsResponse> {
+        return httpClient
+            .post(Vacancy()) { setBody(request) }
+            .networkResponse()
     }
 }

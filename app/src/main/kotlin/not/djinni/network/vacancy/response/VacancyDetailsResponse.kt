@@ -10,7 +10,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @Serializable
-data class VacancyDetailsResponse(
+    data class VacancyDetailsResponse(
     @SerialName("id")
     val id: Long,
     @SerialName("company")
