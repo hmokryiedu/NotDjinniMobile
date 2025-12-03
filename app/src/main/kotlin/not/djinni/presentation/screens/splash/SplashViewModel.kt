@@ -22,9 +22,8 @@ class SplashViewModel(
 
     private fun initialize() {
         launch {
-            val isValid = tokenRepository.validate()
-            val effect = if (isValid) NavigateToChooseRole else NavigateToAuth
-            _sideEffect.tryEmit(effect)
+            val isValid = runCatching { tokenRepository.validate() }.getOrDefault(false)
+            _sideEffect.tryEmit(if (isValid) NavigateToChooseRole else NavigateToAuth)
         }
     }
 }

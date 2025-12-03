@@ -17,9 +17,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import not.djinni.presentation.core.components.base.AlertContainer
 import not.djinni.R
 import not.djinni.presentation.core.Screen
 import not.djinni.presentation.core.components.base.FullscreenColumn
@@ -29,10 +31,13 @@ import not.djinni.presentation.core.components.base.NotDjinniLoader
 import not.djinni.presentation.core.components.base.NotDjinniText
 import not.djinni.presentation.core.components.base.VerticalSpacer
 import not.djinni.presentation.core.components.base.model.ButtonData
+import not.djinni.presentation.core.components.base.model.SnackBarData
 import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.clickableNoRipple
 import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.core.extension.toTextData
+import not.djinni.presentation.screens.seeker.vacancy.details.alert.VacancyDetailsAlert
+import not.djinni.presentation.screens.seeker.vacancy.details.components.ApplyVacancyBottomSheet
 import not.djinni.presentation.theme.NotDjinniIcons
 import not.djinni.presentation.theme.NotDjinniTheme
 import org.koin.core.parameter.parametersOf
@@ -41,7 +46,6 @@ import org.koin.core.parameter.parametersOf
 internal fun VacancyDetailsScreen(
     vacancyId: Long,
     onNavigateBack: () -> Unit,
-    onApply: () -> Unit,
 ) {
     Screen<VacancyDetailsViewModel>(
         parameters = { parametersOf(vacancyId) }
@@ -53,10 +57,28 @@ internal fun VacancyDetailsScreen(
             onAction = viewModel::sendAction
         )
 
+        AlertContainer(state.currentAlert) { alert ->
+            when (alert) {
+                is VacancyDetailsAlert.Applying -> {
+                    ApplyVacancyBottomSheet(
+                        vacancyName = alert.vacancyTitle,
+                        onDismiss = { viewModel.sendAction(VacancyDetailsAction.HideApplyBottomSheet) },
+                        onApply = { coverLetter ->
+                            viewModel.sendAction(VacancyDetailsAction.SubmitApplication(coverLetter))
+                        }
+                    )
+                }
+            }
+        }
+
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
                 VacancyDetailsSideEffect.NavigateBack -> onNavigateBack()
-                VacancyDetailsSideEffect.NavigateToApply -> onApply()
+                VacancyDetailsSideEffect.ApplicationSuccess -> {
+                    viewModel.showSnackBar(
+                        SnackBarData(message = R.string.apply_vacancy_success.toTextData())
+                    )
+                }
             }
         }
     }
@@ -76,9 +98,10 @@ private fun Content(
                 onRetry = { onAction(VacancyDetailsAction.Load) }
             )
 
-            is VacancyDetailsContentState.Data -> Content(
+            is VacancyDetailsContentState.Data -> VacancyContent(
                 vacancy = contentState.vacancy,
                 eligibility = contentState.eligibility,
+                isApplied = state.isApplied,
                 onApply = { onAction(VacancyDetailsAction.Apply) }
             )
         }
@@ -144,9 +167,10 @@ private fun ErrorContent(
 }
 
 @Composable
-private fun Content(
+private fun VacancyContent(
     vacancy: VacancyDisplayData,
     eligibility: EligibilityState?,
+    isApplied: Boolean,
     onApply: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -166,7 +190,11 @@ private fun Content(
             }
         }
         VerticalSpacer(NotDjinniTheme.offsets.large)
-        ApplySection(eligibility = eligibility, onApply = onApply)
+        ApplySection(
+            eligibility = eligibility,
+            isApplied = isApplied,
+            onApply = onApply
+        )
         VerticalSpacer(NotDjinniTheme.offsets.medium)
     }
 }
@@ -307,6 +335,7 @@ private fun AboutCompanySection(description: not.djinni.presentation.core.compon
 @Composable
 private fun ApplySection(
     eligibility: EligibilityState?,
+    isApplied: Boolean,
     onApply: () -> Unit,
 ) {
     val canApply = eligibility?.canApply ?: true
@@ -314,18 +343,32 @@ private fun ApplySection(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (canApply) {
-            NotDjinniButton(
-                modifier = Modifier.fillMaxWidth(),
-                data = ButtonData(text = R.string.vacancy_details_apply.toTextData()),
-                onClick = onApply
-            )
-        } else {
-            NotDjinniText(
-                data = R.string.vacancy_cannot_apply.toTextData(),
-                style = NotDjinniTheme.typography.body1,
-                color = NotDjinniTheme.colors.error
-            )
+        when {
+            isApplied -> {
+                NotDjinniText(
+                    data = R.string.vacancy_already_applied.toTextData(),
+                    style = NotDjinniTheme.typography.body1,
+                    color = NotDjinniTheme.colors.primary,
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            canApply -> {
+                NotDjinniButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    data = ButtonData(text = R.string.vacancy_details_apply.toTextData()),
+                    onClick = onApply
+                )
+            }
+
+            else -> {
+                NotDjinniText(
+                    data = R.string.vacancy_cannot_apply.toTextData(),
+                    style = NotDjinniTheme.typography.body1,
+                    textAlign = TextAlign.Center,
+                    color = NotDjinniTheme.colors.error
+                )
+            }
         }
     }
 }

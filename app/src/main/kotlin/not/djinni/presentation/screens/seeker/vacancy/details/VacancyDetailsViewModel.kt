@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import not.djinni.R
 import not.djinni.core.extension.mutableSideEffect
 import not.djinni.core.extension.toFormattedFullDate
+import not.djinni.domain.repository.ApplicationRepository
 import not.djinni.domain.repository.SeekerRepository
 import not.djinni.domain.repository.VacancyRepository
 import not.djinni.model.seeker.SeekerProfile
@@ -14,6 +15,8 @@ import not.djinni.presentation.core.StateViewModel
 import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.toDisplayName
 import not.djinni.presentation.core.extension.toTextData
+import not.djinni.presentation.screens.seeker.vacancy.details.alert.VacancyDetailsAlert
+import not.djinni.utils.string.StringProvider
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
 import kotlin.time.ExperimentalTime
@@ -21,8 +24,10 @@ import kotlin.time.ExperimentalTime
 @KoinViewModel
 internal class VacancyDetailsViewModel(
     @InjectedParam private val vacancyId: Long,
-    private val vacancyRepository: VacancyRepository,
+    private val stringProvider: StringProvider,
     private val seekerRepository: SeekerRepository,
+    private val vacancyRepository: VacancyRepository,
+    private val applicationRepository: ApplicationRepository,
 ) : StateViewModel<VacancyDetailsState>(VacancyDetailsState()) {
 
     private val _sideEffect = mutableSideEffect<VacancyDetailsSideEffect>()
@@ -37,6 +42,8 @@ internal class VacancyDetailsViewModel(
             VacancyDetailsAction.Load -> loadVacancyDetails()
             VacancyDetailsAction.Apply -> handleApply()
             VacancyDetailsAction.NavigateBack -> _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateBack)
+            VacancyDetailsAction.HideApplyBottomSheet -> updateState { copy(currentAlert = null) }
+            is VacancyDetailsAction.SubmitApplication -> submitApplication(action.coverLetter)
         }
     }
 
@@ -48,35 +55,58 @@ internal class VacancyDetailsViewModel(
                     val profile = seekerRepository.getProfile()
                     val displayData = vacancy.toDisplayData()
                     val eligibility = profile?.let { calculateEligibility(vacancy, it) }
-                    val data = VacancyDetailsContentState.Data(
-                        vacancy = displayData,
-                        eligibility = eligibility
-                    )
-                    updateState { copy(contentState = data) }
+                    val isApplied = applicationRepository.isAppliedToVacancy(vacancyId)
+                    updateState {
+                        copy(
+                            contentState = VacancyDetailsContentState.Data(
+                                vacancy = displayData,
+                                eligibility = eligibility
+                            ),
+                            isApplied = isApplied.getOrDefault(false)
+                        )
+                    }
                 }
                 .onFailure {
-                    val errorState =
-                        VacancyDetailsContentState.Error(R.string.vacancy_details_error.toTextData())
+                    val errorState = VacancyDetailsContentState.Error(
+                        R.string.vacancy_details_error.toTextData()
+                    )
                     updateState { copy(contentState = errorState) }
                 }
         }
     }
 
     private fun handleApply() {
-        val state = mutableState.value.contentState
-        if (state is VacancyDetailsContentState.Data && state.eligibility?.canApply == true) {
-            _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateToApply)
+        val state = mutableState.value.apply { if (isApplied) return }
+        val contentState = state.contentState
+        if (contentState is VacancyDetailsContentState.Data && contentState.eligibility?.canApply == true) {
+            val alert = VacancyDetailsAlert.Applying(vacancyTitle = contentState.vacancy.title)
+            updateState { copy(currentAlert = alert) }
         }
+    }
+
+    private fun submitApplication(coverLetter: String?) {
+        launch {
+            applicationRepository
+                .applyToVacancy(vacancyId = vacancyId, coverLetter = coverLetter)
+                .onSuccess { _sideEffect.tryEmit(VacancyDetailsSideEffect.ApplicationSuccess) }
+            hideAlert()
+        }
+    }
+
+    private fun hideAlert() {
+        updateState { copy(currentAlert = null) }
     }
 
     private fun calculateEligibility(vacancy: Vacancy, profile: SeekerProfile): EligibilityState {
         val experienceMatch = vacancy.minExperienceYears == null ||
                 profile.experienceYears >= vacancy.minExperienceYears
         val salaryMatch = vacancy.salaryMax >= profile.desiredSalary
-        val salaryHint = if (!salaryMatch) {
-            TextData.Text("Salary is below your expectations (\$${profile.desiredSalary})")
-        } else null
-
+        val salaryHint = stringProvider.getString(
+            R.string.vacancy_salary_is_below_your_expectations,
+            profile.desiredSalary
+        )
+            .toTextData()
+            .takeIf { !salaryMatch }
         return EligibilityState(
             canApply = experienceMatch,
             experienceMatch = experienceMatch,
@@ -104,7 +134,7 @@ internal class VacancyDetailsViewModel(
         return if (years == null || years == 0) {
             R.string.vacancy_no_experience_required.toTextData()
         } else {
-            TextData.Text("$years+ years experience")
+            stringProvider.getString(R.string.vacancy_years_experience, years).toTextData()
         }
     }
 }

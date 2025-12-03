@@ -146,6 +146,16 @@
     <string name="vacancy_details_updated">Last updated: %s</string>
     <string name="vacancy_details_error">Failed to load vacancy details</string>
     <string name="vacancy_cannot_apply">You don\'t meet the experience requirements</string>
+    <string name="vacancy_salary_is_below_your_expectations">Salary is below your expectations ($%d)</string>
+    <string name="vacancy_years_experience">%d+ years experience</string>
+
+    <!--Apply Vacancy-->
+    <string name="apply_vacancy_title">Apply to Vacancy</string>
+    <string name="apply_vacancy_cover_letter_title">Cover Letter (Optional)</string>
+    <string name="apply_vacancy_cover_letter_hint">Write a cover letter to stand out…</string>
+    <string name="apply_vacancy_button">Submit Application</string>
+    <string name="apply_vacancy_success">Application submitted successfully!</string>
+    <string name="vacancy_already_applied">You have already applied to this vacancy</string>
 
     <string name="vacancy_status">Status: </string>
     <string name="vacancy_posted">Posted: </string>

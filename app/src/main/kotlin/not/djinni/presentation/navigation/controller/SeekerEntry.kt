@@ -34,8 +34,7 @@ fun EntryProviderScope<Screens>.seekerEntry(
     entry<Screens.Seeker.VacancyDetails> { entry ->
         VacancyDetailsScreen(
             vacancyId = entry.vacancyId,
-            onNavigateBack = controller::popBackStack,
-            onApply = { }
+            onNavigateBack = controller::popBackStack
         )
     }
     entry<Screens.Seeker.Profile> {
