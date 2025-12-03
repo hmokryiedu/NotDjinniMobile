@@ -56,6 +56,7 @@ open class BaseClientBuilder {
     protected fun HttpClientConfig<*>.installContentNegotiation() {
         val json = Json {
             ignoreUnknownKeys = true
+            explicitNulls = false
             prettyPrint = BuildConfig.DEBUG
         }
         install(ContentNegotiation) { json(json) }
@@ -65,7 +66,7 @@ open class BaseClientBuilder {
         install(Logging) {
             logger = object : Logger {
                 override fun log(message: String) {
-                    if (BuildConfig.DEBUG) info("Ktor") { message.take(1000) }
+                    if (BuildConfig.DEBUG) info("Ktor") { message.take(10_000) }
                 }
             }
             level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE

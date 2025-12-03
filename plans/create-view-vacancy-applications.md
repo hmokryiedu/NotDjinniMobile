@@ -1,13 +1,13 @@
 # Plan: View Vacancy Applications Screen
 
 **Created:** December 2024  
-**Status:** Ready for implementation
+**Status:** ✅ Implemented
 
 ---
 
 ## Overview
 
-Implement `ViewVacancyApplicationsScreen` for employers to view all applications submitted for a specific vacancy. The screen will display a list of applications with job seeker information, application status, and navigation to view the full job seeker profile.
+Implement `ViewVacancyApplicationsScreen` for employers to view all applications submitted for a specific vacancy. The screen will display a list of applications with job seeker information, application status, and navigation to view application details.
 
 ---
 
@@ -32,7 +32,7 @@ data class ApplicationDetailsResponse(
     @SerialName("job_seeker")
     val jobSeeker: SeekerProfileResponse,
     @SerialName("status")
-    val status: ApplicationStatusRequest,
+    val status: ApplicationStatusResponse,
     @SerialName("cover_letter")
     val coverLetter: String?,
     @SerialName("created_at")
@@ -154,10 +154,13 @@ override suspend fun getApplicationsByVacancy(
 
 **ApplicationDetails.kt:**
 ```kotlin
+@file:OptIn(ExperimentalTime::class)
+
 package not.djinni.model.application
 
 import not.djinni.model.seeker.SeekerProfile
 import not.djinni.model.seeker.vacancy.Vacancy
+import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 data class ApplicationDetails(
@@ -189,17 +192,21 @@ enum class ApplicationStatus {
 
 ### 2.2 Create Application Mapper
 
-**Location:** `app/src/main/kotlin/not/djinni/model/application/ApplicationMapper.kt`
+**Location:** `app/src/main/kotlin/not/djinni/data/mapper/ApplicationMapper.kt`
 
 ```kotlin
-package not.djinni.model.application
+@file:OptIn(ExperimentalTime::class)
 
+package not.djinni.data.mapper
+
+import not.djinni.model.application.ApplicationDetails
+import not.djinni.model.application.ApplicationStatus
 import not.djinni.model.seeker.vacancy.toDomain
-import not.djinni.model.seeker.toDomain
 import not.djinni.network.application.response.ApplicationDetailsResponse
 import not.djinni.network.application.response.ApplicationStatusResponse
+import kotlin.time.ExperimentalTime
 
-fun ApplicationDetailsResponse.toDomain(): ApplicationDetails = ApplicationDetails(
+internal fun ApplicationDetailsResponse.toDomain(): ApplicationDetails = ApplicationDetails(
     id = id,
     vacancy = vacancy.toDomain(),
     jobSeeker = jobSeeker.toDomain(),
@@ -209,7 +216,7 @@ fun ApplicationDetailsResponse.toDomain(): ApplicationDetails = ApplicationDetai
     updatedAt = updatedAt
 )
 
-fun ApplicationStatusResponse.toDomain(): ApplicationStatus = when (this) {
+internal fun ApplicationStatusResponse.toDomain(): ApplicationStatus = when (this) {
     ApplicationStatusResponse.APPLIED -> ApplicationStatus.APPLIED
     ApplicationStatusResponse.REVIEWING -> ApplicationStatus.REVIEWING
     ApplicationStatusResponse.INTERVIEW -> ApplicationStatus.INTERVIEW
@@ -257,22 +264,138 @@ private companion object {
 
 ---
 
-## Phase 3: Presentation Components
+## Phase 3: Theme Update
 
-### 3.1 Create ApplicationCard Component
+### 3.1 Add Success Color to NotDjinniColor
+
+**Location:** `app/src/main/kotlin/not/djinni/presentation/theme/NotDjinniColor.kt`
+
+Add new color:
+```kotlin
+data class NotDjinniColor(
+    val primary: Color = Color.White,
+    val onPrimary: Color = Color(0xFF1B1C1E),
+    val background: Color = Color(0xFF1B1C1E),
+    val onBackground: Color = Color.White,
+    val surface: Color = Color(0xFF1B1C1E),
+    val onSurface: Color = Color.White,
+    val surfaceContainer: Color = Color(0xFF1B1C1E),
+    val forcedBlack: Color = Color(0xFF1B1C1E),
+    val error: Color = Color(0xFFF54927),
+    val success: Color = Color(0xFF4CAF50),  // NEW - Green color for positive statuses
+    val highlightedContainer: Color = Color(0xFF282828),
+)
+```
+
+---
+
+## Phase 4: Presentation Components
+
+### 4.1 Create ApplicationCard Component
 
 **Location:** `app/src/main/kotlin/not/djinni/presentation/core/components/base/ApplicationCard.kt`
 
 Design pattern similar to `VacancyCard`:
-- Job seeker name (body1Bold)
-- Speciality (body2)
-- Experience years (body3)
+- Job seeker speciality (body1Bold)
+- Experience years (body2)
 - Application status with colored indicator
 - Cover letter preview (if exists, truncated)
 - Applied date
 - Uses `clickableNoRipple`
 
-**ApplicationCardData Model:**
+```kotlin
+package not.djinni.presentation.core.components.base
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
+import not.djinni.presentation.core.components.base.model.ApplicationCardData
+import not.djinni.presentation.core.extension.clickableNoRipple
+import not.djinni.presentation.theme.NotDjinniTheme
+
+@Composable
+fun ApplicationCard(
+    modifier: Modifier = Modifier,
+    data: ApplicationCardData,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = NotDjinniTheme.colors.onSurface,
+                shape = NotDjinniTheme.shapes.small,
+            )
+            .background(
+                color = NotDjinniTheme.colors.primary.copy(alpha = 0.3f),
+                shape = NotDjinniTheme.shapes.small,
+            )
+            .clickableNoRipple(onClick = onClick)
+            .padding(
+                horizontal = NotDjinniTheme.offsets.medium,
+                vertical = NotDjinniTheme.offsets.small,
+            ),
+    ) {
+        NotDjinniText(
+            data = data.speciality,
+            style = NotDjinniTheme.typography.body1Bold,
+            color = NotDjinniTheme.colors.onBackground,
+        )
+        VerticalSpacer(NotDjinniTheme.offsets.tiny)
+        NotDjinniText(
+            data = data.experienceYears,
+            style = NotDjinniTheme.typography.body2,
+            color = NotDjinniTheme.colors.onBackground.copy(alpha = 0.7f),
+        )
+        VerticalSpacer(NotDjinniTheme.offsets.tiny)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Surface(
+                modifier = Modifier
+                    .size(STATUS_INDICATOR_SIZE)
+                    .clip(CircleShape),
+                color = data.statusColor
+            ) {}
+            HorizontalSpacer(NotDjinniTheme.offsets.tiny)
+            NotDjinniText(
+                data = data.status,
+                style = NotDjinniTheme.typography.body3,
+                color = data.statusColor,
+            )
+        }
+        if (data.coverLetterPreview != null) {
+            VerticalSpacer(NotDjinniTheme.offsets.tiny)
+            NotDjinniText(
+                data = data.coverLetterPreview,
+                style = NotDjinniTheme.typography.body3,
+                color = NotDjinniTheme.colors.onBackground.copy(alpha = 0.6f),
+                maxLines = 2,
+            )
+        }
+        VerticalSpacer(NotDjinniTheme.offsets.tiny)
+        NotDjinniText(
+            data = data.appliedDate,
+            style = NotDjinniTheme.typography.body3,
+            color = NotDjinniTheme.colors.onBackground.copy(alpha = 0.5f),
+        )
+    }
+}
+
+private val STATUS_INDICATOR_SIZE = 8.dp
+```
+
+### 4.2 Create ApplicationCardData Model
 
 **Location:** `app/src/main/kotlin/not/djinni/presentation/core/components/base/model/ApplicationCardData.kt`
 
@@ -285,8 +408,6 @@ import androidx.compose.ui.graphics.Color
 @Immutable
 data class ApplicationCardData(
     val id: Long,
-    val seekerId: Long,
-    val seekerName: TextData,
     val speciality: TextData,
     val experienceYears: TextData,
     val status: TextData,
@@ -298,9 +419,9 @@ data class ApplicationCardData(
 
 ---
 
-## Phase 4: Presentation Layer
+## Phase 5: Presentation Layer
 
-### 4.1 Create ViewVacancyApplicationsState
+### 5.1 Create ViewVacancyApplicationsState
 
 **Location:** `app/src/main/kotlin/not/djinni/presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsState.kt`
 
@@ -321,7 +442,7 @@ internal sealed interface ApplicationsContentState {
     data class Error(val message: TextData) : ApplicationsContentState
     data object Empty : ApplicationsContentState
     data class Data(val applications: List<ApplicationCardData>) : ApplicationsContentState
-    
+
     val items: List<ApplicationCardData>
         get() = when (this) {
             is Data -> applications
@@ -330,7 +451,7 @@ internal sealed interface ApplicationsContentState {
 }
 ```
 
-### 4.2 Create ViewVacancyApplicationsAction
+### 5.2 Create ViewVacancyApplicationsAction
 
 **Location:** `app/src/main/kotlin/not/djinni/presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsAction.kt`
 
@@ -340,11 +461,11 @@ package not.djinni.presentation.screens.employer.vacancy.applications
 internal sealed interface ViewVacancyApplicationsAction {
     data object NavigateBack : ViewVacancyApplicationsAction
     data object Retry : ViewVacancyApplicationsAction
-    data class OpenSeekerProfile(val seekerId: Long) : ViewVacancyApplicationsAction
+    data class OpenApplicationDetails(val applicationId: Long) : ViewVacancyApplicationsAction
 }
 ```
 
-### 4.3 Create ViewVacancyApplicationsSideEffect
+### 5.3 Create ViewVacancyApplicationsSideEffect
 
 **Location:** `app/src/main/kotlin/not/djinni/presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsSideEffect.kt`
 
@@ -353,11 +474,11 @@ package not.djinni.presentation.screens.employer.vacancy.applications
 
 internal sealed interface ViewVacancyApplicationsSideEffect {
     data object NavigateBack : ViewVacancyApplicationsSideEffect
-    data class NavigateToSeekerProfile(val seekerId: Long) : ViewVacancyApplicationsSideEffect
+    data class NavigateToApplicationDetails(val applicationId: Long) : ViewVacancyApplicationsSideEffect
 }
 ```
 
-### 4.4 Create ViewVacancyApplicationsViewModel
+### 5.4 Create ViewVacancyApplicationsViewModel
 
 **Location:** `app/src/main/kotlin/not/djinni/presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsViewModel.kt`
 
@@ -376,7 +497,7 @@ import not.djinni.model.application.ApplicationStatus
 import not.djinni.presentation.core.StateViewModel
 import not.djinni.presentation.core.components.base.model.ApplicationCardData
 import not.djinni.presentation.core.extension.toTextData
-import not.djinni.presentation.theme.NotDjinniColor
+import not.djinni.presentation.theme.NotDjinniTheme
 import not.djinni.utils.string.StringProvider
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
@@ -402,8 +523,10 @@ internal class ViewVacancyApplicationsViewModel(
                 _sideEffect.tryEmit(ViewVacancyApplicationsSideEffect.NavigateBack)
             }
             ViewVacancyApplicationsAction.Retry -> loadApplications()
-            is ViewVacancyApplicationsAction.OpenSeekerProfile -> {
-                _sideEffect.tryEmit(ViewVacancyApplicationsSideEffect.NavigateToSeekerProfile(action.seekerId))
+            is ViewVacancyApplicationsAction.OpenApplicationDetails -> {
+                _sideEffect.tryEmit(
+                    ViewVacancyApplicationsSideEffect.NavigateToApplicationDetails(action.applicationId)
+                )
             }
         }
     }
@@ -439,14 +562,15 @@ internal class ViewVacancyApplicationsViewModel(
         )
         return ApplicationCardData(
             id = id,
-            seekerId = jobSeeker.id,
-            seekerName = jobSeeker.speciality.toTextData(), // Using speciality as name placeholder
             speciality = jobSeeker.speciality.toTextData(),
             experienceYears = experienceText.toTextData(),
             status = status.toDisplayText(),
             statusColor = status.toColor(),
-            coverLetterPreview = coverLetter?.take(COVER_LETTER_PREVIEW_LENGTH)?.toTextData(),
-            appliedDate = createdAt.toFormattedFullDate().toTextData()
+            coverLetterPreview = coverLetter?.take(COVER_LETTER_PREVIEW_LENGTH)?.plus("...")?.toTextData(),
+            appliedDate = stringProvider.getString(
+                R.string.application_applied_on,
+                createdAt.toFormattedFullDate()
+            ).toTextData()
         )
     }
 
@@ -462,14 +586,14 @@ internal class ViewVacancyApplicationsViewModel(
     }.toTextData()
 
     private fun ApplicationStatus.toColor() = when (this) {
-        ApplicationStatus.APPLIED -> NotDjinniColor.primary
-        ApplicationStatus.REVIEWING -> NotDjinniColor.primary
-        ApplicationStatus.INTERVIEW -> NotDjinniColor.primary
-        ApplicationStatus.TEST_TASK -> NotDjinniColor.primary
-        ApplicationStatus.OFFER -> NotDjinniColor.success
-        ApplicationStatus.HIRED -> NotDjinniColor.success
-        ApplicationStatus.REJECTED -> NotDjinniColor.error
-        ApplicationStatus.WITHDRAWN -> NotDjinniColor.onSurface
+        ApplicationStatus.APPLIED -> NotDjinniTheme.colors.primary
+        ApplicationStatus.REVIEWING -> NotDjinniTheme.colors.primary
+        ApplicationStatus.INTERVIEW -> NotDjinniTheme.colors.primary
+        ApplicationStatus.TEST_TASK -> NotDjinniTheme.colors.primary
+        ApplicationStatus.OFFER -> NotDjinniTheme.colors.success
+        ApplicationStatus.HIRED -> NotDjinniTheme.colors.success
+        ApplicationStatus.REJECTED -> NotDjinniTheme.colors.error
+        ApplicationStatus.WITHDRAWN -> NotDjinniTheme.colors.onSurface.copy(alpha = 0.5f)
     }
 
     private companion object {
@@ -478,7 +602,29 @@ internal class ViewVacancyApplicationsViewModel(
 }
 ```
 
-### 4.5 Create ViewVacancyApplicationsScreen
+**Note:** Colors are accessed via `NotDjinniTheme.colors` since they are instance properties, not static. The ViewModel will need to use default color values or pass them from the composable.
+
+**Alternative approach for colors (recommended):**
+
+Define color constants in the ViewModel:
+```kotlin
+private object StatusColors {
+    val applied = Color.White
+    val success = Color(0xFF4CAF50)
+    val error = Color(0xFFF54927)
+    val withdrawn = Color.White.copy(alpha = 0.5f)
+}
+
+private fun ApplicationStatus.toColor() = when (this) {
+    ApplicationStatus.APPLIED, ApplicationStatus.REVIEWING,
+    ApplicationStatus.INTERVIEW, ApplicationStatus.TEST_TASK -> StatusColors.applied
+    ApplicationStatus.OFFER, ApplicationStatus.HIRED -> StatusColors.success
+    ApplicationStatus.REJECTED -> StatusColors.error
+    ApplicationStatus.WITHDRAWN -> StatusColors.withdrawn
+}
+```
+
+### 5.5 Create ViewVacancyApplicationsScreen
 
 **Location:** `app/src/main/kotlin/not/djinni/presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsScreen.kt`
 
@@ -512,6 +658,7 @@ import not.djinni.presentation.core.components.base.NotDjinniButton
 import not.djinni.presentation.core.components.base.NotDjinniLoader
 import not.djinni.presentation.core.components.base.NotDjinniText
 import not.djinni.presentation.core.components.base.VerticalSpacer
+import not.djinni.presentation.core.components.base.model.ApplicationCardData
 import not.djinni.presentation.core.components.base.model.ButtonData
 import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.clickableNoRipple
@@ -525,7 +672,7 @@ import org.koin.core.parameter.parametersOf
 internal fun ViewVacancyApplicationsScreen(
     vacancyId: Long,
     onNavigateBack: () -> Unit,
-    onNavigateToSeekerProfile: (Long) -> Unit,
+    onNavigateToApplicationDetails: (Long) -> Unit,
 ) {
     Screen<ViewVacancyApplicationsViewModel>(
         parameters = { parametersOf(vacancyId) }
@@ -540,8 +687,8 @@ internal fun ViewVacancyApplicationsScreen(
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
                 ViewVacancyApplicationsSideEffect.NavigateBack -> onNavigateBack()
-                is ViewVacancyApplicationsSideEffect.NavigateToSeekerProfile -> {
-                    onNavigateToSeekerProfile(effect.seekerId)
+                is ViewVacancyApplicationsSideEffect.NavigateToApplicationDetails -> {
+                    onNavigateToApplicationDetails(effect.applicationId)
                 }
             }
         }
@@ -564,8 +711,8 @@ private fun Content(
             is ApplicationsContentState.Empty -> EmptyContent()
             is ApplicationsContentState.Data -> DataContent(
                 applications = contentState.applications,
-                onApplicationClick = { seekerId ->
-                    onAction(ViewVacancyApplicationsAction.OpenSeekerProfile(seekerId))
+                onApplicationClick = { applicationId ->
+                    onAction(ViewVacancyApplicationsAction.OpenApplicationDetails(applicationId))
                 }
             )
         }
@@ -659,7 +806,7 @@ private fun DataContent(
             ApplicationCard(
                 modifier = Modifier.animateItem(),
                 data = application,
-                onClick = { onApplicationClick(application.seekerId) }
+                onClick = { onApplicationClick(application.id) }
             )
         }
     }
@@ -681,45 +828,93 @@ private val ICON_SIZE = 24.dp
 
 ---
 
-## Phase 5: Navigation
+## Phase 6: Navigation
 
-### 5.1 Update Screens.kt
+### 6.1 Update Screens.kt
 
 **Location:** `app/src/main/kotlin/not/djinni/presentation/navigation/controller/Screens.kt`
 
-Add new screen to Employer sealed interface:
+Add new screens to Employer sealed interface:
 ```kotlin
 @Serializable
 data class VacancyApplications(val vacancyId: Long) : Employer
+
+@Serializable
+data class ViewApplicationDetails(val applicationId: Long) : Employer
 ```
 
-### 5.2 Update EmployerEntry.kt
+### 6.2 Update EmployerEntry.kt
 
 **Location:** `app/src/main/kotlin/not/djinni/presentation/navigation/controller/EmployerEntry.kt`
 
-Add entry:
+Add entries:
 ```kotlin
 entry<Screens.Employer.VacancyApplications> { entry ->
     ViewVacancyApplicationsScreen(
         vacancyId = entry.vacancyId,
         onNavigateBack = { controller.popBackStack() },
-        onNavigateToSeekerProfile = { seekerId ->
-            controller.navigate(Screens.Employer.ViewSeekerProfile(seekerId = seekerId))
+        onNavigateToApplicationDetails = { applicationId ->
+            controller.navigate(Screens.Employer.ViewApplicationDetails(applicationId = applicationId))
+        }
+    )
+}
+
+entry<Screens.Employer.ViewApplicationDetails> { entry ->
+    // TODO: Implement ViewApplicationDetailsScreen
+    // ViewApplicationDetailsScreen(
+    //     applicationId = entry.applicationId,
+    //     onNavigateBack = { controller.popBackStack() }
+    // )
+}
+```
+
+### 6.3 Update Employer VacancyDetailsScreen
+
+Add "View Applications" button and navigation.
+
+**Update VacancyDetailsAction.kt:**
+```kotlin
+internal sealed interface VacancyDetailsAction {
+    data object Retry : VacancyDetailsAction
+    data object NavigateBack : VacancyDetailsAction
+    data object ViewApplications : VacancyDetailsAction  // NEW
+}
+```
+
+**Update VacancyDetailsSideEffect.kt:**
+```kotlin
+internal sealed interface VacancyDetailsSideEffect {
+    data object NavigateBack : VacancyDetailsSideEffect
+    data class NavigateToApplications(val vacancyId: Long) : VacancyDetailsSideEffect  // NEW
+}
+```
+
+**Update VacancyDetailsViewModel.kt sendAction:**
+```kotlin
+is VacancyDetailsAction.ViewApplications -> {
+    _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateToApplications(vacancyId))
+}
+```
+
+**Update VacancyDetailsScreen.kt:**
+Add button in DataContent and handle side effect.
+
+**Update EmployerEntry.kt VacancyDetails entry:**
+```kotlin
+entry<Screens.Employer.VacancyDetails> { entry ->
+    VacancyDetailsScreen(
+        vacancyId = entry.vacancyId,
+        onNavigateBack = { controller.popBackStack() },
+        onNavigateToApplications = { vacancyId ->
+            controller.navigate(Screens.Employer.VacancyApplications(vacancyId = vacancyId))
         }
     )
 }
 ```
 
-### 5.3 Update VacancyDetailsScreen Entry (Optional)
-
-Add navigation from VacancyDetails to VacancyApplications:
-- Add "View Applications" button in employer VacancyDetailsScreen
-- Update VacancyDetailsAction with `ViewApplications` action
-- Update VacancyDetailsSideEffect with `NavigateToApplications(vacancyId)`
-
 ---
 
-## Phase 6: String Resources
+## Phase 7: String Resources
 
 **Location:** `app/src/main/res/values/strings.xml`
 
@@ -729,7 +924,7 @@ Add:
 <string name="vacancy_applications_title">Applications</string>
 <string name="vacancy_applications_error">Failed to load applications</string>
 <string name="vacancy_applications_empty">No applications yet</string>
-<string name="vacancy_years_experience">%d years experience</string>
+<string name="vacancy_view_applications">View Applications</string>
 
 <!-- Application Status -->
 <string name="application_status_applied">Applied</string>
@@ -742,7 +937,6 @@ Add:
 <string name="application_status_withdrawn">Withdrawn</string>
 
 <!-- Application Card -->
-<string name="application_cover_letter">Cover Letter</string>
 <string name="application_applied_on">Applied on %s</string>
 ```
 
@@ -751,29 +945,38 @@ Add:
 ## File Checklist
 
 ### Network Layer
-- [ ] `network/application/response/ApplicationDetailsResponse.kt`
-- [ ] `network/application/response/ApplicationDetailsListResponse.kt`
+- [ ] `network/application/response/ApplicationDetailsResponse.kt` (NEW)
+- [ ] `network/application/response/ApplicationDetailsListResponse.kt` (NEW)
 - [ ] Update `network/application/resource/Application.kt` (add ByVacancy resource)
 - [ ] Update `network/application/ApplicationDataSource.kt`
 - [ ] Update `network/application/DefaultApplicationDataSource.kt`
 
 ### Domain Layer
-- [ ] `model/application/ApplicationDetails.kt`
-- [ ] `model/application/ApplicationStatus.kt`
-- [ ] `model/application/ApplicationMapper.kt`
+- [ ] `model/application/ApplicationDetails.kt` (NEW)
+- [ ] `model/application/ApplicationStatus.kt` (NEW)
+- [ ] `data/mapper/ApplicationMapper.kt` (NEW)
 - [ ] Update `domain/repository/ApplicationRepository.kt`
 - [ ] Update `data/repository/DefaultApplicationRepository.kt`
 
+### Theme
+- [ ] Update `presentation/theme/NotDjinniColor.kt` (add success color)
+
 ### Presentation - Components
-- [ ] `presentation/core/components/base/ApplicationCard.kt`
-- [ ] `presentation/core/components/base/model/ApplicationCardData.kt`
+- [ ] `presentation/core/components/base/ApplicationCard.kt` (NEW)
+- [ ] `presentation/core/components/base/model/ApplicationCardData.kt` (NEW)
 
 ### Presentation - Screen
-- [ ] `presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsState.kt`
-- [ ] `presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsAction.kt`
-- [ ] `presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsSideEffect.kt`
-- [ ] `presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsViewModel.kt`
-- [ ] `presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsScreen.kt`
+- [ ] `presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsState.kt` (NEW)
+- [ ] `presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsAction.kt` (NEW)
+- [ ] `presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsSideEffect.kt` (NEW)
+- [ ] `presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsViewModel.kt` (NEW)
+- [ ] `presentation/screens/employer/vacancy/applications/ViewVacancyApplicationsScreen.kt` (NEW)
+
+### Presentation - VacancyDetails Updates
+- [ ] Update `presentation/screens/employer/vacancy/details/VacancyDetailsAction.kt`
+- [ ] Update `presentation/screens/employer/vacancy/details/VacancyDetailsSideEffect.kt`
+- [ ] Update `presentation/screens/employer/vacancy/details/VacancyDetailsViewModel.kt`
+- [ ] Update `presentation/screens/employer/vacancy/details/VacancyDetailsScreen.kt`
 
 ### Navigation
 - [ ] Update `presentation/navigation/controller/Screens.kt`
@@ -800,7 +1003,7 @@ Add:
 │ │ iOS Developer                │ │
 │ │ 3 years experience           │ │
 │ │ ● Reviewing                  │ │
-│ │ Cover letter preview...      │ │
+│ │ Looking forward to joining..│ │
 │ │ Applied on Dec 2, 2024       │ │
 │ └─────────────────────────────┘ │
 │                                 │
@@ -813,23 +1016,25 @@ Add:
 
 ## Implementation Order
 
-1. **Network Layer** - DTOs, Resource, DataSource updates
-2. **Domain Layer** - Models, Mapper, Repository updates
-3. **Presentation Components** - ApplicationCard and model
-4. **Presentation Screen** - State, Action, SideEffect, ViewModel, Screen
-5. **Navigation** - Screens.kt and EmployerEntry.kt updates
-6. **String Resources** - Add all required strings
-7. **Integration** - Connect from VacancyDetailsScreen (optional)
+1. **Theme** - Add success color to NotDjinniColor
+2. **Network Layer** - DTOs, Resource, DataSource updates
+3. **Domain Layer** - Models, Mapper, Repository updates
+4. **Presentation Components** - ApplicationCard and model
+5. **Presentation Screen** - State, Action, SideEffect, ViewModel, Screen
+6. **Navigation** - Screens.kt and EmployerEntry.kt updates
+7. **VacancyDetails Integration** - Add "View Applications" button and navigation
+8. **String Resources** - Add all required strings
 
 ---
 
 ## Notes
 
 - Pagination is hardcoded (limit=20, offset=0) for now - can be enhanced later
-- ViewSeekerProfile screen may need to be implemented or updated to accept seekerId parameter
+- Clicking on application card navigates to ViewApplicationDetails (to be implemented separately)
 - Consider adding pull-to-refresh functionality in future iterations
-- Status colors use theme colors - ensure NotDjinniColor has `success` defined
-- SeekerProfileResponse already exists and can be reused for mapping
+- Success color (#4CAF50 - Material Green 500) added to theme for positive statuses
+- Mapper placed in `data/mapper/` following existing pattern (SeekerProfileMapper)
+- Use existing `ApplicationStatusResponse` enum from network layer
 
 ---
 
@@ -838,6 +1043,18 @@ Add:
 This implementation depends on:
 - Existing `SeekerProfileResponse` in network layer
 - Existing `VacancyDetailsResponse` in network layer  
-- Existing `ApplicationStatusResponse` enum (rename from `ApplicationStatusRequest` if needed)
+- Existing `ApplicationStatusResponse` enum
 - Existing `toFormattedFullDate()` extension for Instant
 - Existing `StringProvider` utility class
+- Existing `SeekerProfileMapper` for `SeekerProfileResponse.toDomain()`
+- Existing `VacancyMapper` for `VacancyDetailsResponse.toDomain()`
+
+---
+
+## Future Enhancements
+
+- [ ] ViewApplicationDetailsScreen implementation
+- [ ] Pagination support
+- [ ] Pull-to-refresh
+- [ ] Application status update functionality
+- [ ] Filter/sort applications

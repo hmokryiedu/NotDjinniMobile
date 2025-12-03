@@ -216,4 +216,48 @@
     <string name="create_vacancy_select_employment_type">Select Employment Type</string>
     <string name="create_vacancy_select_category">Select Category</string>
 
+    <!--Vacancy Applications-->
+    <string name="vacancy_applications_title">Applications</string>
+    <string name="vacancy_applications_error">Failed to load applications</string>
+    <string name="vacancy_applications_empty">No applications yet</string>
+    <string name="vacancy_view_applications">View Applications</string>
+
+    <!--Application Status-->
+    <string name="application_status_applied">Applied</string>
+    <string name="application_status_reviewing">Reviewing</string>
+    <string name="application_status_interview">Interview</string>
+    <string name="application_status_test_task">Test Task</string>
+    <string name="application_status_offer">Offer</string>
+    <string name="application_status_hired">Hired</string>
+    <string name="application_status_rejected">Rejected</string>
+    <string name="application_status_withdrawn">Withdrawn</string>
+
+    <!--Application Details Screen-->
+    <string name="application_details_title">Application Details</string>
+    <string name="application_details_status">Status:</string>
+    <string name="application_details_seeker_info">Job Seeker Information</string>
+    <string name="application_details_vacancy_summary">Vacancy</string>
+    <string name="application_details_cover_letter">Cover Letter</string>
+    <string name="application_details_no_cover_letter">No cover letter provided</string>
+    <string name="application_details_timeline">Timeline</string>
+    <string name="application_details_applied_at">Applied:</string>
+    <string name="application_details_updated_at">Last updated:</string>
+    <string name="application_details_update_status">Update Status</string>
+    <string name="application_details_view_vacancy">View Full Vacancy Details</string>
+    <string name="select_application_status">Select Status</string>
+    <string name="application_status_updated_success">Application status updated successfully</string>
+
+    <!--Application Card-->
+    <string name="application_applied_on">Applied on %s</string>
+
+    <!--Seeker Applications-->
+    <string name="no_applications_found">No applications found. Tap to refresh.</string>
+    <string name="my_applications">My Applications</string>
+
+    <!--Application Details (Seeker)-->
+    <string name="application_seeker_salary">Salary: $%1$d - $%2$d</string>
+    <string name="application_seeker_cover_letter">Cover Letter</string>
+    <string name="application_seeker_updated_on">Updated on %s</string>
+    <string name="application_seeker_vacancy_details">Vacancy Details</string>
+
 </resources>

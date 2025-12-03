@@ -37,6 +37,10 @@ fun NotDjinniNavDisplay(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
         ),
+        predictivePopTransitionSpec = {
+            fadeIn(tween(ANIMATION_DURATION)) togetherWith
+                    fadeOut(tween(ANIMATION_DURATION))
+        },
         transitionSpec = {
             fadeIn(tween(ANIMATION_DURATION)) togetherWith
                     fadeOut(tween(ANIMATION_DURATION))
@@ -48,4 +52,4 @@ fun NotDjinniNavDisplay(
     )
 }
 
-private const val ANIMATION_DURATION = 500
+private const val ANIMATION_DURATION = 600

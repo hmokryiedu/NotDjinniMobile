@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,10 +43,15 @@ import not.djinni.presentation.theme.NotDjinniTheme
 internal fun MainSeekerScreen(
     onVacancyClick: (Long) -> Unit = {},
     onProfileClick: () -> Unit = {},
+    onApplicationsClick: () -> Unit = {},
 ) {
     Screen<MainSeekerViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
         val searchState = rememberTextFieldState()
+
+        LaunchedEffect(searchState.text) {
+            viewModel.sendAction(MainSeekerAction.Search(searchState.text.toString()))
+        }
 
         Content(
             state = state,
@@ -59,11 +66,8 @@ internal fun MainSeekerScreen(
                 }
 
                 MainSeekerSideEffect.NavigateToProfile -> onProfileClick()
+                MainSeekerSideEffect.NavigateToApplications -> onApplicationsClick()
             }
-        }
-
-        LaunchedEffect(searchState.text) {
-            viewModel.sendAction(MainSeekerAction.Search(searchState.text.toString()))
         }
     }
 }
@@ -87,7 +91,13 @@ private fun Content(
                 style = NotDjinniTheme.typography.title1Bold,
                 color = NotDjinniTheme.colors.onBackground,
             )
-            ProfileButton(onClick = { onAction(MainSeekerAction.OpenProfile) })
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(NotDjinniTheme.offsets.small),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                ApplicationsButton(onClick = { onAction(MainSeekerAction.OpenApplications) })
+                ProfileButton(onClick = { onAction(MainSeekerAction.OpenProfile) })
+            }
         }
         VerticalSpacer(NotDjinniTheme.offsets.medium)
         NotDjinniTabBar(
@@ -136,6 +146,25 @@ private fun Content(
     LaunchedEffect(state.vacanciesListState.items) {
         if (state.vacanciesListState.items.isEmpty()) return@LaunchedEffect
         lazyListState.scrollToItem(0)
+    }
+}
+
+@Composable
+private fun ApplicationsButton(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(PROFILE_BUTTON_SIZE)
+            .clip(CircleShape)
+            .background(NotDjinniTheme.colors.surfaceContainer)
+            .clickableNoRipple(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            modifier = Modifier.size(PROFILE_ICON_SIZE),
+            imageVector = Icons.Outlined.Description,
+            contentDescription = null,
+            tint = NotDjinniTheme.colors.onSurface
+        )
     }
 }
 

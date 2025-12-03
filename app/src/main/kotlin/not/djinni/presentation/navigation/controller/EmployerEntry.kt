@@ -2,10 +2,12 @@ package not.djinni.presentation.navigation.controller
 
 import androidx.navigation3.runtime.EntryProviderScope
 import not.djinni.presentation.navigation.NavigationController
+import not.djinni.presentation.screens.employer.application.details.ApplicationDetailsScreen
 import not.djinni.presentation.screens.employer.main.MainEmployerScreen
 import not.djinni.presentation.screens.employer.profile.create.CreateEmployerProfileScreen
 import not.djinni.presentation.screens.employer.profile.my.EmployerProfileScreen
 import not.djinni.presentation.screens.employer.profile.view.ViewJobSeekerProfileScreen
+import not.djinni.presentation.screens.employer.vacancy.applications.ViewVacancyApplicationsScreen
 import not.djinni.presentation.screens.employer.vacancy.create.CreateVacancyScreen
 import not.djinni.presentation.screens.employer.vacancy.details.VacancyDetailsScreen
 
@@ -29,7 +31,28 @@ fun EntryProviderScope<Screens>.employerEntry(
     entry<Screens.Employer.VacancyDetails> { entry ->
         VacancyDetailsScreen(
             vacancyId = entry.vacancyId,
-            onNavigateBack = { controller.popBackStack() }
+            onNavigateBack = { controller.popBackStack() },
+            onNavigateToApplications = { vacancyId ->
+                controller.navigate(Screens.Employer.VacancyApplications(vacancyId = vacancyId))
+            }
+        )
+    }
+    entry<Screens.Employer.VacancyApplications> { entry ->
+        ViewVacancyApplicationsScreen(
+            vacancyId = entry.vacancyId,
+            onNavigateBack = { controller.popBackStack() },
+            onNavigateToApplicationDetails = { applicationId ->
+                controller.navigate(Screens.Employer.ViewApplicationDetails(applicationId = applicationId))
+            }
+        )
+    }
+    entry<Screens.Employer.ViewApplicationDetails> { entry ->
+        ApplicationDetailsScreen(
+            applicationId = entry.applicationId,
+            onNavigateBack = { controller.popBackStack() },
+            onNavigateToVacancyDetails = { vacancyId ->
+                controller.navigate(Screens.Employer.VacancyDetails(vacancyId = vacancyId))
+            }
         )
     }
     entry<Screens.Employer.CreateVacancy> {

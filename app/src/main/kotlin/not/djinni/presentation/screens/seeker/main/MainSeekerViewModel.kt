@@ -49,6 +49,9 @@ internal class MainSeekerViewModel(
             MainSeekerAction.OpenProfile -> _sideEffect.tryEmit(
                 MainSeekerSideEffect.NavigateToProfile
             )
+            MainSeekerAction.OpenApplications -> _sideEffect.tryEmit(
+                MainSeekerSideEffect.NavigateToApplications
+            )
         }
     }
 

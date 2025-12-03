@@ -40,6 +40,7 @@ import org.koin.core.parameter.parametersOf
 internal fun VacancyDetailsScreen(
     vacancyId: Long,
     onNavigateBack: () -> Unit,
+    onNavigateToApplications: (Long) -> Unit,
 ) {
     Screen<VacancyDetailsViewModel>(
         parameters = { parametersOf(vacancyId) }
@@ -54,6 +55,9 @@ internal fun VacancyDetailsScreen(
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
                 VacancyDetailsSideEffect.NavigateBack -> onNavigateBack()
+                is VacancyDetailsSideEffect.NavigateToApplications -> onNavigateToApplications(
+                    effect.vacancyId
+                )
             }
         }
     }
@@ -73,7 +77,10 @@ private fun Content(
                 onRetry = { onAction(VacancyDetailsAction.Retry) }
             )
 
-            is VacancyDetailsContentState.Data -> DataContent(vacancy = contentState.vacancy)
+            is VacancyDetailsContentState.Data -> DataContent(
+                vacancy = contentState.vacancy,
+                onViewApplications = { onAction(VacancyDetailsAction.ViewApplications) }
+            )
         }
     }
 }
@@ -137,19 +144,30 @@ private fun ErrorContent(
 }
 
 @Composable
-private fun DataContent(vacancy: VacancyDisplayData) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        VacancyHeader(vacancy = vacancy)
-        VerticalSpacer(NotDjinniTheme.offsets.medium)
-        DescriptionSection(description = vacancy.description)
-        VerticalSpacer(NotDjinniTheme.offsets.medium)
-        DateInfoSection(
-            postedDate = vacancy.postedDate,
-            updatedDate = vacancy.updatedDate
+private fun DataContent(
+    vacancy: VacancyDisplayData,
+    onViewApplications: () -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+        ) {
+            VacancyHeader(vacancy = vacancy)
+            VerticalSpacer(NotDjinniTheme.offsets.medium)
+            DescriptionSection(description = vacancy.description)
+            VerticalSpacer(NotDjinniTheme.offsets.medium)
+            DateInfoSection(
+                postedDate = vacancy.postedDate,
+                updatedDate = vacancy.updatedDate
+            )
+            VerticalSpacer(NotDjinniTheme.offsets.large)
+        }
+        NotDjinniButton(
+            modifier = Modifier.fillMaxWidth(),
+            data = ButtonData(text = R.string.vacancy_view_applications.toTextData()),
+            onClick = onViewApplications
         )
         VerticalSpacer(NotDjinniTheme.offsets.medium)
     }

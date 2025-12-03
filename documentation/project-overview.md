@@ -43,6 +43,7 @@ The application follows **Clean Architecture** principles with clear separation 
 - Profile management for both user types
 - Vacancy creation and browsing
 - Application tracking
+- Application details viewing and status management for employers
 
 ---
 
@@ -873,6 +874,7 @@ class AppModule
 | `HorizontalSpacer` | Horizontal spacing | `components/base/Spacer.kt` |
 | `MessageCard` | Error/info message display | `components/base/MessageCard.kt` |
 | `VacancyCard` | Vacancy list item | `components/base/VacancyCard.kt` |
+| `ApplicationCard` | Application list item | `components/base/ApplicationCard.kt` |
 | `AlertContainer` | Alert/dialog wrapper | `components/base/AlertContainer.kt` |
 
 ### 11.2 Model Classes
@@ -884,6 +886,7 @@ class AppModule
 | `ButtonData` | Button configuration |
 | `SnackBarData` | SnackBar configuration |
 | `VacancyCardData` | Vacancy card data |
+| `ApplicationCardData` | Application card data |
 
 ### 11.3 TextData Usage
 
@@ -924,6 +927,7 @@ object NotDjinniColor {
     val onSurface: Color
     val primary: Color
     val error: Color
+    val success: Color
     val forcedBlack: Color
     val forcedWhite: Color
     // ... more colors

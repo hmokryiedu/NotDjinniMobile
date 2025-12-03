@@ -27,20 +27,12 @@ data class ApplicationResponse(
 
 @Serializable
 enum class ApplicationStatusResponse {
-    @SerialName("applied")
     APPLIED,
-    @SerialName("reviewing")
     REVIEWING,
-    @SerialName("interview")
     INTERVIEW,
-    @SerialName("test_task")
     TEST_TASK,
-    @SerialName("offer")
     OFFER,
-    @SerialName("hired")
     HIRED,
-    @SerialName("rejected")
     REJECTED,
-    @SerialName("withdrawn")
     WITHDRAWN
 }

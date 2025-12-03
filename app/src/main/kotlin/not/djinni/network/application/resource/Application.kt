@@ -9,4 +9,21 @@ class Application {
     @Serializable
     @Resource("check/vacancy/{vacancyId}")
     data class CheckByVacancy(val parent: Application = Application(), val vacancyId: Long)
+
+    @Serializable
+    @Resource("vacancy/{vacancyId}")
+    data class ByVacancy(
+        val parent: Application = Application(),
+        val vacancyId: Long,
+        val limit: Int? = null,
+        val offset: Int? = null,
+    )
+
+    @Serializable
+    @Resource("{id}")
+    data class Details(val parent: Application = Application(), val id: Long)
+
+    @Serializable
+    @Resource("{id}/status")
+    data class UpdateStatus(val parent: Application = Application(), val id: Long)
 }

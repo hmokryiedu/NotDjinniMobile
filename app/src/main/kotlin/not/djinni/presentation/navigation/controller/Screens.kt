@@ -36,6 +36,12 @@ sealed interface Screens : NavKey {
         data object AppliedVacancies : Seeker
 
         @Serializable
+        data object ViewApplications : Seeker
+
+        @Serializable
+        data class ApplicationDetails(val applicationId: Long) : Seeker
+
+        @Serializable
         data object Profile : Seeker
     }
 
@@ -53,6 +59,12 @@ sealed interface Screens : NavKey {
 
         @Serializable
         data class VacancyDetails(val vacancyId: Long) : Employer
+
+        @Serializable
+        data class VacancyApplications(val vacancyId: Long) : Employer
+
+        @Serializable
+        data class ViewApplicationDetails(val applicationId: Long) : Employer
 
         @Serializable
         data object CreateVacancy : Employer

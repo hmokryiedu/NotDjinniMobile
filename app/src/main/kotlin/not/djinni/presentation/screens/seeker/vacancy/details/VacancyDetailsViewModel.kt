@@ -122,7 +122,11 @@ internal class VacancyDetailsViewModel(
             companyName = company.name.toTextData(),
             companyDescription = company.description.toTextData(),
             description = description.toTextData(),
-            salaryRange = "$$salaryMin - $$salaryMax".toTextData(),
+            salaryRange = stringProvider.getString(
+                R.string.vacancy_salary_range,
+                salaryMin,
+                salaryMax
+            ).toTextData(),
             employmentType = employmentType.toDisplayName(),
             requiredExperience = formatExperience(minExperienceYears),
             category = category?.toDisplayName(),
