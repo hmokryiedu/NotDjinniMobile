@@ -4,6 +4,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.asSharedFlow
 import not.djinni.core.extension.mutableSideEffect
+import not.djinni.domain.repository.AuthRepository
 import not.djinni.domain.repository.EmployerRepository
 import not.djinni.domain.repository.UserRepository
 import not.djinni.presentation.core.StateViewModel
@@ -13,6 +14,7 @@ import org.koin.android.annotation.KoinViewModel
 internal class EmployerProfileViewModel(
     private val userRepository: UserRepository,
     private val employerRepository: EmployerRepository,
+    private val authRepository: AuthRepository,
 ) : StateViewModel<EmployerProfileState>(EmployerProfileState()) {
 
     private val _sideEffect = mutableSideEffect<EmployerProfileSideEffect>()
@@ -27,7 +29,15 @@ internal class EmployerProfileViewModel(
             EmployerProfileAction.ChangeRole -> {
                 _sideEffect.tryEmit(EmployerProfileSideEffect.NavigateToChooseRole)
             }
+            EmployerProfileAction.Logout -> logOut()
             EmployerProfileAction.Retry -> loadProfile()
+        }
+    }
+
+    private fun logOut() {
+        launch {
+            authRepository.logOut()
+            _sideEffect.emit(EmployerProfileSideEffect.NavigateToAuth)
         }
     }
 

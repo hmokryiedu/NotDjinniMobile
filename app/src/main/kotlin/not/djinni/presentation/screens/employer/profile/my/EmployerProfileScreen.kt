@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import not.djinni.R
@@ -22,12 +24,14 @@ import not.djinni.model.company.Company
 import not.djinni.model.employer.EmployerProfile
 import not.djinni.presentation.core.Screen
 import not.djinni.presentation.core.components.base.FullscreenColumn
+import not.djinni.presentation.core.components.base.HorizontalSpacer
 import not.djinni.presentation.core.components.base.NotDjinniButton
 import not.djinni.presentation.core.components.base.NotDjinniLoader
 import not.djinni.presentation.core.components.base.NotDjinniText
 import not.djinni.presentation.core.components.base.VerticalSpacer
 import not.djinni.presentation.core.components.base.model.ButtonData
 import not.djinni.presentation.core.components.base.model.TextData
+import not.djinni.presentation.core.extension.clickableNoRipple
 import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.core.extension.toTextData
 import not.djinni.presentation.theme.NotDjinniTheme
@@ -35,6 +39,7 @@ import not.djinni.presentation.theme.NotDjinniTheme
 @Composable
 internal fun EmployerProfileScreen(
     onChangeRole: () -> Unit,
+    onLogout: () -> Unit,
 ) {
     Screen<EmployerProfileViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -47,6 +52,7 @@ internal fun EmployerProfileScreen(
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
                 EmployerProfileSideEffect.NavigateToChooseRole -> onChangeRole()
+                EmployerProfileSideEffect.NavigateToAuth -> onLogout()
             }
         }
     }
@@ -58,12 +64,7 @@ private fun Content(
     onAction: (EmployerProfileAction) -> Unit = {},
 ) {
     FullscreenColumn {
-        NotDjinniText(
-            modifier = Modifier.align(Alignment.Start),
-            data = R.string.profile_title.toTextData(),
-            style = NotDjinniTheme.typography.title1Bold,
-            color = NotDjinniTheme.colors.onBackground,
-        )
+        ProfileHeader(onLogout = { onAction(EmployerProfileAction.Logout) })
         VerticalSpacer(NotDjinniTheme.offsets.medium)
         when {
             state.isLoading -> LoadingContent()
@@ -74,6 +75,27 @@ private fun Content(
                 onChangeRole = { onAction(EmployerProfileAction.ChangeRole) }
             )
         }
+    }
+}
+
+@Composable
+private fun ProfileHeader(onLogout: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        NotDjinniText(
+            data = R.string.profile_title.toTextData(),
+            style = NotDjinniTheme.typography.title1Bold,
+            color = NotDjinniTheme.colors.onBackground,
+        )
+        NotDjinniText(
+            modifier = Modifier.clickableNoRipple(onClick = onLogout),
+            data = R.string.profile_logout.toTextData(),
+            style = NotDjinniTheme.typography.body2,
+            color = NotDjinniTheme.colors.error,
+        )
     }
 }
 
@@ -186,16 +208,18 @@ private fun ProfileRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = NotDjinniTheme.offsets.tiny),
-        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         NotDjinniText(
             data = label,
             style = NotDjinniTheme.typography.body2,
             color = NotDjinniTheme.colors.onSurface.copy(alpha = LABEL_ALPHA),
         )
+        Spacer(modifier = Modifier.weight(1f))
+        HorizontalSpacer(NotDjinniTheme.offsets.small)
         NotDjinniText(
             data = value,
             style = NotDjinniTheme.typography.body2,
+            textAlign = TextAlign.End,
             color = NotDjinniTheme.colors.onSurface,
         )
     }

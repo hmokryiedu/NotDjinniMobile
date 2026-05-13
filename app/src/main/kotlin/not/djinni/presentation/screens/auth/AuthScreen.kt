@@ -8,6 +8,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.HorizontalDivider
@@ -108,6 +109,7 @@ private fun Content(
         NotDjinniTextField(
             modifier = Modifier.fillMaxWidth(),
             state = emailFieldState,
+            lineLimits = TextFieldLineLimits.SingleLine,
             placeholder = R.string.email_field_placeholder.toTextData(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )

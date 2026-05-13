@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ import not.djinni.presentation.core.components.base.NotDjinniText
 import not.djinni.presentation.core.components.base.VerticalSpacer
 import not.djinni.presentation.core.components.base.model.ButtonData
 import not.djinni.presentation.core.components.base.model.TextData
+import not.djinni.presentation.core.extension.clickableNoRipple
 import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.core.extension.toDisplayName
 import not.djinni.presentation.core.extension.toTextData
@@ -38,6 +40,7 @@ import not.djinni.presentation.theme.NotDjinniTheme
 @Composable
 internal fun SeekerProfileScreen(
     onChangeRole: () -> Unit,
+    onLogout: () -> Unit,
 ) {
     Screen<SeekerProfileViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -50,6 +53,7 @@ internal fun SeekerProfileScreen(
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
                 SeekerProfileSideEffect.NavigateToChooseRole -> onChangeRole()
+                SeekerProfileSideEffect.NavigateToAuth -> onLogout()
             }
         }
     }
@@ -61,12 +65,7 @@ private fun Content(
     onAction: (SeekerProfileAction) -> Unit = {},
 ) {
     FullscreenColumn {
-        NotDjinniText(
-            modifier = Modifier.align(Alignment.Start),
-            data = R.string.profile_title.toTextData(),
-            style = NotDjinniTheme.typography.title1Bold,
-            color = NotDjinniTheme.colors.onBackground,
-        )
+        ProfileHeader(onLogout = { onAction(SeekerProfileAction.Logout) })
         VerticalSpacer(NotDjinniTheme.offsets.medium)
         when {
             state.isLoading -> LoadingContent()
@@ -77,6 +76,28 @@ private fun Content(
                 onChangeRole = { onAction(SeekerProfileAction.ChangeRole) }
             )
         }
+    }
+}
+
+@Composable
+private fun ProfileHeader(onLogout: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        NotDjinniText(
+            data = R.string.profile_title.toTextData(),
+            style = NotDjinniTheme.typography.title1Bold,
+            color = NotDjinniTheme.colors.onBackground,
+        )
+        HorizontalSpacer(NotDjinniTheme.offsets.small)
+        NotDjinniText(
+            modifier = Modifier.clickableNoRipple(onClick = onLogout),
+            data = R.string.profile_logout.toTextData(),
+            style = NotDjinniTheme.typography.body2,
+            color = NotDjinniTheme.colors.error,
+        )
     }
 }
 
@@ -218,13 +239,13 @@ private fun ProfileRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = NotDjinniTheme.offsets.tiny),
-        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         NotDjinniText(
             data = label,
             style = NotDjinniTheme.typography.body2,
             color = NotDjinniTheme.colors.onSurface.copy(alpha = LABEL_ALPHA),
         )
+        Spacer(modifier = Modifier.weight(1f))
         HorizontalSpacer(NotDjinniTheme.offsets.small)
         NotDjinniText(
             data = value,

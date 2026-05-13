@@ -1,16 +1,22 @@
 package not.djinni.data.repository
 
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.auth.authProvider
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
+import not.djinni.data.auth.AuthTokenManager
 import not.djinni.datastore.session.SessionDataStore
 import not.djinni.domain.repository.AuthRepository
 import not.djinni.network.auth.AuthDataSource
 import not.djinni.network.common.response.NetworkResponse
-import not.djinni.network.token.request.RefreshTokenRequest
+import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
 @Single(binds = [AuthRepository::class])
 internal class DefaultAuthRepository(
     private val authDataSource: AuthDataSource,
     private val sessionDataStore: SessionDataStore,
+    private val authTokenManager: AuthTokenManager,
+    @Named("authenticated") private val httpClient: HttpClient,
 ) : AuthRepository {
 
     override suspend fun getIsLoggedIn(): Boolean {
@@ -39,21 +45,13 @@ internal class DefaultAuthRepository(
     }
 
     override suspend fun refreshToken() = runCatching {
-        val request = sessionDataStore.getRefreshSessionToken()
-            ?.let(::RefreshTokenRequest)
-            ?: throw Exception("No refresh token available")
-        when (val response = authDataSource.refresh(request)) {
-            is NetworkResponse.Success -> {
-                sessionDataStore.setRefreshSessionToken(response.data.refreshToken)
-                sessionDataStore.setAccessSessionToken(response.data.accessToken)
-            }
-
-            is NetworkResponse.Error -> throw Exception("Failed to refresh token")
-        }
+        authTokenManager.refreshTokens() ?: throw Exception("Failed to refresh token")
+        Unit
     }
 
     override suspend fun logOut(): Result<Unit> {
-        sessionDataStore.clearTokens()
-        return authDataSource.logOut()
+        authTokenManager.clearTokens()
+        httpClient.authProvider<BearerAuthProvider>()?.clearToken()
+        return Result.success(Unit)
     }
 }

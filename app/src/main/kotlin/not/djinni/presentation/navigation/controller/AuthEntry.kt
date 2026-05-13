@@ -15,8 +15,8 @@ fun EntryProviderScope<Screens>.authEntry(
         ChooseRoleScreen(
             onSeekerMain = { controller.replaceAll(Screens.Seeker.Main) },
             onEmployerMain = { controller.replaceAll(Screens.Employer.Main) },
-            onSeekerCreateProfile = { controller.replaceAll(Screens.Seeker.CreateProfile) },
-            onEmployerCreateProfile = { controller.replaceAll(Screens.Employer.CreateProfile) },
+            onSeekerCreateProfile = { controller.navigate(Screens.Seeker.CreateProfile) },
+            onEmployerCreateProfile = { controller.navigate(Screens.Employer.CreateProfile) },
         )
     }
 }

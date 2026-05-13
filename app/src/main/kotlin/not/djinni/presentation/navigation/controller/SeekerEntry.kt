@@ -56,7 +56,8 @@ fun EntryProviderScope<Screens>.seekerEntry(
     }
     entry<Screens.Seeker.Profile> {
         SeekerProfileScreen(
-            onChangeRole = { controller.replaceAll(Screens.ChooseRole) }
+            onChangeRole = { controller.replaceAll(Screens.ChooseRole) },
+            onLogout = { controller.replaceAll(Screens.Auth) }
         )
     }
 }

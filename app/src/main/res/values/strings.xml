@@ -179,6 +179,7 @@
 
     <!--Profile Screen-->
     <string name="profile_title">Profile</string>
+    <string name="profile_logout">Logout</string>
     <string name="profile_change_role">Change Role</string>
     <string name="profile_user_section">Account</string>
     <string name="profile_details_section">Details</string>
