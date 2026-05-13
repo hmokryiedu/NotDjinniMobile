@@ -46,7 +46,7 @@ open class BaseClientBuilder {
 
     protected fun HttpClientConfig<*>.installDefaultRequest() {
         install(DefaultRequest) {
-            host = "192.168.0.8"
+            host = "192.168.0.81"
             port = 8080
             url { protocol = URLProtocol.HTTP }
             contentType(ContentType.Application.Json)
