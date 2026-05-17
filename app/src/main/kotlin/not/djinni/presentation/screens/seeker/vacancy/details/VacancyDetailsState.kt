@@ -27,6 +27,7 @@ internal data class VacancyDisplayData(
     val companyName: TextData,
     val companyDescription: TextData?,
     val description: TextData,
+    val viewsCount: TextData,
     val salaryRange: TextData,
     val employmentType: TextData,
     val requiredExperience: TextData,

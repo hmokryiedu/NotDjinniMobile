@@ -19,6 +19,8 @@ import kotlin.time.Instant
     val title: String,
     @SerialName("description")
     val description: String,
+    @SerialName("views_count")
+    val viewsCount: Int,
     @SerialName("salary_min")
     val salaryMin: Int,
     @SerialName("salary_max")

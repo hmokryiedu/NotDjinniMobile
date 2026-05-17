@@ -140,6 +140,7 @@ internal class VacancyDetailsViewModel(
             companyName = company.name.toTextData(),
             companyDescription = company.description.toTextData(),
             description = description.toTextData(),
+            viewsCount = viewsCount.toString().toTextData(),
             salaryRange = stringProvider.getString(
                 R.string.vacancy_salary_range,
                 salaryMin,
