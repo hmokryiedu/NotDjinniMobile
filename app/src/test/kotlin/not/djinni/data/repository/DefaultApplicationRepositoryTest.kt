@@ -94,6 +94,8 @@ class DefaultApplicationRepositoryTest {
             id: Long,
             request: UpdateApplicationStatusRequest,
         ): NetworkResponse<Unit> = error("Not used")
+
+        override suspend fun withdrawApplication(id: Long): NetworkResponse<Unit> = error("Not used")
     }
 
     private fun applicationDetailsResponse(id: Long): ApplicationDetailsResponse {
@@ -111,6 +113,7 @@ class DefaultApplicationRepositoryTest {
                 title = "Java API Engineer",
                 description = "Maintain APIs",
                 viewsCount = 15,
+                applicationsCount = 2,
                 salaryMin = 4200,
                 salaryMax = 6000,
                 minExperienceYears = 3,

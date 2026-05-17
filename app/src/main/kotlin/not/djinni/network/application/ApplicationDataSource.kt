@@ -26,4 +26,5 @@ interface ApplicationDataSource {
         id: Long,
         request: UpdateApplicationStatusRequest
     ): NetworkResponse<Unit>
+    suspend fun withdrawApplication(id: Long): NetworkResponse<Unit>
 }

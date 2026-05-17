@@ -17,6 +17,9 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -39,8 +42,10 @@ import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.clickableNoRipple
 import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.core.extension.toTextData
+import not.djinni.presentation.navigation.NavResultKey
 import not.djinni.presentation.screens.seeker.vacancy.details.alert.VacancyDetailsAlert
 import not.djinni.presentation.screens.seeker.vacancy.details.components.ApplyVacancyBottomSheet
+import not.djinni.presentation.screens.seeker.vacancy.details.coverletter.CoverLetterResultContract
 import not.djinni.presentation.theme.NotDjinniIcons
 import not.djinni.presentation.theme.NotDjinniTheme
 import org.koin.core.parameter.parametersOf
@@ -50,11 +55,27 @@ internal fun VacancyDetailsScreen(
     vacancyId: Long,
     onNavigateBack: () -> Unit,
     onNavigateToApplicationDetails: (Long) -> Unit,
+    onNavigateToCoverLetterTemplates: (Long, NavResultKey<String>) -> Unit,
+    coverLetterResult: String?,
 ) {
+    val coverLetterResultKeyId = rememberSaveable(vacancyId) { "cover_letter_result_$vacancyId" }
+    val coverLetterResultKey = remember(coverLetterResultKeyId) {
+        NavResultKey(
+            id = coverLetterResultKeyId,
+            contract = CoverLetterResultContract,
+        )
+    }
+
     Screen<VacancyDetailsViewModel>(
         parameters = { parametersOf(vacancyId) }
     ) { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
+
+        LaunchedEffect(coverLetterResult) {
+            coverLetterResult?.let {
+                viewModel.sendAction(VacancyDetailsAction.ApplyCoverLetterTemplate(it))
+            }
+        }
 
         Content(
             state = state,
@@ -63,9 +84,14 @@ internal fun VacancyDetailsScreen(
 
         AlertContainer(state.currentAlert) { alert ->
             when (alert) {
-                is VacancyDetailsAlert.Applying -> {
+                VacancyDetailsAlert.Applying -> {
                     ApplyVacancyBottomSheet(
-                        vacancyName = alert.vacancyTitle,
+                        initialCoverLetter = state.selectedCoverLetterTemplate,
+                        onCoverLetterTemplatesClick = {
+                            viewModel.sendAction(
+                                VacancyDetailsAction.OpenCoverLetterTemplates(coverLetterResultKey.id)
+                            )
+                        },
                         onDismiss = { viewModel.sendAction(VacancyDetailsAction.HideApplyBottomSheet) },
                         onApply = { coverLetter ->
                             viewModel.sendAction(VacancyDetailsAction.SubmitApplication(coverLetter))
@@ -81,6 +107,15 @@ internal fun VacancyDetailsScreen(
                 VacancyDetailsSideEffect.ApplicationSuccess -> {
                     viewModel.showSnackBar(
                         SnackBarData(message = R.string.apply_vacancy_success.toTextData())
+                    )
+                }
+                is VacancyDetailsSideEffect.NavigateToCoverLetterTemplates -> {
+                    onNavigateToCoverLetterTemplates(
+                        vacancyId,
+                        NavResultKey(
+                            id = effect.resultKeyId,
+                            contract = CoverLetterResultContract
+                        )
                     )
                 }
                 is VacancyDetailsSideEffect.NavigateToApplicationDetails -> {
@@ -218,7 +253,10 @@ private fun VacancyContent(
                 AboutCompanySection(description = it)
             }
             VerticalSpacer(NotDjinniTheme.offsets.medium)
-            VacancyViewsSection(viewsCount = vacancy.viewsCount)
+            VacancyViewsSection(
+                viewsCount = vacancy.viewsCount,
+                applicationsCount = vacancy.applicationsCount
+            )
         }
         VerticalSpacer(NotDjinniTheme.offsets.large)
         ApplySection(
@@ -365,7 +403,10 @@ private fun AboutCompanySection(description: not.djinni.presentation.core.compon
 }
 
 @Composable
-private fun VacancyViewsSection(viewsCount: TextData) {
+private fun VacancyViewsSection(
+    viewsCount: TextData,
+    applicationsCount: TextData,
+) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             modifier = Modifier.size(ELIGIBILITY_ICON_SIZE),
@@ -376,6 +417,19 @@ private fun VacancyViewsSection(viewsCount: TextData) {
         HorizontalSpacer(NotDjinniTheme.offsets.small)
         NotDjinniText(
             data = viewsCount,
+            style = NotDjinniTheme.typography.body2,
+            color = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA)
+        )
+        HorizontalSpacer(NotDjinniTheme.offsets.medium)
+        Icon(
+            modifier = Modifier.size(ELIGIBILITY_ICON_SIZE),
+            imageVector = NotDjinniIcons.case,
+            contentDescription = null,
+            tint = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA)
+        )
+        HorizontalSpacer(NotDjinniTheme.offsets.small)
+        NotDjinniText(
+            data = applicationsCount,
             style = NotDjinniTheme.typography.body2,
             color = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA)
         )
@@ -436,6 +490,7 @@ private fun Preview() {
                     companyDescription = "A leading technology company".toTextData(),
                     description = "We are looking for an experienced Android developer...".toTextData(),
                     viewsCount = "128".toTextData(),
+                    applicationsCount = "12".toTextData(),
                     salaryRange = "$5000 - $8000".toTextData(),
                     employmentType = "Full-time".toTextData(),
                     requiredExperience = "5+ years experience".toTextData(),

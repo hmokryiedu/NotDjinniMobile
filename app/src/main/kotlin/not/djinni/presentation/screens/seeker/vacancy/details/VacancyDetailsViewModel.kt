@@ -45,7 +45,13 @@ internal class VacancyDetailsViewModel(
             VacancyDetailsAction.SeeApplication -> seeApplication()
             VacancyDetailsAction.NavigateBack -> _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateBack)
             VacancyDetailsAction.ToggleFavorite -> toggleFavorite()
-            VacancyDetailsAction.HideApplyBottomSheet -> updateState { copy(currentAlert = null) }
+            VacancyDetailsAction.HideApplyBottomSheet -> updateState { copy(currentAlert = null, selectedCoverLetterTemplate = null) }
+            is VacancyDetailsAction.OpenCoverLetterTemplates -> {
+                _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateToCoverLetterTemplates(action.resultKeyId))
+            }
+            is VacancyDetailsAction.ApplyCoverLetterTemplate -> {
+                updateState { copy(selectedCoverLetterTemplate = action.coverLetter) }
+            }
             is VacancyDetailsAction.SubmitApplication -> submitApplication(action.coverLetter)
         }
     }
@@ -82,7 +88,7 @@ internal class VacancyDetailsViewModel(
         val state = mutableState.value.apply { if (isApplied) return }
         val contentState = state.contentState
         if (contentState is VacancyDetailsContentState.Data && contentState.eligibility?.canApply == true) {
-            val alert = VacancyDetailsAlert.Applying(vacancyTitle = contentState.vacancy.title)
+            val alert = VacancyDetailsAlert.Applying
             updateState { copy(currentAlert = alert) }
         }
     }
@@ -107,8 +113,11 @@ internal class VacancyDetailsViewModel(
         launch {
             applicationRepository
                 .applyToVacancy(vacancyId = vacancyId, coverLetter = coverLetter)
-                .onSuccess { _sideEffect.tryEmit(VacancyDetailsSideEffect.ApplicationSuccess) }
-            hideAlert()
+                .onSuccess {
+                    hideAlert()
+                    loadVacancyDetails()
+                    _sideEffect.tryEmit(VacancyDetailsSideEffect.ApplicationSuccess)
+                }
         }
     }
 
@@ -168,6 +177,7 @@ internal class VacancyDetailsViewModel(
             companyDescription = company.description.toTextData(),
             description = description.toTextData(),
             viewsCount = viewsCount.toString().toTextData(),
+            applicationsCount = applicationsCount.toString().toTextData(),
             salaryRange = stringProvider.getString(
                 R.string.vacancy_salary_range,
                 salaryMin,
@@ -188,4 +198,5 @@ internal class VacancyDetailsViewModel(
             stringProvider.getString(R.string.vacancy_years_experience, years).toTextData()
         }
     }
+
 }

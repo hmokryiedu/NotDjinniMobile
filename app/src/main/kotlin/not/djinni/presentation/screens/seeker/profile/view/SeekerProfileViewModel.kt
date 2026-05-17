@@ -26,6 +26,9 @@ internal class SeekerProfileViewModel(
 
     fun sendAction(action: SeekerProfileAction) {
         when (action) {
+            SeekerProfileAction.NavigateBack -> {
+                _sideEffect.tryEmit(SeekerProfileSideEffect.NavigateBack)
+            }
             SeekerProfileAction.ChangeRole -> {
                 _sideEffect.tryEmit(SeekerProfileSideEffect.NavigateToChooseRole)
             }

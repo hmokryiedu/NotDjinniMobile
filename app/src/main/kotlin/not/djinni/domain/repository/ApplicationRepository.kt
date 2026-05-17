@@ -11,4 +11,5 @@ interface ApplicationRepository {
     suspend fun getMyApplicationByVacancy(vacancyId: Long): Result<ApplicationDetails>
     suspend fun getApplicationDetails(id: Long): Result<ApplicationDetails>
     suspend fun updateApplicationStatus(id: Long, status: ApplicationStatus): Result<Unit>
+    suspend fun withdrawApplication(id: Long): Result<Unit>
 }

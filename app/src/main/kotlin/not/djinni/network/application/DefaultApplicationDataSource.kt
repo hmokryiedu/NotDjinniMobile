@@ -2,6 +2,7 @@ package not.djinni.network.application
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.resources.get
+import io.ktor.client.plugins.resources.patch
 import io.ktor.client.plugins.resources.post
 import io.ktor.client.plugins.resources.put
 import io.ktor.client.request.setBody
@@ -79,6 +80,12 @@ internal class DefaultApplicationDataSource(
     ): NetworkResponse<Unit> {
         return httpClient
             .put(Application.UpdateStatus(id = id)) { setBody(request) }
+            .networkResponse<Unit>()
+    }
+
+    override suspend fun withdrawApplication(id: Long): NetworkResponse<Unit> {
+        return httpClient
+            .patch(Application.Withdraw(id = id))
             .networkResponse<Unit>()
     }
 }

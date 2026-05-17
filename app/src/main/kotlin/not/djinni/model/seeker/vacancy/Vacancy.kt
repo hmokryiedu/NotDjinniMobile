@@ -12,6 +12,7 @@ data class Vacancy(
     val title: String,
     val description: String,
     val viewsCount: Int,
+    val applicationsCount: Int,
     val salaryMin: Int,
     val salaryMax: Int,
     val minExperienceYears: Int?,

@@ -15,7 +15,7 @@ import kotlin.time.Instant
 class VacancyMapperTest {
 
     @Test
-    fun toDomain_maps_viewsCount() {
+    fun toDomain_maps_views_and_applications_count() {
         val instant = Instant.parse("2026-05-14T10:00:00Z")
         val response = VacancyDetailsResponse(
             id = 7,
@@ -28,6 +28,7 @@ class VacancyMapperTest {
             title = "Java API Engineer",
             description = "Maintain APIs",
             viewsCount = 42,
+            applicationsCount = 7,
             salaryMin = 4200,
             salaryMax = 6000,
             minExperienceYears = 3,
@@ -41,5 +42,6 @@ class VacancyMapperTest {
         val vacancy = response.toDomain()
 
         assertEquals(42, vacancy.viewsCount)
+        assertEquals(7, vacancy.applicationsCount)
     }
 }

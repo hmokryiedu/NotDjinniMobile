@@ -10,7 +10,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @Serializable
-    data class VacancyDetailsResponse(
+data class VacancyDetailsResponse(
     @SerialName("id")
     val id: Long,
     @SerialName("company")
@@ -21,6 +21,8 @@ import kotlin.time.Instant
     val description: String,
     @SerialName("views_count")
     val viewsCount: Int,
+    @SerialName("applications_count")
+    val applicationsCount: Int = 0,
     @SerialName("salary_min")
     val salaryMin: Int,
     @SerialName("salary_max")

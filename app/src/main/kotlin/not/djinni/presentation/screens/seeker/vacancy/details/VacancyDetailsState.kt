@@ -8,6 +8,7 @@ import not.djinni.presentation.screens.seeker.vacancy.details.alert.VacancyDetai
 internal data class VacancyDetailsState(
     val contentState: VacancyDetailsContentState = VacancyDetailsContentState.Loading,
     val isApplied: Boolean = false,
+    val selectedCoverLetterTemplate: String? = null,
     val currentAlert: VacancyDetailsAlert? = null,
 )
 
@@ -28,6 +29,7 @@ internal data class VacancyDisplayData(
     val companyDescription: TextData?,
     val description: TextData,
     val viewsCount: TextData,
+    val applicationsCount: TextData,
     val salaryRange: TextData,
     val employmentType: TextData,
     val requiredExperience: TextData,

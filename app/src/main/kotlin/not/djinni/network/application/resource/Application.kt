@@ -30,4 +30,8 @@ class Application {
     @Serializable
     @Resource("{id}/status")
     data class UpdateStatus(val parent: Application = Application(), val id: Long)
+
+    @Serializable
+    @Resource("{id}/withdraw")
+    data class Withdraw(val parent: Application = Application(), val id: Long)
 }

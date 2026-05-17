@@ -86,6 +86,13 @@ class DefaultApplicationRepository(
         }
     }
 
+    override suspend fun withdrawApplication(id: Long): Result<Unit> = runCatching {
+        when (val response = dataSource.withdrawApplication(id)) {
+            is NetworkResponse.Success -> Unit
+            is NetworkResponse.Error -> throw Exception(response.error)
+        }
+    }
+
     private companion object {
         const val DEFAULT_LIMIT = 20
         const val DEFAULT_OFFSET = 0

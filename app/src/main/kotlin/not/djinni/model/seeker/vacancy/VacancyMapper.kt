@@ -20,6 +20,7 @@ fun VacancyDetailsResponse.toDomain(): Vacancy = Vacancy(
     title = title,
     description = description,
     viewsCount = viewsCount,
+    applicationsCount = applicationsCount,
     salaryMin = salaryMin,
     salaryMax = salaryMax,
     minExperienceYears = minExperienceYears,

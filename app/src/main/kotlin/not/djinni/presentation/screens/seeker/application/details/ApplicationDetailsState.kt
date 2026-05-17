@@ -7,6 +7,7 @@ import not.djinni.presentation.core.components.base.model.TextData
 @Immutable
 internal data class ApplicationDetailsState(
     val contentState: ContentState = ContentState.Loading,
+    val isWithdrawing: Boolean = false,
 )
 
 @Immutable

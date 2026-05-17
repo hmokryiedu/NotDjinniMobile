@@ -41,7 +41,7 @@ Ask the user for:
 
 5. Copy local context directories (overwrite if files already exist):
    ```bash
-   for dir in .claude .codex ai; do
+   for dir in .claude .codex ai docs; do
      if [ -d "$dir" ]; then
        cp -R "$dir" "../not-djinni-worktrees/<worktree_name>/"
      fi

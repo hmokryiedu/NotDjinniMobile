@@ -13,8 +13,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.launch
 import not.djinni.R
@@ -24,19 +27,24 @@ import not.djinni.presentation.core.components.base.NotDjinniTextField
 import not.djinni.presentation.core.components.base.VerticalSpacer
 import not.djinni.presentation.core.components.base.buildDefaultTextFieldDecorator
 import not.djinni.presentation.core.components.base.model.ButtonData
-import not.djinni.presentation.core.components.base.model.TextData
+import not.djinni.presentation.core.extension.clickableNoRipple
+import not.djinni.presentation.core.extension.replaceText
 import not.djinni.presentation.core.extension.toTextData
 import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
 internal fun ApplyVacancyBottomSheet(
-    vacancyName: TextData,
+    initialCoverLetter: String?,
+    onCoverLetterTemplatesClick: () -> Unit,
     onDismiss: () -> Unit,
     onApply: (coverLetter: String?) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coverLetterState = rememberTextFieldState()
     val scope = rememberCoroutineScope()
+    LaunchedEffect(initialCoverLetter) {
+        initialCoverLetter?.let(coverLetterState::replaceText)
+    }
 
     ModalBottomSheet(
         onDismissRequest = {
@@ -50,8 +58,8 @@ internal fun ApplyVacancyBottomSheet(
         contentColor = NotDjinniTheme.colors.onSurface,
     ) {
         BottomSheetContent(
-            vacancyName = vacancyName,
             coverLetterState = coverLetterState,
+            onCoverLetterTemplatesClick = onCoverLetterTemplatesClick,
             onApply = {
                 scope.launch {
                     sheetState.hide()
@@ -64,8 +72,8 @@ internal fun ApplyVacancyBottomSheet(
 
 @Composable
 private fun BottomSheetContent(
-    vacancyName: TextData,
     coverLetterState: TextFieldState,
+    onCoverLetterTemplatesClick: () -> Unit,
     onApply: () -> Unit,
 ) {
     Column(
@@ -79,12 +87,6 @@ private fun BottomSheetContent(
             data = R.string.apply_vacancy_title.toTextData(),
             style = NotDjinniTheme.typography.title2,
             color = NotDjinniTheme.colors.onSurface
-        )
-        VerticalSpacer(NotDjinniTheme.offsets.tiny)
-        NotDjinniText(
-            data = vacancyName,
-            style = NotDjinniTheme.typography.body1,
-            color = NotDjinniTheme.colors.onSurface.copy(alpha = SECONDARY_TEXT_ALPHA)
         )
         VerticalSpacer(NotDjinniTheme.offsets.medium)
         NotDjinniText(
@@ -108,6 +110,16 @@ private fun BottomSheetContent(
                 )
             )
         )
+        VerticalSpacer(NotDjinniTheme.offsets.small)
+        NotDjinniText(
+            modifier = Modifier.clickableNoRipple(onClick = onCoverLetterTemplatesClick),
+            data = R.string.apply_vacancy_cover_letter_templates.toTextData(),
+            style = NotDjinniTheme.typography.body2.copy(
+                fontWeight = FontWeight.Bold,
+                textDecoration = TextDecoration.Underline
+            ),
+            color = NotDjinniTheme.colors.primary
+        )
         VerticalSpacer(NotDjinniTheme.offsets.medium)
         NotDjinniButton(
             modifier = Modifier.fillMaxWidth(),
@@ -122,8 +134,8 @@ private fun BottomSheetContent(
 private fun Preview() {
     NotDjinniTheme {
         BottomSheetContent(
-            vacancyName = "Senior Android Developer".toTextData(),
             coverLetterState = rememberTextFieldState(),
+            onCoverLetterTemplatesClick = {},
             onApply = {}
         )
     }
@@ -131,4 +143,3 @@ private fun Preview() {
 
 private const val COVER_LETTER_MIN_LINES = 4
 private const val COVER_LETTER_MAX_LINES = 8
-private const val SECONDARY_TEXT_ALPHA = 0.7f

@@ -2,12 +2,15 @@ package not.djinni.presentation.navigation.controller
 
 import androidx.navigation3.runtime.EntryProviderScope
 import not.djinni.presentation.navigation.NavigationController
+import not.djinni.presentation.navigation.NavResultKey
+import not.djinni.presentation.screens.seeker.coverletter.templates.CoverLetterTemplatesScreen
 import not.djinni.presentation.screens.seeker.application.details.ApplicationDetailsScreen
 import not.djinni.presentation.screens.seeker.application.list.ViewApplicationsScreen
 import not.djinni.presentation.screens.seeker.main.MainSeekerScreen
 import not.djinni.presentation.screens.seeker.profile.create.CreateSeekerProfileScreen
 import not.djinni.presentation.screens.seeker.profile.view.SeekerProfileScreen
 import not.djinni.presentation.screens.seeker.vacancy.all.AllVacanciesScreen
+import not.djinni.presentation.screens.seeker.vacancy.details.coverletter.CoverLetterResultContract
 import not.djinni.presentation.screens.seeker.vacancy.applied.AppliedVacanciesScreen
 import not.djinni.presentation.screens.seeker.vacancy.details.VacancyDetailsScreen
 import not.djinni.presentation.screens.seeker.vacancy.favorite.FavoriteVacanciesScreen
@@ -50,11 +53,37 @@ fun EntryProviderScope<Screens>.seekerEntry(
         )
     }
     entry<Screens.Seeker.VacancyDetails> { entry ->
+        val coverLetterResultKey = NavResultKey(
+            id = "cover_letter_result_${entry.vacancyId}",
+            contract = CoverLetterResultContract
+        )
         VacancyDetailsScreen(
             vacancyId = entry.vacancyId,
             onNavigateBack = controller::popBackStack,
+            onNavigateToCoverLetterTemplates = { vacancyId, resultKey ->
+                controller.navigateForResult(
+                    Screens.Seeker.CoverLetterTemplates(
+                        vacancyId = vacancyId,
+                        resultKeyId = resultKey.id
+                    ),
+                    resultKey
+                )
+            },
+            coverLetterResult = controller.consumeResult(coverLetterResultKey),
             onNavigateToApplicationDetails = { applicationId ->
                 controller.navigate(Screens.Seeker.ApplicationDetails(applicationId = applicationId))
+            }
+        )
+    }
+    entry<Screens.Seeker.CoverLetterTemplates> { entry ->
+        val resultKey = NavResultKey(
+            id = entry.resultKeyId,
+            contract = CoverLetterResultContract
+        )
+        CoverLetterTemplatesScreen(
+            onBack = controller::popBackStack,
+            onApply = { message ->
+                controller.popWithResult(resultKey, message)
             }
         )
     }
@@ -74,6 +103,7 @@ fun EntryProviderScope<Screens>.seekerEntry(
     }
     entry<Screens.Seeker.Profile> {
         SeekerProfileScreen(
+            onBack = controller::popBackStack,
             onChangeRole = { controller.replaceAll(Screens.ChooseRole) },
             onLogout = { controller.replaceAll(Screens.Auth) }
         )

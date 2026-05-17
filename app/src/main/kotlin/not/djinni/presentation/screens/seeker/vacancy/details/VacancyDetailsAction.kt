@@ -7,5 +7,7 @@ internal sealed interface VacancyDetailsAction {
     data object NavigateBack : VacancyDetailsAction
     data object ToggleFavorite : VacancyDetailsAction
     data object HideApplyBottomSheet : VacancyDetailsAction
+    data class OpenCoverLetterTemplates(val resultKeyId: String) : VacancyDetailsAction
+    data class ApplyCoverLetterTemplate(val coverLetter: String) : VacancyDetailsAction
     data class SubmitApplication(val coverLetter: String?) : VacancyDetailsAction
 }

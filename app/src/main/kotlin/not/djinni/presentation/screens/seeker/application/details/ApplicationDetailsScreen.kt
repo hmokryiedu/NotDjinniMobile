@@ -26,11 +26,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import not.djinni.R
 import not.djinni.core.extension.toFormattedFullDate
+import not.djinni.model.application.ApplicationStatus
 import not.djinni.presentation.core.Screen
 import not.djinni.presentation.core.components.base.FullscreenColumn
 import not.djinni.presentation.core.components.base.HorizontalSpacer
+import not.djinni.presentation.core.components.base.NotDjinniButton
 import not.djinni.presentation.core.components.base.NotDjinniText
 import not.djinni.presentation.core.components.base.VerticalSpacer
+import not.djinni.presentation.core.components.base.model.ButtonData
+import not.djinni.presentation.core.components.base.model.SnackBarData
 import not.djinni.presentation.core.extension.clickableNoRipple
 import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.core.extension.toTextData
@@ -59,6 +63,11 @@ internal fun ApplicationDetailsScreen(
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
                 ApplicationDetailsSideEffect.NavigateBack -> onNavigateBack()
+                ApplicationDetailsSideEffect.WithdrawSuccess -> {
+                    viewModel.showSnackBar(
+                        SnackBarData(message = R.string.application_details_withdraw_success.toTextData())
+                    )
+                }
             }
         }
     }
@@ -76,7 +85,9 @@ private fun Content(
             is ContentState.Error -> {}
             is ContentState.Data -> ContentState(
                 modifier = Modifier.fillMaxSize(),
-                state = state.contentState
+                state = state.contentState,
+                isWithdrawing = state.isWithdrawing,
+                onWithdraw = { onAction(ApplicationDetailsAction.Withdraw) }
             )
         }
     }
@@ -85,7 +96,9 @@ private fun Content(
 @Composable
 private fun ContentState(
     modifier: Modifier = Modifier,
-    state: ContentState.Data
+    state: ContentState.Data,
+    isWithdrawing: Boolean,
+    onWithdraw: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -180,6 +193,17 @@ private fun ContentState(
             style = NotDjinniTheme.typography.body2,
             color = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA),
         )
+        if (state.application.status.canWithdraw()) {
+            VerticalSpacer(NotDjinniTheme.offsets.large)
+            NotDjinniButton(
+                modifier = Modifier.fillMaxWidth(),
+                data = ButtonData(
+                    text = R.string.application_details_withdraw.toTextData(),
+                    enabled = !isWithdrawing
+                ),
+                onClick = onWithdraw
+            )
+        }
     }
 }
 
@@ -223,3 +247,9 @@ private val ICON_SIZE = 24.dp
 private val STATUS_INDICATOR_SIZE = 10.dp
 private const val SECONDARY_TEXT_ALPHA = 0.7f
 private const val COVER_LETTER_ALPHA = 0.8f
+
+private fun ApplicationStatus.canWithdraw(): Boolean {
+    return this != ApplicationStatus.WITHDRAWN &&
+            this != ApplicationStatus.HIRED &&
+            this != ApplicationStatus.REJECTED
+}
