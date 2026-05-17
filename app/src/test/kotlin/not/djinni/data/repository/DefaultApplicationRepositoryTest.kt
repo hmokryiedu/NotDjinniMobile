@@ -110,6 +110,7 @@ class DefaultApplicationRepositoryTest {
                 ),
                 title = "Java API Engineer",
                 description = "Maintain APIs",
+                viewsCount = 15,
                 salaryMin = 4200,
                 salaryMax = 6000,
                 minExperienceYears = 3,

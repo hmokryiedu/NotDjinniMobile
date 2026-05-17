@@ -217,6 +217,8 @@ private fun VacancyContent(
                 VerticalSpacer(NotDjinniTheme.offsets.medium)
                 AboutCompanySection(description = it)
             }
+            VerticalSpacer(NotDjinniTheme.offsets.medium)
+            VacancyViewsSection(viewsCount = vacancy.viewsCount)
         }
         VerticalSpacer(NotDjinniTheme.offsets.large)
         ApplySection(
@@ -363,6 +365,24 @@ private fun AboutCompanySection(description: not.djinni.presentation.core.compon
 }
 
 @Composable
+private fun VacancyViewsSection(viewsCount: TextData) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            modifier = Modifier.size(ELIGIBILITY_ICON_SIZE),
+            imageVector = NotDjinniIcons.eye,
+            contentDescription = null,
+            tint = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA)
+        )
+        HorizontalSpacer(NotDjinniTheme.offsets.small)
+        NotDjinniText(
+            data = viewsCount,
+            style = NotDjinniTheme.typography.body2,
+            color = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA)
+        )
+    }
+}
+
+@Composable
 private fun ApplySection(
     eligibility: EligibilityState?,
     isApplied: Boolean,
@@ -415,6 +435,7 @@ private fun Preview() {
                     companyName = "Tech Company".toTextData(),
                     companyDescription = "A leading technology company".toTextData(),
                     description = "We are looking for an experienced Android developer...".toTextData(),
+                    viewsCount = "128".toTextData(),
                     salaryRange = "$5000 - $8000".toTextData(),
                     employmentType = "Full-time".toTextData(),
                     requiredExperience = "5+ years experience".toTextData(),
