@@ -8,6 +8,7 @@ interface ApplicationRepository {
     suspend fun isAppliedToVacancy(vacancyId: Long): Result<Boolean>
     suspend fun getApplicationsByVacancy(vacancyId: Long): Result<List<ApplicationDetails>>
     suspend fun getSeekerApplications(): Result<List<ApplicationDetails>>
+    suspend fun getMyApplicationByVacancy(vacancyId: Long): Result<ApplicationDetails>
     suspend fun getApplicationDetails(id: Long): Result<ApplicationDetails>
     suspend fun updateApplicationStatus(id: Long, status: ApplicationStatus): Result<Unit>
 }

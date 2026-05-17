@@ -20,6 +20,10 @@ class Application {
     )
 
     @Serializable
+    @Resource("vacancy/{vacancyId}/mine")
+    data class MineByVacancy(val parent: Application = Application(), val vacancyId: Long)
+
+    @Serializable
     @Resource("{id}")
     data class Details(val parent: Application = Application(), val id: Long)
 

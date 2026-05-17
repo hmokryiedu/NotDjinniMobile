@@ -57,6 +57,14 @@ internal class DefaultApplicationDataSource(
             .networkResponse<ApplicationDetailsListResponse>()
     }
 
+    override suspend fun getMyApplicationByVacancy(
+        vacancyId: Long
+    ): NetworkResponse<ApplicationDetailsResponse> {
+        return httpClient
+            .get(Application.MineByVacancy(vacancyId = vacancyId))
+            .networkResponse<ApplicationDetailsResponse>()
+    }
+
     override suspend fun getApplicationDetails(
         id: Long
     ): NetworkResponse<ApplicationDetailsResponse> {

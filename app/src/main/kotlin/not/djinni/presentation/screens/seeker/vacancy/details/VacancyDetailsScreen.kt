@@ -46,6 +46,7 @@ import org.koin.core.parameter.parametersOf
 internal fun VacancyDetailsScreen(
     vacancyId: Long,
     onNavigateBack: () -> Unit,
+    onNavigateToApplicationDetails: (Long) -> Unit,
 ) {
     Screen<VacancyDetailsViewModel>(
         parameters = { parametersOf(vacancyId) }
@@ -79,6 +80,9 @@ internal fun VacancyDetailsScreen(
                         SnackBarData(message = R.string.apply_vacancy_success.toTextData())
                     )
                 }
+                is VacancyDetailsSideEffect.NavigateToApplicationDetails -> {
+                    onNavigateToApplicationDetails(effect.applicationId)
+                }
             }
         }
     }
@@ -102,7 +106,8 @@ private fun Content(
                 vacancy = contentState.vacancy,
                 eligibility = contentState.eligibility,
                 isApplied = state.isApplied,
-                onApply = { onAction(VacancyDetailsAction.Apply) }
+                onApply = { onAction(VacancyDetailsAction.Apply) },
+                onSeeApplication = { onAction(VacancyDetailsAction.SeeApplication) }
             )
         }
     }
@@ -172,6 +177,7 @@ private fun VacancyContent(
     eligibility: EligibilityState?,
     isApplied: Boolean,
     onApply: () -> Unit,
+    onSeeApplication: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         VacancyHeader(vacancy = vacancy)
@@ -193,7 +199,8 @@ private fun VacancyContent(
         ApplySection(
             eligibility = eligibility,
             isApplied = isApplied,
-            onApply = onApply
+            onApply = onApply,
+            onSeeApplication = onSeeApplication
         )
         VerticalSpacer(NotDjinniTheme.offsets.medium)
     }
@@ -337,6 +344,7 @@ private fun ApplySection(
     eligibility: EligibilityState?,
     isApplied: Boolean,
     onApply: () -> Unit,
+    onSeeApplication: () -> Unit,
 ) {
     val canApply = eligibility?.canApply ?: true
     Column(
@@ -345,11 +353,10 @@ private fun ApplySection(
     ) {
         when {
             isApplied -> {
-                NotDjinniText(
-                    data = R.string.vacancy_already_applied.toTextData(),
-                    style = NotDjinniTheme.typography.body1,
-                    color = NotDjinniTheme.colors.primary,
-                    textAlign = TextAlign.Center
+                NotDjinniButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    data = ButtonData(text = R.string.vacancy_details_see_application.toTextData()),
+                    onClick = onSeeApplication
                 )
             }
 

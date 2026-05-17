@@ -13,4 +13,12 @@ class Vacancy(
     @Serializable
     @Resource("{id}")
     class ById(val parent: Vacancy = Vacancy(), val id: Long)
+
+    @Serializable
+    @Resource("applied")
+    class Applied(
+        val parent: Vacancy = Vacancy(),
+        val limit: Int? = null,
+        val offset: Int? = null,
+    )
 }

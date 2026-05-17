@@ -99,4 +99,6 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.accompanist.permissions)
     implementation(libs.timber)
+
+    testImplementation(libs.junit)
 }

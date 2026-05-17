@@ -15,5 +15,10 @@ interface VacancyDataSource {
 
     suspend fun getVacancyById(id: Long): NetworkResponse<VacancyDetailsResponse>
 
+    suspend fun getAppliedVacancies(
+        limit: Int = 60,
+        offset: Int = 0,
+    ): NetworkResponse<VacancyListResponse>
+
     suspend fun createVacancy(request: CreateVacancyRequest): NetworkResponse<VacancyDetailsResponse>
 }

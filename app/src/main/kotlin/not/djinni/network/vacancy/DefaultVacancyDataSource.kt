@@ -34,6 +34,15 @@ internal class DefaultVacancyDataSource(
             .networkResponse<VacancyDetailsResponse>()
     }
 
+    override suspend fun getAppliedVacancies(
+        limit: Int,
+        offset: Int
+    ): NetworkResponse<VacancyListResponse> {
+        return httpClient
+            .get(Vacancy.Applied(limit = limit, offset = offset))
+            .networkResponse<VacancyListResponse>()
+    }
+
     override suspend fun createVacancy(
         request: CreateVacancyRequest
     ): NetworkResponse<VacancyDetailsResponse> {

@@ -32,6 +32,13 @@ class DefaultVacancyRepository(
         }
     }
 
+    override suspend fun getAppliedVacancies(): Result<List<Vacancy>> = runCatching {
+        when (val response = dataSource.getAppliedVacancies()) {
+            is NetworkResponse.Success -> response.data.vacancies.map(VacancyDetailsResponse::toDomain)
+            is NetworkResponse.Error -> throw Exception(response.error)
+        }
+    }
+
     override suspend fun createVacancy(
         title: String,
         description: String,

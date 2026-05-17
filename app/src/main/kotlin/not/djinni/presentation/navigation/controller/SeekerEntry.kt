@@ -25,19 +25,27 @@ fun EntryProviderScope<Screens>.seekerEntry(
                 controller.navigate(Screens.Seeker.VacancyDetails(vacancyId = vacancyId))
             },
             onProfileClick = { controller.navigate(Screens.Seeker.Profile) },
-            onApplicationsClick = { controller.navigate(Screens.Seeker.ViewApplications) }
+            onApplicationsClick = { controller.navigate(Screens.Seeker.AppliedVacancies) }
         )
     }
     entry<Screens.Seeker.AllVacancies> {
         AllVacanciesScreen()
     }
     entry<Screens.Seeker.AppliedVacancies> {
-        AppliedVacanciesScreen()
+        AppliedVacanciesScreen(
+            onBack = controller::popBackStack,
+            onVacancyClick = { vacancyId ->
+                controller.navigate(Screens.Seeker.VacancyDetails(vacancyId = vacancyId))
+            }
+        )
     }
     entry<Screens.Seeker.VacancyDetails> { entry ->
         VacancyDetailsScreen(
             vacancyId = entry.vacancyId,
-            onNavigateBack = controller::popBackStack
+            onNavigateBack = controller::popBackStack,
+            onNavigateToApplicationDetails = { applicationId ->
+                controller.navigate(Screens.Seeker.ApplicationDetails(applicationId = applicationId))
+            }
         )
     }
     entry<Screens.Seeker.ViewApplications> {

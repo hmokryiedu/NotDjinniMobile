@@ -12,6 +12,7 @@ import not.djinni.domain.repository.VacancyRepository
 import not.djinni.model.seeker.SeekerProfile
 import not.djinni.model.seeker.vacancy.Vacancy
 import not.djinni.presentation.core.StateViewModel
+import not.djinni.presentation.core.components.base.model.SnackBarData
 import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.toDisplayName
 import not.djinni.presentation.core.extension.toTextData
@@ -41,6 +42,7 @@ internal class VacancyDetailsViewModel(
         when (action) {
             VacancyDetailsAction.Load -> loadVacancyDetails()
             VacancyDetailsAction.Apply -> handleApply()
+            VacancyDetailsAction.SeeApplication -> seeApplication()
             VacancyDetailsAction.NavigateBack -> _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateBack)
             VacancyDetailsAction.HideApplyBottomSheet -> updateState { copy(currentAlert = null) }
             is VacancyDetailsAction.SubmitApplication -> submitApplication(action.coverLetter)
@@ -81,6 +83,22 @@ internal class VacancyDetailsViewModel(
         if (contentState is VacancyDetailsContentState.Data && contentState.eligibility?.canApply == true) {
             val alert = VacancyDetailsAlert.Applying(vacancyTitle = contentState.vacancy.title)
             updateState { copy(currentAlert = alert) }
+        }
+    }
+
+    private fun seeApplication() {
+        launch {
+            applicationRepository.getMyApplicationByVacancy(vacancyId)
+                .onSuccess { application ->
+                    _sideEffect.tryEmit(
+                        VacancyDetailsSideEffect.NavigateToApplicationDetails(application.id)
+                    )
+                }
+                .onFailure {
+                    showSnackBar(
+                        SnackBarData(message = R.string.vacancy_details_error.toTextData())
+                    )
+                }
         }
     }
 

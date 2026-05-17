@@ -20,6 +20,7 @@ interface ApplicationDataSource {
         limit: Int,
         offset: Int
     ): NetworkResponse<ApplicationDetailsListResponse>
+    suspend fun getMyApplicationByVacancy(vacancyId: Long): NetworkResponse<ApplicationDetailsResponse>
     suspend fun getApplicationDetails(id: Long): NetworkResponse<ApplicationDetailsResponse>
     suspend fun updateApplicationStatus(
         id: Long,

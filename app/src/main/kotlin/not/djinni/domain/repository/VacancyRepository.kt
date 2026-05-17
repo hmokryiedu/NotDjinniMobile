@@ -7,6 +7,7 @@ import not.djinni.model.seeker.vacancy.Vacancy
 interface VacancyRepository {
     suspend fun getAllVacancies(query: String?): Result<List<Vacancy>>
     suspend fun getVacancyById(id: Long): Result<Vacancy>
+    suspend fun getAppliedVacancies(): Result<List<Vacancy>>
     suspend fun createVacancy(
         title: String,
         description: String,

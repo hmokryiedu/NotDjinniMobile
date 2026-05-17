@@ -57,6 +57,15 @@ class DefaultApplicationRepository(
         }
     }
 
+    override suspend fun getMyApplicationByVacancy(
+        vacancyId: Long
+    ): Result<ApplicationDetails> = runCatching {
+        when (val response = dataSource.getMyApplicationByVacancy(vacancyId)) {
+            is NetworkResponse.Success -> response.data.toDomain()
+            is NetworkResponse.Error -> throw Exception(response.error)
+        }
+    }
+
     override suspend fun getApplicationDetails(
         id: Long
     ): Result<ApplicationDetails> = runCatching {
