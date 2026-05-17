@@ -38,6 +38,20 @@ class DefaultVacancyRepository(
         }
     }
 
+    override suspend fun getPublicVacancies(query: String?) = runCatching {
+        when (val response = dataSource.getPublicVacancies(search = query)) {
+            is NetworkResponse.Success -> response.data.vacancies.map(VacancyDetailsResponse::toDomain)
+            is NetworkResponse.Error -> throw Exception("Vacancies are empty or error occurred")
+        }
+    }
+
+    override suspend fun getPublicVacancyById(id: Long) = runCatching {
+        when (val response = dataSource.getPublicVacancyById(id)) {
+            is NetworkResponse.Success -> response.data.toDomain()
+            is NetworkResponse.Error -> throw Exception("Failed to load vacancy details")
+        }
+    }
+
     override suspend fun getAppliedVacancies(): Result<List<Vacancy>> = runCatching {
         when (val response = dataSource.getAppliedVacancies()) {
             is NetworkResponse.Success -> response.data.vacancies.map(VacancyDetailsResponse::toDomain)

@@ -24,6 +24,7 @@ internal class AuthViewModel(
     fun sendAction(action: AuthAction) {
         when (action) {
             AuthAction.SwitchAuthType -> switchAuthType()
+            AuthAction.ViewOnlyClicked -> _sideEffect.tryEmit(AuthSideEffect.NavigatePublic)
             is AuthAction.AuthButtonClicked -> when (state.value.type) {
                 SIGN_IN -> signIn(
                     email = action.state.email,

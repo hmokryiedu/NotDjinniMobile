@@ -15,6 +15,8 @@ interface VacancyRepository {
 
     suspend fun getAllVacancies(query: String?): Result<List<Vacancy>>
     suspend fun getVacancyById(id: Long): Result<Vacancy>
+    suspend fun getPublicVacancies(query: String?): Result<List<Vacancy>>
+    suspend fun getPublicVacancyById(id: Long): Result<Vacancy>
     suspend fun getAppliedVacancies(): Result<List<Vacancy>>
     suspend fun getFavoriteVacancies(): Result<List<Vacancy>>
     suspend fun addFavoriteVacancy(id: Long): Result<Unit>

@@ -18,6 +18,16 @@ sealed interface Screens : NavKey {
     data object ChooseRole : Screens
 
     @Serializable
+    sealed interface Public : Screens {
+
+        @Serializable
+        data object Main : Public
+
+        @Serializable
+        data class VacancyDetails(val vacancyId: Long) : Public
+    }
+
+    @Serializable
     sealed interface Seeker : Screens {
 
         @Serializable
