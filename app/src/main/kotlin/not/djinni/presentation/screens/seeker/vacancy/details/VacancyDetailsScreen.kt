@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -94,7 +97,12 @@ private fun Content(
     onAction: (VacancyDetailsAction) -> Unit = {},
 ) {
     FullscreenColumn {
-        TopBar(onBack = { onAction(VacancyDetailsAction.NavigateBack) })
+        val favoriteState = (state.contentState as? VacancyDetailsContentState.Data)?.vacancy?.isFavorite
+        TopBar(
+            isFavorite = favoriteState,
+            onBack = { onAction(VacancyDetailsAction.NavigateBack) },
+            onFavoriteClick = { onAction(VacancyDetailsAction.ToggleFavorite) }
+        )
         when (val contentState = state.contentState) {
             is VacancyDetailsContentState.Loading -> LoadingContent()
             is VacancyDetailsContentState.Error -> ErrorContent(
@@ -114,7 +122,11 @@ private fun Content(
 }
 
 @Composable
-private fun TopBar(onBack: () -> Unit) {
+private fun TopBar(
+    isFavorite: Boolean?,
+    onBack: () -> Unit,
+    onFavoriteClick: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -135,6 +147,17 @@ private fun TopBar(onBack: () -> Unit) {
             style = NotDjinniTheme.typography.title2.copy(fontWeight = FontWeight.Bold),
             color = NotDjinniTheme.colors.onBackground
         )
+        Box(modifier = Modifier.weight(1f))
+        isFavorite?.let {
+            Icon(
+                modifier = Modifier
+                    .size(ICON_SIZE)
+                    .clickableNoRipple(onClick = onFavoriteClick),
+                imageVector = if (it) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                contentDescription = null,
+                tint = NotDjinniTheme.colors.onBackground
+            )
+        }
     }
 }
 
@@ -396,7 +419,8 @@ private fun Preview() {
                     employmentType = "Full-time".toTextData(),
                     requiredExperience = "5+ years experience".toTextData(),
                     category = "Software Development".toTextData(),
-                    postedDate = "Dec 1, 2025".toTextData()
+                    postedDate = "Dec 1, 2025".toTextData(),
+                    isFavorite = false
                 ),
                 eligibility = EligibilityState(
                     canApply = true,

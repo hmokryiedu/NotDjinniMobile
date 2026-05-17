@@ -32,6 +32,7 @@ internal data class VacancyDisplayData(
     val requiredExperience: TextData,
     val category: TextData?,
     val postedDate: TextData,
+    val isFavorite: Boolean,
 )
 
 @Immutable

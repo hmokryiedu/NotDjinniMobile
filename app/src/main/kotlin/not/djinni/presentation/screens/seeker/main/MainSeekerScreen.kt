@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -44,6 +45,7 @@ internal fun MainSeekerScreen(
     onVacancyClick: (Long) -> Unit = {},
     onProfileClick: () -> Unit = {},
     onApplicationsClick: () -> Unit = {},
+    onFavoriteVacanciesClick: () -> Unit = {},
 ) {
     Screen<MainSeekerViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -67,6 +69,7 @@ internal fun MainSeekerScreen(
 
                 MainSeekerSideEffect.NavigateToProfile -> onProfileClick()
                 MainSeekerSideEffect.NavigateToApplications -> onApplicationsClick()
+                MainSeekerSideEffect.NavigateToFavoriteVacancies -> onFavoriteVacanciesClick()
             }
         }
     }
@@ -95,6 +98,7 @@ private fun Content(
                 horizontalArrangement = Arrangement.spacedBy(NotDjinniTheme.offsets.small),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                FavoritesButton(onClick = { onAction(MainSeekerAction.OpenFavoriteVacancies) })
                 ApplicationsButton(onClick = { onAction(MainSeekerAction.OpenApplications) })
                 ProfileButton(onClick = { onAction(MainSeekerAction.OpenProfile) })
             }
@@ -136,7 +140,15 @@ private fun Content(
                     VacancyCard(
                         modifier = Modifier.animateItem(),
                         data = vacancy,
-                        onClick = { onAction(MainSeekerAction.OpenVacancy(vacancy.id)) }
+                        onClick = { onAction(MainSeekerAction.OpenVacancy(vacancy.id)) },
+                        onFavoriteClick = {
+                            onAction(
+                                MainSeekerAction.ToggleFavorite(
+                                    vacancyId = vacancy.id,
+                                    isFavorite = vacancy.isFavorite
+                                )
+                            )
+                        }
                     )
                 }
             }
@@ -146,6 +158,25 @@ private fun Content(
     LaunchedEffect(state.vacanciesListState.items) {
         if (state.vacanciesListState.items.isEmpty()) return@LaunchedEffect
         lazyListState.scrollToItem(0)
+    }
+}
+
+@Composable
+private fun FavoritesButton(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(PROFILE_BUTTON_SIZE)
+            .clip(CircleShape)
+            .background(NotDjinniTheme.colors.surfaceContainer)
+            .clickableNoRipple(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            modifier = Modifier.size(PROFILE_ICON_SIZE),
+            imageVector = Icons.Filled.Favorite,
+            contentDescription = null,
+            tint = NotDjinniTheme.colors.onSurface
+        )
     }
 }
 

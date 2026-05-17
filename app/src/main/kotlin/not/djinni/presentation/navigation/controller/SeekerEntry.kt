@@ -10,6 +10,7 @@ import not.djinni.presentation.screens.seeker.profile.view.SeekerProfileScreen
 import not.djinni.presentation.screens.seeker.vacancy.all.AllVacanciesScreen
 import not.djinni.presentation.screens.seeker.vacancy.applied.AppliedVacanciesScreen
 import not.djinni.presentation.screens.seeker.vacancy.details.VacancyDetailsScreen
+import not.djinni.presentation.screens.seeker.vacancy.favorite.FavoriteVacanciesScreen
 
 fun EntryProviderScope<Screens>.seekerEntry(
     controller: NavigationController,
@@ -25,7 +26,8 @@ fun EntryProviderScope<Screens>.seekerEntry(
                 controller.navigate(Screens.Seeker.VacancyDetails(vacancyId = vacancyId))
             },
             onProfileClick = { controller.navigate(Screens.Seeker.Profile) },
-            onApplicationsClick = { controller.navigate(Screens.Seeker.AppliedVacancies) }
+            onApplicationsClick = { controller.navigate(Screens.Seeker.AppliedVacancies) },
+            onFavoriteVacanciesClick = { controller.navigate(Screens.Seeker.FavoriteVacancies) }
         )
     }
     entry<Screens.Seeker.AllVacancies> {
@@ -33,6 +35,14 @@ fun EntryProviderScope<Screens>.seekerEntry(
     }
     entry<Screens.Seeker.AppliedVacancies> {
         AppliedVacanciesScreen(
+            onBack = controller::popBackStack,
+            onVacancyClick = { vacancyId ->
+                controller.navigate(Screens.Seeker.VacancyDetails(vacancyId = vacancyId))
+            }
+        )
+    }
+    entry<Screens.Seeker.FavoriteVacancies> {
+        FavoriteVacanciesScreen(
             onBack = controller::popBackStack,
             onVacancyClick = { vacancyId ->
                 controller.navigate(Screens.Seeker.VacancyDetails(vacancyId = vacancyId))

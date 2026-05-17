@@ -36,6 +36,9 @@ sealed interface Screens : NavKey {
         data object AppliedVacancies : Seeker
 
         @Serializable
+        data object FavoriteVacancies : Seeker
+
+        @Serializable
         data object ViewApplications : Seeker
 
         @Serializable

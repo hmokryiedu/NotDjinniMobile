@@ -17,6 +17,7 @@ data class Vacancy(
     val employmentType: EmploymentType,
     val category: JobCategoryCode?,
     val status: VacancyStatusCode,
+    val isFavorite: Boolean = false,
     val createdAt: Instant,
     val updatedAt: Instant
 )

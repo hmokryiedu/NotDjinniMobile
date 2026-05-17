@@ -2,10 +2,16 @@ package not.djinni.presentation.core.components.base
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +25,7 @@ fun VacancyCard(
     modifier: Modifier = Modifier,
     data: VacancyCardData,
     onClick: () -> Unit,
+    onFavoriteClick: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier
@@ -38,11 +45,31 @@ fun VacancyCard(
                 vertical = NotDjinniTheme.offsets.small,
             ),
     ) {
-        NotDjinniText(
-            data = data.companyName,
-            style = NotDjinniTheme.typography.body2,
-            color = NotDjinniTheme.colors.onBackground.copy(alpha = 0.7f),
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            NotDjinniText(
+                data = data.companyName,
+                style = NotDjinniTheme.typography.body2,
+                color = NotDjinniTheme.colors.onBackground.copy(alpha = 0.7f),
+            )
+            onFavoriteClick?.let {
+                Icon(
+                    modifier = Modifier
+                        .size(FAVORITE_ICON_SIZE)
+                        .clickableNoRipple(onClick = it),
+                    imageVector = if (data.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = null,
+                    tint = if (data.isFavorite) {
+                        NotDjinniTheme.colors.error
+                    } else {
+                        NotDjinniTheme.colors.onSurface
+                    },
+                )
+            }
+        }
         VerticalSpacer(NotDjinniTheme.offsets.tiny)
         NotDjinniText(
             data = data.title,
@@ -71,3 +98,5 @@ fun VacancyCard(
         )
     }
 }
+
+private val FAVORITE_ICON_SIZE = 24.dp

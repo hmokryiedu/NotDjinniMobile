@@ -1,5 +1,8 @@
 package not.djinni.data.repository
 
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import not.djinni.domain.repository.FavoriteVacancyChange
 import not.djinni.domain.repository.VacancyRepository
 import not.djinni.model.seeker.vacancy.EmploymentType
 import not.djinni.model.seeker.vacancy.JobCategoryCode
@@ -18,6 +21,9 @@ class DefaultVacancyRepository(
     private val dataSource: VacancyDataSource,
 ) : VacancyRepository {
 
+    private val _favoriteVacancyChanges = MutableSharedFlow<FavoriteVacancyChange>(extraBufferCapacity = 1)
+    override val favoriteVacancyChanges = _favoriteVacancyChanges.asSharedFlow()
+
     override suspend fun getAllVacancies(query: String?) = runCatching {
         when (val response = dataSource.getAllVacancies(search = query)) {
             is NetworkResponse.Success -> response.data.vacancies.map(VacancyDetailsResponse::toDomain)
@@ -35,6 +41,33 @@ class DefaultVacancyRepository(
     override suspend fun getAppliedVacancies(): Result<List<Vacancy>> = runCatching {
         when (val response = dataSource.getAppliedVacancies()) {
             is NetworkResponse.Success -> response.data.vacancies.map(VacancyDetailsResponse::toDomain)
+            is NetworkResponse.Error -> throw Exception(response.error)
+        }
+    }
+
+    override suspend fun getFavoriteVacancies(): Result<List<Vacancy>> = runCatching {
+        when (val response = dataSource.getFavoriteVacancies()) {
+            is NetworkResponse.Success -> response.data.vacancies.map(VacancyDetailsResponse::toDomain)
+            is NetworkResponse.Error -> throw Exception(response.error)
+        }
+    }
+
+    override suspend fun addFavoriteVacancy(id: Long): Result<Unit> = runCatching {
+        when (val response = dataSource.addFavoriteVacancy(id)) {
+            is NetworkResponse.Success -> {
+                _favoriteVacancyChanges.emit(FavoriteVacancyChange(vacancyId = id, isFavorite = true))
+                Unit
+            }
+            is NetworkResponse.Error -> throw Exception(response.error)
+        }
+    }
+
+    override suspend fun removeFavoriteVacancy(id: Long): Result<Unit> = runCatching {
+        when (val response = dataSource.removeFavoriteVacancy(id)) {
+            is NetworkResponse.Success -> {
+                _favoriteVacancyChanges.emit(FavoriteVacancyChange(vacancyId = id, isFavorite = false))
+                Unit
+            }
             is NetworkResponse.Error -> throw Exception(response.error)
         }
     }

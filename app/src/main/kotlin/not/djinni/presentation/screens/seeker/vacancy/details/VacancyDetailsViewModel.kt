@@ -44,6 +44,7 @@ internal class VacancyDetailsViewModel(
             VacancyDetailsAction.Apply -> handleApply()
             VacancyDetailsAction.SeeApplication -> seeApplication()
             VacancyDetailsAction.NavigateBack -> _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateBack)
+            VacancyDetailsAction.ToggleFavorite -> toggleFavorite()
             VacancyDetailsAction.HideApplyBottomSheet -> updateState { copy(currentAlert = null) }
             is VacancyDetailsAction.SubmitApplication -> submitApplication(action.coverLetter)
         }
@@ -111,6 +112,32 @@ internal class VacancyDetailsViewModel(
         }
     }
 
+    private fun toggleFavorite() {
+        val contentState = mutableState.value.contentState
+        if (contentState !is VacancyDetailsContentState.Data) return
+        launch {
+            val vacancy = contentState.vacancy
+            val result = if (vacancy.isFavorite) {
+                vacancyRepository.removeFavoriteVacancy(vacancy.id)
+            } else {
+                vacancyRepository.addFavoriteVacancy(vacancy.id)
+            }
+            result.onSuccess {
+                updateState {
+                    val currentContentState = this.contentState
+                    if (currentContentState !is VacancyDetailsContentState.Data) return@updateState this
+                    copy(
+                        contentState = currentContentState.copy(
+                            vacancy = currentContentState.vacancy.copy(
+                                isFavorite = !currentContentState.vacancy.isFavorite
+                            )
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     private fun hideAlert() {
         updateState { copy(currentAlert = null) }
     }
@@ -148,7 +175,8 @@ internal class VacancyDetailsViewModel(
             employmentType = employmentType.toDisplayName(),
             requiredExperience = formatExperience(minExperienceYears),
             category = category?.toDisplayName(),
-            postedDate = createdAt.toFormattedFullDate().toTextData()
+            postedDate = createdAt.toFormattedFullDate().toTextData(),
+            isFavorite = isFavorite
         )
     }
 

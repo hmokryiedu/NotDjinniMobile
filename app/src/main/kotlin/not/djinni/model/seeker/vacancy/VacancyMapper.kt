@@ -25,6 +25,7 @@ fun VacancyDetailsResponse.toDomain(): Vacancy = Vacancy(
     employmentType = employmentType?.toDomain() ?: EmploymentType.FULL_TIME,
     category = category?.toDomain(),
     status = status.toDomain(),
+    isFavorite = isFavorite,
     createdAt = createdAt,
     updatedAt = updatedAt
 )

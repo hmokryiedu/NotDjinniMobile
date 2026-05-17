@@ -258,6 +258,9 @@
     <string name="applied_vacancies_title">Applied Vacancies</string>
     <string name="applied_vacancies_empty">No applied vacancies yet</string>
     <string name="applied_vacancies_error">Failed to load applied vacancies</string>
+    <string name="favorite_vacancies_title">Favorite Vacancies</string>
+    <string name="favorite_vacancies_empty">No favorite vacancies yet</string>
+    <string name="favorite_vacancies_error">Failed to load favorite vacancies</string>
 
     <!--Application Details (Seeker)-->
     <string name="application_seeker_salary">Salary: $%1$d - $%2$d</string>
