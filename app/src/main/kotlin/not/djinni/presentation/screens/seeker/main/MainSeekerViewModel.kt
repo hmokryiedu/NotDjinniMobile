@@ -46,11 +46,18 @@ internal class MainSeekerViewModel(
             is MainSeekerAction.OpenVacancy -> _sideEffect.tryEmit(
                 MainSeekerSideEffect.NavigateToVacancyDetails(action.vacancyId)
             )
+            is MainSeekerAction.ToggleFavorite -> toggleFavorite(
+                vacancyId = action.vacancyId,
+                isFavorite = action.isFavorite
+            )
             MainSeekerAction.OpenProfile -> _sideEffect.tryEmit(
                 MainSeekerSideEffect.NavigateToProfile
             )
             MainSeekerAction.OpenApplications -> _sideEffect.tryEmit(
                 MainSeekerSideEffect.NavigateToApplications
+            )
+            MainSeekerAction.OpenFavoriteVacancies -> _sideEffect.tryEmit(
+                MainSeekerSideEffect.NavigateToFavoriteVacancies
             )
         }
     }
@@ -93,6 +100,37 @@ internal class MainSeekerViewModel(
         }
     }
 
+    private fun toggleFavorite(vacancyId: Long, isFavorite: Boolean) {
+        launch {
+            val result = if (isFavorite) {
+                vacancyRepository.removeFavoriteVacancy(vacancyId)
+            } else {
+                vacancyRepository.addFavoriteVacancy(vacancyId)
+            }
+            result.onSuccess {
+                updateVacancyFavoriteState(vacancyId = vacancyId, isFavorite = !isFavorite)
+            }
+        }
+    }
+
+    private fun updateVacancyFavoriteState(vacancyId: Long, isFavorite: Boolean) {
+        updateState {
+            val contentState = vacanciesListState
+            if (contentState !is VacanciesListState.Data) return@updateState this
+            copy(
+                vacanciesListState = contentState.copy(
+                    vacancies = contentState.vacancies.map { vacancy ->
+                        if (vacancy.id == vacancyId) {
+                            vacancy.copy(isFavorite = isFavorite)
+                        } else {
+                            vacancy
+                        }
+                    }
+                )
+            )
+        }
+    }
+
     private fun Vacancy.toCardData(): VacancyCardData {
         val salaryRange =
             stringProvider.getString(R.string.vacancy_salary_range, salaryMin, salaryMax)
@@ -107,7 +145,8 @@ internal class MainSeekerViewModel(
             companyName = company.name.toTextData(),
             salaryRange = salaryRange.toTextData(),
             requiredExperience = minExperienceYears.toTextData(),
-            employmentType = employmentType.toDisplayName()
+            employmentType = employmentType.toDisplayName(),
+            isFavorite = isFavorite
         )
     }
 
@@ -115,4 +154,3 @@ internal class MainSeekerViewModel(
         const val SEARCH_DEBOUNCE_MS = 200L
     }
 }
-

@@ -31,6 +31,8 @@ import kotlin.time.Instant
     val category: JobCategoryCodeResponse?,
     @SerialName("status")
     val status: VacancyStatusCodeResponse,
+    @SerialName("is_favorite")
+    val isFavorite: Boolean = false,
     @SerialName("created_at")
     @Contextual
     val createdAt: Instant,

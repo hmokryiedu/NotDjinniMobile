@@ -4,4 +4,5 @@ internal sealed interface MainSeekerSideEffect {
     data class NavigateToVacancyDetails(val vacancyId: Long) : MainSeekerSideEffect
     data object NavigateToProfile : MainSeekerSideEffect
     data object NavigateToApplications : MainSeekerSideEffect
+    data object NavigateToFavoriteVacancies : MainSeekerSideEffect
 }

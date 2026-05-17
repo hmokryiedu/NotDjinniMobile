@@ -66,7 +66,8 @@ internal class MainEmployerViewModel(
             companyName = company.name.toTextData(),
             salaryRange = salaryRange.toTextData(),
             requiredExperience = experienceText.toTextData(),
-            employmentType = employmentType.toDisplayName()
+            employmentType = employmentType.toDisplayName(),
+            isFavorite = isFavorite
         )
     }
 }

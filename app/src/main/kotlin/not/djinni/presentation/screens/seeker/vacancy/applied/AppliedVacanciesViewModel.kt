@@ -74,7 +74,8 @@ internal class AppliedVacanciesViewModel(
             companyName = company.name.toTextData(),
             salaryRange = salaryRange.toTextData(),
             requiredExperience = minExperienceYears.toTextData(),
-            employmentType = employmentType.toDisplayName()
+            employmentType = employmentType.toDisplayName(),
+            isFavorite = isFavorite
         )
     }
 }

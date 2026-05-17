@@ -7,4 +7,5 @@ data class VacancyCardData(
     val salaryRange: TextData,
     val employmentType: TextData,
     val requiredExperience: TextData,
+    val isFavorite: Boolean = false,
 )
