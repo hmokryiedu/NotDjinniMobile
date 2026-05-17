@@ -15,7 +15,8 @@ import org.koin.core.annotation.Single
 
 @Single(binds = [VacancyDataSource::class])
 internal class DefaultVacancyDataSource(
-    @Named("authenticated") private val httpClient: HttpClient
+    @Named("authenticated") private val httpClient: HttpClient,
+    @Named("public") private val publicHttpClient: HttpClient,
 ) : VacancyDataSource {
 
     override suspend fun getAllVacancies(
@@ -30,6 +31,22 @@ internal class DefaultVacancyDataSource(
 
     override suspend fun getVacancyById(id: Long): NetworkResponse<VacancyDetailsResponse> {
         return httpClient
+            .get(Vacancy.ById(id = id))
+            .networkResponse<VacancyDetailsResponse>()
+    }
+
+    override suspend fun getPublicVacancies(
+        limit: Int,
+        offset: Int,
+        search: String?
+    ): NetworkResponse<VacancyListResponse> {
+        return publicHttpClient
+            .get(Vacancy(limit = limit, offset = offset, search = search))
+            .networkResponse<VacancyListResponse>()
+    }
+
+    override suspend fun getPublicVacancyById(id: Long): NetworkResponse<VacancyDetailsResponse> {
+        return publicHttpClient
             .get(Vacancy.ById(id = id))
             .networkResponse<VacancyDetailsResponse>()
     }

@@ -41,6 +41,7 @@ import not.djinni.presentation.theme.NotDjinniTheme
 @Composable
 fun AuthScreen(
     onNext: () -> Unit,
+    onPublic: () -> Unit,
 ) {
     Screen<AuthViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -57,7 +58,10 @@ fun AuthScreen(
         )
 
         viewModel.sideEffect.collectAsEffect { effect ->
-            if (effect is AuthSideEffect.NavigateNext) onNext()
+            when (effect) {
+                AuthSideEffect.NavigateNext -> onNext()
+                AuthSideEffect.NavigatePublic -> onPublic()
+            }
         }
     }
 }
@@ -149,6 +153,15 @@ private fun Content(
                 .align(Alignment.CenterHorizontally)
                 .clickableNoRipple { onAction(AuthAction.SwitchAuthType) },
             data = state.type.switchText,
+            style = NotDjinniTheme.typography.body3,
+            color = NotDjinniTheme.colors.onSurface,
+        )
+        VerticalSpacer(NotDjinniTheme.offsets.medium)
+        NotDjinniText(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .clickableNoRipple { onAction(AuthAction.ViewOnlyClicked) },
+            data = R.string.auth_view_only.toTextData(),
             style = NotDjinniTheme.typography.body3,
             color = NotDjinniTheme.colors.onSurface,
         )
