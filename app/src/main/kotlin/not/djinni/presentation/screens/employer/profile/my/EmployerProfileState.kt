@@ -10,4 +10,7 @@ internal data class EmployerProfileState(
     val profile: EmployerProfile? = null,
     val isLoading: Boolean = true,
     val hasError: Boolean = false,
+    val editingRole: String = "",
+    val isRoleDialogVisible: Boolean = false,
+    val isSavingRole: Boolean = false,
 )

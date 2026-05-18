@@ -1,5 +1,6 @@
 package not.djinni.presentation.screens.seeker.coverletter.templates
 
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asSharedFlow
 import not.djinni.R
 import not.djinni.core.extension.mutableSideEffect
@@ -150,10 +151,21 @@ internal class CoverLetterTemplatesViewModel(
 
     private fun applyTemplate() {
         val template = mutableState.value.selectedTemplate ?: return
-        _sideEffect.tryEmit(CoverLetterTemplatesSideEffect.ApplyTemplate(template.message))
+        launch {
+            updateState {
+                copy(
+                    selectedTemplate = null,
+                    isEditing = false,
+                    editingMessage = "",
+                )
+            }
+            delay(APPLY_TEMPLATE_NAVIGATION_DELAY_MS)
+            _sideEffect.tryEmit(CoverLetterTemplatesSideEffect.ApplyTemplate(template.message))
+        }
     }
 
     companion object {
         const val MIN_TEMPLATE_LENGTH = 10
+        private const val APPLY_TEMPLATE_NAVIGATION_DELAY_MS = 120L
     }
 }

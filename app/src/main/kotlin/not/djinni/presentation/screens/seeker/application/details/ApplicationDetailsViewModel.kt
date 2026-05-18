@@ -1,10 +1,12 @@
 package not.djinni.presentation.screens.seeker.application.details
 
 import kotlinx.coroutines.flow.asSharedFlow
+import not.djinni.R
 import not.djinni.core.extension.mutableSideEffect
 import not.djinni.domain.usecase.application.GetApplicationDetailsUseCase
 import not.djinni.domain.usecase.application.WithdrawApplicationUseCase
 import not.djinni.presentation.core.StateViewModel
+import not.djinni.presentation.core.components.base.model.SnackBarData
 import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.toTextData
 import org.koin.android.annotation.KoinViewModel
@@ -28,6 +30,11 @@ internal class ApplicationDetailsViewModel(
         when (action) {
             ApplicationDetailsAction.NavigateBack -> navigateBack()
             ApplicationDetailsAction.Withdraw -> withdraw()
+            ApplicationDetailsAction.ShowWithdrawSuccessSnackBar -> {
+                showSnackBar(
+                    SnackBarData(message = R.string.application_details_withdraw_success.toTextData())
+                )
+            }
         }
     }
 

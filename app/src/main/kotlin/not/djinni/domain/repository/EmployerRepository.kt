@@ -8,6 +8,7 @@ interface EmployerRepository {
     suspend fun getProfile(): EmployerProfile?
 
     suspend fun createProfile(companyId: Long, role: String): EmployerProfile
+    suspend fun updateProfileRole(role: String): EmployerProfile
 
     suspend fun getEmployerVacancies(): Result<List<Vacancy>>
 }

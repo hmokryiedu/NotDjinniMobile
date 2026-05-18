@@ -84,12 +84,6 @@ private fun BottomSheetContent(
             .padding(bottom = NotDjinniTheme.offsets.medium)
     ) {
         NotDjinniText(
-            data = R.string.apply_vacancy_title.toTextData(),
-            style = NotDjinniTheme.typography.title2,
-            color = NotDjinniTheme.colors.onSurface
-        )
-        VerticalSpacer(NotDjinniTheme.offsets.medium)
-        NotDjinniText(
             data = R.string.apply_vacancy_cover_letter_title.toTextData(),
             style = NotDjinniTheme.typography.body3,
             color = NotDjinniTheme.colors.onSurface

@@ -23,6 +23,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -168,13 +170,14 @@ private fun FavoritesButton(onClick: () -> Unit) {
             .size(PROFILE_BUTTON_SIZE)
             .clip(CircleShape)
             .background(NotDjinniTheme.colors.surfaceContainer)
+            .semantics { contentDescription = "Favorite vacancies" }
             .clickableNoRipple(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             modifier = Modifier.size(PROFILE_ICON_SIZE),
             imageVector = Icons.Filled.Favorite,
-            contentDescription = null,
+            contentDescription = "Favorite vacancies",
             tint = NotDjinniTheme.colors.onSurface
         )
     }
@@ -187,13 +190,14 @@ private fun ApplicationsButton(onClick: () -> Unit) {
             .size(PROFILE_BUTTON_SIZE)
             .clip(CircleShape)
             .background(NotDjinniTheme.colors.surfaceContainer)
+            .semantics { contentDescription = "Applications" }
             .clickableNoRipple(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             modifier = Modifier.size(PROFILE_ICON_SIZE),
             imageVector = Icons.Outlined.Description,
-            contentDescription = null,
+            contentDescription = "Applications",
             tint = NotDjinniTheme.colors.onSurface
         )
     }
@@ -206,13 +210,14 @@ private fun ProfileButton(onClick: () -> Unit) {
             .size(PROFILE_BUTTON_SIZE)
             .clip(CircleShape)
             .background(NotDjinniTheme.colors.surfaceContainer)
+            .semantics { contentDescription = "Profile" }
             .clickableNoRipple(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             modifier = Modifier.size(PROFILE_ICON_SIZE),
             imageVector = NotDjinniIcons.person,
-            contentDescription = null,
+            contentDescription = "Profile",
             tint = NotDjinniTheme.colors.onSurface
         )
     }

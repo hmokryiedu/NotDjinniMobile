@@ -2,6 +2,7 @@ package not.djinni.data.repository
 
 import not.djinni.data.mapper.toDomain
 import not.djinni.data.mapper.toRequest
+import not.djinni.data.mapper.toUpdateRequest
 import not.djinni.domain.repository.SeekerRepository
 import not.djinni.model.seeker.SeekerProfile
 import not.djinni.model.seeker.vacancy.toDomain
@@ -25,6 +26,13 @@ class DefaultSeekerRepository(
         return when (val response = remoteDataSource.createProfile(profile.toRequest())) {
             is NetworkResponse.Success -> response.data.toDomain()
             is NetworkResponse.Error -> throw Exception("Failed to create profile")
+        }
+    }
+
+    override suspend fun updateProfile(profile: SeekerProfile): SeekerProfile {
+        return when (val response = remoteDataSource.updateProfile(profile.toUpdateRequest())) {
+            is NetworkResponse.Success -> response.data.toDomain()
+            is NetworkResponse.Error -> throw Exception("Failed to update profile")
         }
     }
 

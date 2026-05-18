@@ -37,7 +37,6 @@ import not.djinni.presentation.core.components.base.NotDjinniLoader
 import not.djinni.presentation.core.components.base.NotDjinniText
 import not.djinni.presentation.core.components.base.VerticalSpacer
 import not.djinni.presentation.core.components.base.model.ButtonData
-import not.djinni.presentation.core.components.base.model.SnackBarData
 import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.clickableNoRipple
 import not.djinni.presentation.core.extension.collectAsEffect
@@ -105,9 +104,7 @@ internal fun VacancyDetailsScreen(
             when (effect) {
                 VacancyDetailsSideEffect.NavigateBack -> onNavigateBack()
                 VacancyDetailsSideEffect.ApplicationSuccess -> {
-                    viewModel.showSnackBar(
-                        SnackBarData(message = R.string.apply_vacancy_success.toTextData())
-                    )
+                    viewModel.sendAction(VacancyDetailsAction.ShowApplicationSuccessSnackBar)
                 }
                 is VacancyDetailsSideEffect.NavigateToCoverLetterTemplates -> {
                     onNavigateToCoverLetterTemplates(

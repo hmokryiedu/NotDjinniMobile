@@ -32,10 +32,15 @@ internal class SeekerProfileViewModel(
             SeekerProfileAction.ChangeRole -> {
                 _sideEffect.tryEmit(SeekerProfileSideEffect.NavigateToChooseRole)
             }
+            SeekerProfileAction.EditProfile -> {
+                _sideEffect.tryEmit(SeekerProfileSideEffect.NavigateToEditProfile)
+            }
             SeekerProfileAction.Logout -> logOut()
             SeekerProfileAction.Retry -> loadProfile()
         }
     }
+
+    fun refreshProfile() = loadProfile()
 
     private fun logOut() {
         launch {

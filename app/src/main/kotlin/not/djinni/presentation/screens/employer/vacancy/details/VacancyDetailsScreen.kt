@@ -3,6 +3,7 @@ package not.djinni.presentation.screens.employer.vacancy.details
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,6 +44,7 @@ internal fun VacancyDetailsScreen(
     vacancyId: Long,
     onNavigateBack: () -> Unit,
     onNavigateToApplications: (Long) -> Unit,
+    onNavigateToDuplicate: (Long) -> Unit,
 ) {
     Screen<VacancyDetailsViewModel>(
         parameters = { parametersOf(vacancyId) }
@@ -55,6 +59,7 @@ internal fun VacancyDetailsScreen(
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
                 VacancyDetailsSideEffect.NavigateBack -> onNavigateBack()
+                is VacancyDetailsSideEffect.NavigateToDuplicate -> onNavigateToDuplicate(effect.vacancyId)
                 is VacancyDetailsSideEffect.NavigateToApplications -> onNavigateToApplications(
                     effect.vacancyId
                 )
@@ -69,7 +74,10 @@ private fun Content(
     onAction: (VacancyDetailsAction) -> Unit = {},
 ) {
     FullscreenColumn {
-        TopBar(onBack = { onAction(VacancyDetailsAction.NavigateBack) })
+        TopBar(
+            onBack = { onAction(VacancyDetailsAction.NavigateBack) },
+            onDuplicate = { onAction(VacancyDetailsAction.Duplicate) }
+        )
         when (val contentState = state.contentState) {
             is VacancyDetailsContentState.Loading -> LoadingContent()
             is VacancyDetailsContentState.Error -> ErrorContent(
@@ -86,7 +94,10 @@ private fun Content(
 }
 
 @Composable
-private fun TopBar(onBack: () -> Unit) {
+private fun TopBar(
+    onBack: () -> Unit,
+    onDuplicate: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,6 +117,15 @@ private fun TopBar(onBack: () -> Unit) {
             data = R.string.vacancy_details_title.toTextData(),
             style = NotDjinniTheme.typography.title2,
             color = NotDjinniTheme.colors.onBackground
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Icon(
+            modifier = Modifier
+                .size(ICON_SIZE)
+                .clickableNoRipple(onClick = onDuplicate),
+            imageVector = Icons.Filled.ContentCopy,
+            contentDescription = null,
+            tint = NotDjinniTheme.colors.onBackground
         )
     }
 }

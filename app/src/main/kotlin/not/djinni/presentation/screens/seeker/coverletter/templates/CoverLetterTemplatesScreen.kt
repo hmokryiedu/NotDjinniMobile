@@ -18,7 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
-import androidx.compose.material3.TextButton
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -150,7 +150,7 @@ private fun TemplateItem(
                 shape = NotDjinniTheme.shapes.small
             )
             .background(
-                color = NotDjinniTheme.colors.primary.copy(alpha = TEMPLATE_ITEM_BACKGROUND_ALPHA),
+                color = NotDjinniTheme.colors.highlightedContainer,
                 shape = NotDjinniTheme.shapes.small
             )
             .clickable(onClick = onClick)
@@ -220,6 +220,7 @@ private fun TemplateDialog(
     if (state.selectedTemplate == null && !state.isEditing) return
     AlertDialog(
         onDismissRequest = { onAction(CoverLetterTemplatesAction.DismissDialog) },
+        properties = DialogProperties(dismissOnClickOutside = true),
         containerColor = NotDjinniTheme.colors.surface,
         titleContentColor = NotDjinniTheme.colors.onSurface,
         textContentColor = NotDjinniTheme.colors.onSurface,
@@ -265,30 +266,29 @@ private fun TemplateDialog(
         confirmButton = {
             when {
                 state.isEditing -> {
-                    TextButton(
-                        enabled = state.editingMessage.trim().length >= CoverLetterTemplatesViewModel.MIN_TEMPLATE_LENGTH,
+                    NotDjinniButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        data = ButtonData(
+                            text = R.string.save.toTextData(),
+                            enabled = state.editingMessage.trim().length >= CoverLetterTemplatesViewModel.MIN_TEMPLATE_LENGTH
+                        ),
                         onClick = { onAction(CoverLetterTemplatesAction.Save) }
-                    ) {
-                        NotDjinniText(
-                            data = R.string.save.toTextData(),
-                            style = NotDjinniTheme.typography.body2,
-                            color = NotDjinniTheme.colors.primary
-                        )
-                    }
+                    )
                 }
                 state.selectedTemplate != null -> {
-                    TextButton(onClick = { onAction(CoverLetterTemplatesAction.StartEdit) }) {
-                        NotDjinniText(
-                            data = R.string.edit.toTextData(),
-                            style = NotDjinniTheme.typography.body2,
-                            color = NotDjinniTheme.colors.primary
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(NotDjinniTheme.offsets.small)
+                    ) {
+                        NotDjinniButton(
+                            modifier = Modifier.weight(1f),
+                            data = ButtonData(text = R.string.edit.toTextData()),
+                            onClick = { onAction(CoverLetterTemplatesAction.StartEdit) }
                         )
-                    }
-                    TextButton(onClick = { onAction(CoverLetterTemplatesAction.Apply) }) {
-                        NotDjinniText(
-                            data = R.string.apply.toTextData(),
-                            style = NotDjinniTheme.typography.body2,
-                            color = NotDjinniTheme.colors.primary
+                        NotDjinniButton(
+                            modifier = Modifier.weight(1f),
+                            data = ButtonData(text = R.string.apply.toTextData()),
+                            onClick = { onAction(CoverLetterTemplatesAction.Apply) }
                         )
                     }
                 }
@@ -297,5 +297,3 @@ private fun TemplateDialog(
         dismissButton = null
     )
 }
-
-private const val TEMPLATE_ITEM_BACKGROUND_ALPHA = 0.3f

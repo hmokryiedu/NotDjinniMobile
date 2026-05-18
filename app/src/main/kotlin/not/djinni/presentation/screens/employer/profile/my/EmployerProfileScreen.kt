@@ -11,12 +11,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import not.djinni.R
 import not.djinni.model.User
@@ -28,7 +34,9 @@ import not.djinni.presentation.core.components.base.HorizontalSpacer
 import not.djinni.presentation.core.components.base.NotDjinniButton
 import not.djinni.presentation.core.components.base.NotDjinniLoader
 import not.djinni.presentation.core.components.base.NotDjinniText
+import not.djinni.presentation.core.components.base.NotDjinniTextField
 import not.djinni.presentation.core.components.base.VerticalSpacer
+import not.djinni.presentation.core.components.base.buildDefaultTextFieldDecorator
 import not.djinni.presentation.core.components.base.model.ButtonData
 import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.clickableNoRipple
@@ -38,7 +46,6 @@ import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
 internal fun EmployerProfileScreen(
-    onChangeRole: () -> Unit,
     onLogout: () -> Unit,
 ) {
     Screen<EmployerProfileViewModel> { viewModel ->
@@ -51,7 +58,6 @@ internal fun EmployerProfileScreen(
 
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
-                EmployerProfileSideEffect.NavigateToChooseRole -> onChangeRole()
                 EmployerProfileSideEffect.NavigateToAuth -> onLogout()
             }
         }
@@ -72,8 +78,11 @@ private fun Content(
             else -> ProfileContent(
                 user = state.user ?: return@FullscreenColumn,
                 profile = state.profile ?: return@FullscreenColumn,
-                onChangeRole = { onAction(EmployerProfileAction.ChangeRole) }
+                onChangeRole = { onAction(EmployerProfileAction.ShowRoleEditor) }
             )
+        }
+        if (state.isRoleDialogVisible) {
+            RoleEditDialog(state = state, onAction = onAction)
         }
     }
 }
@@ -97,6 +106,67 @@ private fun ProfileHeader(onLogout: () -> Unit) {
             color = NotDjinniTheme.colors.error,
         )
     }
+}
+
+@Composable
+private fun RoleEditDialog(
+    state: EmployerProfileState,
+    onAction: (EmployerProfileAction) -> Unit,
+) {
+    val roleFieldState = rememberTextFieldState()
+    LaunchedEffect(state.editingRole) {
+        if (roleFieldState.text.toString() != state.editingRole) {
+            roleFieldState.setTextAndPlaceCursorAtEnd(state.editingRole)
+        }
+    }
+    LaunchedEffect(Unit) {
+        snapshotFlow { roleFieldState.text.toString() }
+            .collect { onAction(EmployerProfileAction.UpdateEditingRole(it)) }
+    }
+
+    AlertDialog(
+        onDismissRequest = { onAction(EmployerProfileAction.DismissRoleEditor) },
+        properties = DialogProperties(dismissOnClickOutside = true),
+        containerColor = NotDjinniTheme.colors.surface,
+        titleContentColor = NotDjinniTheme.colors.onSurface,
+        textContentColor = NotDjinniTheme.colors.onSurface,
+        title = {
+            NotDjinniText(
+                data = R.string.profile_change_role.toTextData(),
+                style = NotDjinniTheme.typography.title2,
+                color = NotDjinniTheme.colors.onSurface,
+            )
+        },
+        text = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                NotDjinniText(
+                    data = R.string.profile_role.toTextData(),
+                    style = NotDjinniTheme.typography.body3,
+                    color = NotDjinniTheme.colors.onSurface,
+                )
+                VerticalSpacer(NotDjinniTheme.offsets.tiny)
+                NotDjinniTextField(
+                    state = roleFieldState,
+                    decorator = buildDefaultTextFieldDecorator(
+                        state = roleFieldState,
+                        placeholder = R.string.profile_role.toTextData(),
+                        textStyle = NotDjinniTheme.typography.body1.copy(color = NotDjinniTheme.colors.onSurface),
+                    ),
+                )
+            }
+        },
+        confirmButton = {
+            NotDjinniButton(
+                modifier = Modifier.fillMaxWidth(),
+                data = ButtonData(
+                    text = R.string.save.toTextData(),
+                    isLoading = state.isSavingRole,
+                ),
+                onClick = { onAction(EmployerProfileAction.SaveRole) }
+            )
+        },
+        dismissButton = null,
+    )
 }
 
 @Composable

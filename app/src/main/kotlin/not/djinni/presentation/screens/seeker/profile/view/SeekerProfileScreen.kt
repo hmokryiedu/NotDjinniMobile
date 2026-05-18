@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -45,10 +46,15 @@ import androidx.compose.material3.Icon
 internal fun SeekerProfileScreen(
     onBack: () -> Unit,
     onChangeRole: () -> Unit,
+    onEditProfile: () -> Unit,
     onLogout: () -> Unit,
+    isProfileUpdated: Boolean,
 ) {
     Screen<SeekerProfileViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
+        LaunchedEffect(isProfileUpdated) {
+            if (isProfileUpdated) viewModel.refreshProfile()
+        }
 
         Content(
             state = state,
@@ -59,6 +65,7 @@ internal fun SeekerProfileScreen(
             when (effect) {
                 SeekerProfileSideEffect.NavigateBack -> onBack()
                 SeekerProfileSideEffect.NavigateToChooseRole -> onChangeRole()
+                SeekerProfileSideEffect.NavigateToEditProfile -> onEditProfile()
                 SeekerProfileSideEffect.NavigateToAuth -> onLogout()
             }
         }
@@ -82,6 +89,7 @@ private fun Content(
             else -> ProfileContent(
                 user = state.user ?: return@FullscreenColumn,
                 profile = state.profile ?: return@FullscreenColumn,
+                onEditProfile = { onAction(SeekerProfileAction.EditProfile) },
                 onChangeRole = { onAction(SeekerProfileAction.ChangeRole) }
             )
         }
@@ -156,6 +164,7 @@ private fun ErrorContent(onRetry: () -> Unit) {
 private fun ProfileContent(
     user: User,
     profile: SeekerProfile,
+    onEditProfile: () -> Unit,
     onChangeRole: () -> Unit,
 ) {
     Column(
@@ -218,6 +227,12 @@ private fun ProfileContent(
             )
         }
         VerticalSpacer(NotDjinniTheme.offsets.large)
+        NotDjinniButton(
+            modifier = Modifier.fillMaxWidth(),
+            data = ButtonData(text = R.string.edit.toTextData()),
+            onClick = onEditProfile
+        )
+        VerticalSpacer(NotDjinniTheme.offsets.small)
         NotDjinniButton(
             modifier = Modifier.fillMaxWidth(),
             data = ButtonData(text = R.string.profile_change_role.toTextData()),

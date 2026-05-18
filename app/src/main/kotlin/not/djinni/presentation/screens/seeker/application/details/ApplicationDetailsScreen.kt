@@ -34,7 +34,6 @@ import not.djinni.presentation.core.components.base.NotDjinniButton
 import not.djinni.presentation.core.components.base.NotDjinniText
 import not.djinni.presentation.core.components.base.VerticalSpacer
 import not.djinni.presentation.core.components.base.model.ButtonData
-import not.djinni.presentation.core.components.base.model.SnackBarData
 import not.djinni.presentation.core.extension.clickableNoRipple
 import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.core.extension.toTextData
@@ -64,9 +63,7 @@ internal fun ApplicationDetailsScreen(
             when (effect) {
                 ApplicationDetailsSideEffect.NavigateBack -> onNavigateBack()
                 ApplicationDetailsSideEffect.WithdrawSuccess -> {
-                    viewModel.showSnackBar(
-                        SnackBarData(message = R.string.application_details_withdraw_success.toTextData())
-                    )
+                    viewModel.sendAction(ApplicationDetailsAction.ShowWithdrawSuccessSnackBar)
                 }
             }
         }

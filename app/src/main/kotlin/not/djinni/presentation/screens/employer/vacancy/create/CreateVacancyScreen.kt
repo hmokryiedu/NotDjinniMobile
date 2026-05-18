@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -43,13 +44,17 @@ import not.djinni.presentation.screens.employer.vacancy.create.components.Employ
 import not.djinni.presentation.screens.employer.vacancy.create.components.JobCategoryBottomSheet
 import not.djinni.presentation.theme.NotDjinniIcons
 import not.djinni.presentation.theme.NotDjinniTheme
+import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun CreateVacancyScreen(
+    sourceVacancyId: Long?,
     onNavigateBack: () -> Unit,
     onNavigateToDetails: (Long) -> Unit,
 ) {
-    Screen<CreateVacancyViewModel> { viewModel ->
+    Screen<CreateVacancyViewModel>(
+        parameters = { parametersOf(sourceVacancyId) }
+    ) { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
 
         Content(
@@ -97,136 +102,138 @@ private fun Content(
     state: CreateVacancyState,
     onAction: (CreateVacancyAction) -> Unit = {},
 ) {
-    val titleState = rememberTextFieldState()
-    val descriptionState = rememberTextFieldState()
-    val salaryMinState = rememberTextFieldState()
-    val salaryMaxState = rememberTextFieldState()
-    val experienceState = rememberTextFieldState()
+    key(state.prefillVersion) {
+        val titleState = rememberTextFieldState(state.title)
+        val descriptionState = rememberTextFieldState(state.description)
+        val salaryMinState = rememberTextFieldState(state.salaryMin)
+        val salaryMaxState = rememberTextFieldState(state.salaryMax)
+        val experienceState = rememberTextFieldState(state.experienceYears)
 
-    FullscreenColumn {
-        TopBar()
-        Column(
-            modifier = Modifier
-                .imePadding()
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-        ) {
-            VerticalSpacer(NotDjinniTheme.offsets.medium)
-            NotDjinniText(
-                data = R.string.create_vacancy_job_title.toTextData(),
-                style = NotDjinniTheme.typography.body3,
-                color = NotDjinniTheme.colors.onBackground
-            )
-            VerticalSpacer(NotDjinniTheme.offsets.tiny)
-            NotDjinniTextField(
-                modifier = Modifier.fillMaxWidth(),
-                state = titleState,
-                placeholder = R.string.create_vacancy_job_title_hint.toTextData()
-            )
-            VerticalSpacer(NotDjinniTheme.offsets.medium)
-            NotDjinniText(
-                data = R.string.create_vacancy_description.toTextData(),
-                style = NotDjinniTheme.typography.body3,
-                color = NotDjinniTheme.colors.onBackground
-            )
-            VerticalSpacer(NotDjinniTheme.offsets.tiny)
-            NotDjinniTextField(
-                modifier = Modifier.fillMaxWidth(),
-                state = descriptionState,
-                lineLimits = TextFieldLineLimits.MultiLine(
-                    minHeightInLines = DESCRIPTION_MIN_LINES,
-                    maxHeightInLines = DESCRIPTION_MAX_LINES
-                ),
-                placeholder = R.string.create_vacancy_description_hint.toTextData()
-            )
-            VerticalSpacer(NotDjinniTheme.offsets.medium)
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.weight(1f)) {
-                    NotDjinniText(
-                        data = R.string.create_vacancy_salary_min.toTextData(),
-                        style = NotDjinniTheme.typography.body3,
-                        color = NotDjinniTheme.colors.onBackground
-                    )
-                    VerticalSpacer(NotDjinniTheme.offsets.tiny)
-                    NotDjinniTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = salaryMinState,
-                        outputTransformation = { if (originalText.isNotEmpty()) append("$") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        placeholder = R.string.create_vacancy_salary_min_hint.toTextData()
-                    )
-                }
-                HorizontalSpacer(NotDjinniTheme.offsets.medium)
-                Column(modifier = Modifier.weight(1f)) {
-                    NotDjinniText(
-                        data = R.string.create_vacancy_salary_max.toTextData(),
-                        style = NotDjinniTheme.typography.body3,
-                        color = NotDjinniTheme.colors.onBackground
-                    )
-                    VerticalSpacer(NotDjinniTheme.offsets.tiny)
-                    NotDjinniTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = salaryMaxState,
-                        outputTransformation = { if (originalText.isNotEmpty()) append("$") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        placeholder = R.string.create_vacancy_salary_max_hint.toTextData()
-                    )
-                }
-            }
-            VerticalSpacer(NotDjinniTheme.offsets.medium)
-            NotDjinniText(
-                data = R.string.create_vacancy_experience_years.toTextData(),
-                style = NotDjinniTheme.typography.body3,
-                color = NotDjinniTheme.colors.onBackground
-            )
-            VerticalSpacer(NotDjinniTheme.offsets.tiny)
-            NotDjinniTextField(
-                modifier = Modifier.fillMaxWidth(),
-                state = experienceState,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                placeholder = R.string.create_vacancy_experience_years_hint.toTextData()
-            )
-            VerticalSpacer(NotDjinniTheme.offsets.medium)
-            NotDjinniText(
-                data = R.string.create_vacancy_employment_type.toTextData(),
-                style = NotDjinniTheme.typography.body3,
-                color = NotDjinniTheme.colors.onBackground
-            )
-            VerticalSpacer(NotDjinniTheme.offsets.tiny)
-            SelectableField(
-                value = state.selectedEmploymentType?.toDisplayName(),
-                placeholder = R.string.create_vacancy_employment_type_hint.toTextData(),
-                onClick = { onAction(CreateVacancyAction.ShowEmploymentTypeSheet) }
-            )
-            VerticalSpacer(NotDjinniTheme.offsets.medium)
-            NotDjinniText(
-                data = R.string.create_vacancy_category.toTextData(),
-                style = NotDjinniTheme.typography.body3,
-                color = NotDjinniTheme.colors.onBackground
-            )
-            VerticalSpacer(NotDjinniTheme.offsets.tiny)
-            SelectableField(
-                value = state.selectedCategory?.toDisplayName(),
-                placeholder = R.string.create_vacancy_category_hint.toTextData(),
-                onClick = { onAction(CreateVacancyAction.ShowCategorySheet) }
-            )
-        }
-        VerticalSpacer(NotDjinniTheme.offsets.medium)
-        NotDjinniButton(
-            modifier = Modifier.fillMaxWidth(),
-            data = ButtonData(text = R.string.create_vacancy_submit.toTextData()),
-            onClick = {
-                val action = CreateVacancyAction.SubmitVacancy(
-                    title = titleState.text.toString(),
-                    description = descriptionState.text.toString(),
-                    salaryMin = salaryMinState.text.toString(),
-                    salaryMax = salaryMaxState.text.toString(),
-                    experienceYears = experienceState.text.toString(),
+        FullscreenColumn {
+            TopBar()
+            Column(
+                modifier = Modifier
+                    .imePadding()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                VerticalSpacer(NotDjinniTheme.offsets.medium)
+                NotDjinniText(
+                    data = R.string.create_vacancy_job_title.toTextData(),
+                    style = NotDjinniTheme.typography.body3,
+                    color = NotDjinniTheme.colors.onBackground
                 )
-                onAction(action)
+                VerticalSpacer(NotDjinniTheme.offsets.tiny)
+                NotDjinniTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = titleState,
+                    placeholder = R.string.create_vacancy_job_title_hint.toTextData()
+                )
+                VerticalSpacer(NotDjinniTheme.offsets.medium)
+                NotDjinniText(
+                    data = R.string.create_vacancy_description.toTextData(),
+                    style = NotDjinniTheme.typography.body3,
+                    color = NotDjinniTheme.colors.onBackground
+                )
+                VerticalSpacer(NotDjinniTheme.offsets.tiny)
+                NotDjinniTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = descriptionState,
+                    lineLimits = TextFieldLineLimits.MultiLine(
+                        minHeightInLines = DESCRIPTION_MIN_LINES,
+                        maxHeightInLines = DESCRIPTION_MAX_LINES
+                    ),
+                    placeholder = R.string.create_vacancy_description_hint.toTextData()
+                )
+                VerticalSpacer(NotDjinniTheme.offsets.medium)
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        NotDjinniText(
+                            data = R.string.create_vacancy_salary_min.toTextData(),
+                            style = NotDjinniTheme.typography.body3,
+                            color = NotDjinniTheme.colors.onBackground
+                        )
+                        VerticalSpacer(NotDjinniTheme.offsets.tiny)
+                        NotDjinniTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            state = salaryMinState,
+                            outputTransformation = { if (originalText.isNotEmpty()) append("$") },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            placeholder = R.string.create_vacancy_salary_min_hint.toTextData()
+                        )
+                    }
+                    HorizontalSpacer(NotDjinniTheme.offsets.medium)
+                    Column(modifier = Modifier.weight(1f)) {
+                        NotDjinniText(
+                            data = R.string.create_vacancy_salary_max.toTextData(),
+                            style = NotDjinniTheme.typography.body3,
+                            color = NotDjinniTheme.colors.onBackground
+                        )
+                        VerticalSpacer(NotDjinniTheme.offsets.tiny)
+                        NotDjinniTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            state = salaryMaxState,
+                            outputTransformation = { if (originalText.isNotEmpty()) append("$") },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            placeholder = R.string.create_vacancy_salary_max_hint.toTextData()
+                        )
+                    }
+                }
+                VerticalSpacer(NotDjinniTheme.offsets.medium)
+                NotDjinniText(
+                    data = R.string.create_vacancy_experience_years.toTextData(),
+                    style = NotDjinniTheme.typography.body3,
+                    color = NotDjinniTheme.colors.onBackground
+                )
+                VerticalSpacer(NotDjinniTheme.offsets.tiny)
+                NotDjinniTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = experienceState,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    placeholder = R.string.create_vacancy_experience_years_hint.toTextData()
+                )
+                VerticalSpacer(NotDjinniTheme.offsets.medium)
+                NotDjinniText(
+                    data = R.string.create_vacancy_employment_type.toTextData(),
+                    style = NotDjinniTheme.typography.body3,
+                    color = NotDjinniTheme.colors.onBackground
+                )
+                VerticalSpacer(NotDjinniTheme.offsets.tiny)
+                SelectableField(
+                    value = state.selectedEmploymentType?.toDisplayName(),
+                    placeholder = R.string.create_vacancy_employment_type_hint.toTextData(),
+                    onClick = { onAction(CreateVacancyAction.ShowEmploymentTypeSheet) }
+                )
+                VerticalSpacer(NotDjinniTheme.offsets.medium)
+                NotDjinniText(
+                    data = R.string.create_vacancy_category.toTextData(),
+                    style = NotDjinniTheme.typography.body3,
+                    color = NotDjinniTheme.colors.onBackground
+                )
+                VerticalSpacer(NotDjinniTheme.offsets.tiny)
+                SelectableField(
+                    value = state.selectedCategory?.toDisplayName(),
+                    placeholder = R.string.create_vacancy_category_hint.toTextData(),
+                    onClick = { onAction(CreateVacancyAction.ShowCategorySheet) }
+                )
             }
-        )
-        VerticalSpacer(NotDjinniTheme.offsets.medium)
+            VerticalSpacer(NotDjinniTheme.offsets.medium)
+            NotDjinniButton(
+                modifier = Modifier.fillMaxWidth(),
+                data = ButtonData(text = R.string.create_vacancy_submit.toTextData()),
+                onClick = {
+                    val action = CreateVacancyAction.SubmitVacancy(
+                        title = titleState.text.toString(),
+                        description = descriptionState.text.toString(),
+                        salaryMin = salaryMinState.text.toString(),
+                        salaryMax = salaryMaxState.text.toString(),
+                        experienceYears = experienceState.text.toString(),
+                    )
+                    onAction(action)
+                }
+            )
+            VerticalSpacer(NotDjinniTheme.offsets.medium)
+        }
     }
 }
 

@@ -26,11 +26,33 @@ internal class EmployerProfileViewModel(
 
     fun sendAction(action: EmployerProfileAction) {
         when (action) {
-            EmployerProfileAction.ChangeRole -> {
-                _sideEffect.tryEmit(EmployerProfileSideEffect.NavigateToChooseRole)
+            EmployerProfileAction.ShowRoleEditor -> updateState {
+                copy(
+                    isRoleDialogVisible = true,
+                    editingRole = profile?.role.orEmpty(),
+                )
             }
+            EmployerProfileAction.DismissRoleEditor -> updateState { copy(isRoleDialogVisible = false) }
+            is EmployerProfileAction.UpdateEditingRole -> updateState { copy(editingRole = action.value) }
+            EmployerProfileAction.SaveRole -> saveRole()
             EmployerProfileAction.Logout -> logOut()
             EmployerProfileAction.Retry -> loadProfile()
+        }
+    }
+
+    private fun saveRole() {
+        val role = state.value.editingRole.trim()
+        if (role.isBlank()) return
+        launch {
+            updateState { copy(isSavingRole = true) }
+            val profile = employerRepository.updateProfileRole(role)
+            updateState {
+                copy(
+                    profile = profile,
+                    isRoleDialogVisible = false,
+                    isSavingRole = false
+                )
+            }
         }
     }
 

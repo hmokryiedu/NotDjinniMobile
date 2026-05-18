@@ -25,7 +25,7 @@ fun EntryProviderScope<Screens>.employerEntry(
                 controller.navigate(Screens.Employer.VacancyDetails(vacancyId = vacancyId))
             },
             onProfileClick = { controller.navigate(Screens.Employer.Profile) },
-            onCreateVacancyClick = { controller.navigate(Screens.Employer.CreateVacancy) }
+            onCreateVacancyClick = { controller.navigate(Screens.Employer.CreateVacancy()) }
         )
     }
     entry<Screens.Employer.VacancyDetails> { entry ->
@@ -34,7 +34,10 @@ fun EntryProviderScope<Screens>.employerEntry(
             onNavigateBack = { controller.popBackStack() },
             onNavigateToApplications = { vacancyId ->
                 controller.navigate(Screens.Employer.VacancyApplications(vacancyId = vacancyId))
-            }
+            },
+            onNavigateToDuplicate = { vacancyId ->
+                controller.navigate(Screens.Employer.CreateVacancy(sourceVacancyId = vacancyId))
+            },
         )
     }
     entry<Screens.Employer.VacancyApplications> { entry ->
@@ -55,8 +58,9 @@ fun EntryProviderScope<Screens>.employerEntry(
             }
         )
     }
-    entry<Screens.Employer.CreateVacancy> {
+    entry<Screens.Employer.CreateVacancy> { entry ->
         CreateVacancyScreen(
+            sourceVacancyId = entry.sourceVacancyId,
             onNavigateBack = { controller.popBackStack() },
             onNavigateToDetails = { vacancyId ->
                 controller.popUpTo(
@@ -71,7 +75,6 @@ fun EntryProviderScope<Screens>.employerEntry(
     }
     entry<Screens.Employer.Profile> {
         EmployerProfileScreen(
-            onChangeRole = { controller.replaceAll(Screens.ChooseRole) },
             onLogout = { controller.replaceAll(Screens.Auth) }
         )
     }

@@ -93,12 +93,13 @@ internal class CreateSeekerProfileViewModel(
                 jobCategory = selectedCategory,
                 workExperience = state.value.workExperiences.map {
                     WorkExperience(
-                        id = 0,
+                        id = null,
                         position = it.position,
                         companyName = it.companyName,
                         description = it.description,
                         startDate = it.startDate,
                         endDate = it.endDate,
+                        isCurrent = false,
                     )
                 }
             )

@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import not.djinni.presentation.core.components.base.model.VacancyCardData
 import not.djinni.presentation.core.extension.clickableNoRipple
@@ -51,11 +52,15 @@ fun VacancyCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             NotDjinniText(
+                modifier = Modifier.weight(1f),
                 data = data.companyName,
                 style = NotDjinniTheme.typography.body2,
                 color = NotDjinniTheme.colors.onBackground.copy(alpha = 0.7f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             onFavoriteClick?.let {
+                HorizontalSpacer(NotDjinniTheme.offsets.tiny)
                 Icon(
                     modifier = Modifier
                         .size(FAVORITE_ICON_SIZE)

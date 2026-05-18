@@ -33,6 +33,7 @@ internal class VacancyDetailsViewModel(
         when (action) {
             VacancyDetailsAction.Retry -> loadVacancyDetails()
             VacancyDetailsAction.NavigateBack -> _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateBack)
+            VacancyDetailsAction.Duplicate -> _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateToDuplicate(vacancyId))
             VacancyDetailsAction.ViewApplications -> _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateToApplications(vacancyId))
         }
     }

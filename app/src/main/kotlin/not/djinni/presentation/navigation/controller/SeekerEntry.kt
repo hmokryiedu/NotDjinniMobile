@@ -8,6 +8,8 @@ import not.djinni.presentation.screens.seeker.application.details.ApplicationDet
 import not.djinni.presentation.screens.seeker.application.list.ViewApplicationsScreen
 import not.djinni.presentation.screens.seeker.main.MainSeekerScreen
 import not.djinni.presentation.screens.seeker.profile.create.CreateSeekerProfileScreen
+import not.djinni.presentation.screens.seeker.profile.edit.EditSeekerProfileScreen
+import not.djinni.presentation.screens.seeker.profile.edit.ProfileEditResultContract
 import not.djinni.presentation.screens.seeker.profile.view.SeekerProfileScreen
 import not.djinni.presentation.screens.seeker.vacancy.all.AllVacanciesScreen
 import not.djinni.presentation.screens.seeker.vacancy.details.coverletter.CoverLetterResultContract
@@ -102,10 +104,25 @@ fun EntryProviderScope<Screens>.seekerEntry(
         )
     }
     entry<Screens.Seeker.Profile> {
+        val editResultKey = NavResultKey(
+            id = "seeker_profile_edited",
+            contract = ProfileEditResultContract
+        )
         SeekerProfileScreen(
             onBack = controller::popBackStack,
             onChangeRole = { controller.replaceAll(Screens.ChooseRole) },
-            onLogout = { controller.replaceAll(Screens.Auth) }
+            onEditProfile = { controller.navigateForResult(Screens.Seeker.EditProfile, editResultKey) },
+            onLogout = { controller.replaceAll(Screens.Auth) },
+            isProfileUpdated = controller.consumeResult(editResultKey) == true,
+        )
+    }
+    entry<Screens.Seeker.EditProfile> {
+        val resultKey = NavResultKey(
+            id = "seeker_profile_edited",
+            contract = ProfileEditResultContract
+        )
+        EditSeekerProfileScreen(
+            onBack = { controller.popWithResult(resultKey, true) }
         )
     }
 }

@@ -10,4 +10,5 @@ internal sealed interface VacancyDetailsAction {
     data class OpenCoverLetterTemplates(val resultKeyId: String) : VacancyDetailsAction
     data class ApplyCoverLetterTemplate(val coverLetter: String) : VacancyDetailsAction
     data class SubmitApplication(val coverLetter: String?) : VacancyDetailsAction
+    data object ShowApplicationSuccessSnackBar : VacancyDetailsAction
 }

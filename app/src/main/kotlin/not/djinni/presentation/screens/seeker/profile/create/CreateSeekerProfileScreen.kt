@@ -398,34 +398,36 @@ private fun DatePickerAlert(
                 DatePickerDefaults.YearMonthSkeleton
             ),
             colors = DatePickerDefaults.colors(
-                headlineContentColor = NotDjinniTheme.colors.onPrimary,
+                containerColor = NotDjinniTheme.colors.background,
+                titleContentColor = NotDjinniTheme.colors.onBackground,
+                headlineContentColor = NotDjinniTheme.colors.onBackground,
+                weekdayContentColor = NotDjinniTheme.colors.onSurface,
+                subheadContentColor = NotDjinniTheme.colors.onSurface,
                 dayInSelectionRangeContainerColor = NotDjinniTheme.colors.primary.copy(
                     alpha = 0.1f
                 ),
-                dayInSelectionRangeContentColor = NotDjinniTheme.colors.onPrimary.copy(
-                    alpha = 0.1f
-                ),
-                todayDateBorderColor = NotDjinniTheme.colors.onPrimary,
-                dividerColor = NotDjinniTheme.colors.onPrimary.copy(alpha = 0.5f),
+                dayInSelectionRangeContentColor = NotDjinniTheme.colors.onSurface,
+                todayDateBorderColor = NotDjinniTheme.colors.onSurface,
+                dividerColor = NotDjinniTheme.colors.onSurface.copy(alpha = 0.5f),
                 dateTextFieldColors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = NotDjinniTheme.colors.onPrimary,
-                    unfocusedIndicatorColor = NotDjinniTheme.colors.onPrimary,
-                    focusedLabelColor = NotDjinniTheme.colors.onPrimary,
-                    unfocusedLabelColor = NotDjinniTheme.colors.onPrimary,
-                    cursorColor = NotDjinniTheme.colors.onPrimary,
+                    focusedIndicatorColor = NotDjinniTheme.colors.onSurface,
+                    unfocusedIndicatorColor = NotDjinniTheme.colors.onSurface,
+                    focusedLabelColor = NotDjinniTheme.colors.onBackground,
+                    unfocusedLabelColor = NotDjinniTheme.colors.onBackground,
+                    cursorColor = NotDjinniTheme.colors.primary,
                 ),
                 selectedDayContainerColor = NotDjinniTheme.colors.primary.copy(
                     0.2f
                 ),
                 selectedDayContentColor = NotDjinniTheme.colors.onPrimary,
-                todayContentColor = NotDjinniTheme.colors.onPrimary,
+                todayContentColor = NotDjinniTheme.colors.onSurface,
             ),
             title = {
                 NotDjinniText(
                     modifier = Modifier.padding(NotDjinniTheme.offsets.small),
                     data = R.string.seeker_work_experience_date_range.toTextData(),
                     style = NotDjinniTheme.typography.title2,
-                    color = NotDjinniTheme.colors.onPrimary,
+                    color = NotDjinniTheme.colors.onBackground,
                 )
             },
             headline = {
@@ -433,7 +435,7 @@ private fun DatePickerAlert(
                     modifier = Modifier.padding(NotDjinniTheme.offsets.small),
                     data = state.toFormatterMonthYearDate().toTextData(),
                     style = NotDjinniTheme.typography.body1,
-                    color = NotDjinniTheme.colors.onPrimary,
+                    color = NotDjinniTheme.colors.onBackground,
                 )
             },
             state = state

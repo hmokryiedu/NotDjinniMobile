@@ -53,6 +53,11 @@ internal class VacancyDetailsViewModel(
                 updateState { copy(selectedCoverLetterTemplate = action.coverLetter) }
             }
             is VacancyDetailsAction.SubmitApplication -> submitApplication(action.coverLetter)
+            VacancyDetailsAction.ShowApplicationSuccessSnackBar -> {
+                showSnackBar(
+                    SnackBarData(message = R.string.apply_vacancy_success.toTextData())
+                )
+            }
         }
     }
 

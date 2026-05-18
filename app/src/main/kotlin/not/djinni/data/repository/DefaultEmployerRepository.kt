@@ -8,6 +8,7 @@ import not.djinni.model.seeker.vacancy.toDomain
 import not.djinni.network.common.response.NetworkResponse
 import not.djinni.network.employer.EmployerDataSource
 import not.djinni.network.employer.request.CreateEmployerProfileRequest
+import not.djinni.network.employer.request.UpdateEmployerProfileRequest
 import not.djinni.network.vacancy.response.VacancyDetailsResponse
 import org.koin.core.annotation.Single
 
@@ -28,6 +29,13 @@ class DefaultEmployerRepository(
         return when (val response = remoteDataSource.createProfile(request)) {
             is NetworkResponse.Success -> response.data.toDomain()
             is NetworkResponse.Error -> throw Exception("Failed to create profile")
+        }
+    }
+
+    override suspend fun updateProfileRole(role: String): EmployerProfile {
+        return when (val response = remoteDataSource.updateProfileRole(UpdateEmployerProfileRequest(role = role))) {
+            is NetworkResponse.Success -> response.data.toDomain()
+            is NetworkResponse.Error -> throw Exception("Failed to update profile")
         }
     }
 
