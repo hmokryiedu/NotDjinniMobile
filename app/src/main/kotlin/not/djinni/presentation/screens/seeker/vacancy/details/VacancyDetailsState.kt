@@ -1,7 +1,10 @@
 package not.djinni.presentation.screens.seeker.vacancy.details
 
 import androidx.compose.runtime.Immutable
+import not.djinni.model.seeker.SeekerProfile
+import not.djinni.model.seeker.vacancy.Vacancy
 import not.djinni.presentation.core.components.base.model.TextData
+import not.djinni.presentation.core.extension.toTextData
 import not.djinni.presentation.screens.seeker.vacancy.details.alert.VacancyDetailsAlert
 
 @Immutable
@@ -45,3 +48,24 @@ internal data class EligibilityState(
     val salaryMatch: Boolean,
     val salaryHint: TextData?,
 )
+
+internal fun EligibilityState?.isApplyAvailable(): Boolean = this?.canApply == true
+
+internal fun calculateEligibility(
+    vacancy: Vacancy,
+    profile: SeekerProfile,
+    salaryHintProvider: (Int) -> String,
+): EligibilityState {
+    val experienceMatch = vacancy.minExperienceYears == null ||
+            profile.experienceYears >= vacancy.minExperienceYears
+    val salaryMatch = vacancy.salaryMax >= profile.desiredSalary
+    val salaryHint = salaryHintProvider(profile.desiredSalary)
+        .toTextData()
+        .takeIf { !salaryMatch }
+    return EligibilityState(
+        canApply = experienceMatch,
+        experienceMatch = experienceMatch,
+        salaryMatch = salaryMatch,
+        salaryHint = salaryHint
+    )
+}

@@ -17,9 +17,6 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.result.ResultEffect
 import not.djinni.presentation.core.components.base.AlertContainer
 import not.djinni.R
 import not.djinni.presentation.core.Screen
@@ -41,10 +39,8 @@ import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.clickableNoRipple
 import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.core.extension.toTextData
-import not.djinni.presentation.navigation.NavResultKey
 import not.djinni.presentation.screens.seeker.vacancy.details.alert.VacancyDetailsAlert
 import not.djinni.presentation.screens.seeker.vacancy.details.components.ApplyVacancyBottomSheet
-import not.djinni.presentation.screens.seeker.vacancy.details.coverletter.CoverLetterResultContract
 import not.djinni.presentation.theme.NotDjinniIcons
 import not.djinni.presentation.theme.NotDjinniTheme
 import org.koin.core.parameter.parametersOf
@@ -54,26 +50,15 @@ internal fun VacancyDetailsScreen(
     vacancyId: Long,
     onNavigateBack: () -> Unit,
     onNavigateToApplicationDetails: (Long) -> Unit,
-    onNavigateToCoverLetterTemplates: (Long, NavResultKey<String>) -> Unit,
-    coverLetterResult: String?,
+    onNavigateToCoverLetterTemplates: (Long) -> Unit,
 ) {
-    val coverLetterResultKeyId = rememberSaveable(vacancyId) { "cover_letter_result_$vacancyId" }
-    val coverLetterResultKey = remember(coverLetterResultKeyId) {
-        NavResultKey(
-            id = coverLetterResultKeyId,
-            contract = CoverLetterResultContract,
-        )
-    }
-
     Screen<VacancyDetailsViewModel>(
         parameters = { parametersOf(vacancyId) }
     ) { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
 
-        LaunchedEffect(coverLetterResult) {
-            coverLetterResult?.let {
-                viewModel.sendAction(VacancyDetailsAction.ApplyCoverLetterTemplate(it))
-            }
+        ResultEffect<String> { coverLetter ->
+            viewModel.sendAction(VacancyDetailsAction.ApplyCoverLetterTemplate(coverLetter))
         }
 
         Content(
@@ -87,9 +72,7 @@ internal fun VacancyDetailsScreen(
                     ApplyVacancyBottomSheet(
                         initialCoverLetter = state.selectedCoverLetterTemplate,
                         onCoverLetterTemplatesClick = {
-                            viewModel.sendAction(
-                                VacancyDetailsAction.OpenCoverLetterTemplates(coverLetterResultKey.id)
-                            )
+                            viewModel.sendAction(VacancyDetailsAction.OpenCoverLetterTemplates)
                         },
                         onDismiss = { viewModel.sendAction(VacancyDetailsAction.HideApplyBottomSheet) },
                         onApply = { coverLetter ->
@@ -106,15 +89,7 @@ internal fun VacancyDetailsScreen(
                 VacancyDetailsSideEffect.ApplicationSuccess -> {
                     viewModel.sendAction(VacancyDetailsAction.ShowApplicationSuccessSnackBar)
                 }
-                is VacancyDetailsSideEffect.NavigateToCoverLetterTemplates -> {
-                    onNavigateToCoverLetterTemplates(
-                        vacancyId,
-                        NavResultKey(
-                            id = effect.resultKeyId,
-                            contract = CoverLetterResultContract
-                        )
-                    )
-                }
+                VacancyDetailsSideEffect.NavigateToCoverLetterTemplates -> onNavigateToCoverLetterTemplates(vacancyId)
                 is VacancyDetailsSideEffect.NavigateToApplicationDetails -> {
                     onNavigateToApplicationDetails(effect.applicationId)
                 }
@@ -440,7 +415,7 @@ private fun ApplySection(
     onApply: () -> Unit,
     onSeeApplication: () -> Unit,
 ) {
-    val canApply = eligibility?.canApply ?: true
+    val canApply = eligibility.isApplyAvailable()
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally

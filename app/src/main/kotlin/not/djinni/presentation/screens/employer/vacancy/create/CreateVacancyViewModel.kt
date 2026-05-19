@@ -27,6 +27,7 @@ internal class CreateVacancyViewModel(
 
     fun sendAction(action: CreateVacancyAction) {
         when (action) {
+            CreateVacancyAction.NavigateBack -> navigateBack()
             CreateVacancyAction.ShowEmploymentTypeSheet -> updateState { copy(alert = CreateVacancyAlert.SelectEmploymentType) }
             CreateVacancyAction.ShowCategorySheet -> updateState { copy(alert = CreateVacancyAlert.SelectCategory) }
             CreateVacancyAction.HideAlert -> updateState { copy(alert = null) }
@@ -59,6 +60,12 @@ internal class CreateVacancyViewModel(
                     )
                 }
             }
+        }
+    }
+
+    private fun navigateBack() {
+        launch {
+            _sideEffect.emit(CreateVacancySideEffect.NavigateBack)
         }
     }
 

@@ -4,6 +4,7 @@ import not.djinni.model.seeker.vacancy.EmploymentType
 import not.djinni.model.seeker.vacancy.JobCategoryCode
 
 internal sealed interface CreateVacancyAction {
+    data object NavigateBack : CreateVacancyAction
     data object ShowEmploymentTypeSheet : CreateVacancyAction
     data object ShowCategorySheet : CreateVacancyAction
     data object HideAlert : CreateVacancyAction

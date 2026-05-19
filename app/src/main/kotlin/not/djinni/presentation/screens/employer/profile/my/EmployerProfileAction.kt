@@ -1,6 +1,7 @@
 package not.djinni.presentation.screens.employer.profile.my
 
 internal sealed interface EmployerProfileAction {
+    data object NavigateBack : EmployerProfileAction
     data object ShowRoleEditor : EmployerProfileAction
     data object DismissRoleEditor : EmployerProfileAction
     data class UpdateEditingRole(val value: String) : EmployerProfileAction

@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import not.djinni.R
@@ -42,10 +45,12 @@ import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.clickableNoRipple
 import not.djinni.presentation.core.extension.collectAsEffect
 import not.djinni.presentation.core.extension.toTextData
+import not.djinni.presentation.theme.NotDjinniIcons
 import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
 internal fun EmployerProfileScreen(
+    onBack: () -> Unit,
     onLogout: () -> Unit,
 ) {
     Screen<EmployerProfileViewModel> { viewModel ->
@@ -58,6 +63,7 @@ internal fun EmployerProfileScreen(
 
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
+                EmployerProfileSideEffect.NavigateBack -> onBack()
                 EmployerProfileSideEffect.NavigateToAuth -> onLogout()
             }
         }
@@ -70,7 +76,10 @@ private fun Content(
     onAction: (EmployerProfileAction) -> Unit = {},
 ) {
     FullscreenColumn {
-        ProfileHeader(onLogout = { onAction(EmployerProfileAction.Logout) })
+        ProfileHeader(
+            onBack = { onAction(EmployerProfileAction.NavigateBack) },
+            onLogout = { onAction(EmployerProfileAction.Logout) }
+        )
         VerticalSpacer(NotDjinniTheme.offsets.medium)
         when {
             state.isLoading -> LoadingContent()
@@ -88,17 +97,31 @@ private fun Content(
 }
 
 @Composable
-private fun ProfileHeader(onLogout: () -> Unit) {
+private fun ProfileHeader(
+    onBack: () -> Unit,
+    onLogout: () -> Unit,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        NotDjinniText(
-            data = R.string.profile_title.toTextData(),
-            style = NotDjinniTheme.typography.title1Bold,
-            color = NotDjinniTheme.colors.onBackground,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                modifier = Modifier
+                    .size(ICON_SIZE)
+                    .clickableNoRipple(onClick = onBack),
+                imageVector = NotDjinniIcons.back,
+                contentDescription = null,
+                tint = NotDjinniTheme.colors.onBackground
+            )
+            HorizontalSpacer(NotDjinniTheme.offsets.small)
+            NotDjinniText(
+                data = R.string.profile_title.toTextData(),
+                style = NotDjinniTheme.typography.title1Bold,
+                color = NotDjinniTheme.colors.onBackground,
+            )
+        }
         NotDjinniText(
             modifier = Modifier.clickableNoRipple(onClick = onLogout),
             data = R.string.profile_logout.toTextData(),
@@ -319,5 +342,7 @@ private fun Preview() {
         }
     }
 }
+
+private val ICON_SIZE = 24.dp
 
 private const val LABEL_ALPHA = 0.6f

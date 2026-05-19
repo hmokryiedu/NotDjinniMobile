@@ -1,4 +1,0 @@
-interface:
-  display_name: "Plain Task Doc Writer"
-  short_description: "Turn dictated tasks into Markdown docs"
-  default_prompt: "Use $plain-task-doc-writer to convert this dictated task into an ai/specs Markdown document."

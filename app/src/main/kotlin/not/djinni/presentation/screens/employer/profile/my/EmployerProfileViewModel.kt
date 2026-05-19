@@ -26,6 +26,7 @@ internal class EmployerProfileViewModel(
 
     fun sendAction(action: EmployerProfileAction) {
         when (action) {
+            EmployerProfileAction.NavigateBack -> navigateBack()
             EmployerProfileAction.ShowRoleEditor -> updateState {
                 copy(
                     isRoleDialogVisible = true,
@@ -60,6 +61,12 @@ internal class EmployerProfileViewModel(
         launch {
             authRepository.logOut()
             _sideEffect.emit(EmployerProfileSideEffect.NavigateToAuth)
+        }
+    }
+
+    private fun navigateBack() {
+        launch {
+            _sideEffect.emit(EmployerProfileSideEffect.NavigateBack)
         }
     }
 

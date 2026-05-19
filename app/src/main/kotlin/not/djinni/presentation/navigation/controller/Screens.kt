@@ -45,7 +45,7 @@ sealed interface Screens : NavKey {
         @Serializable
         data class CoverLetterTemplates(
             val vacancyId: Long,
-            val resultKeyId: String,
+            val resultKeyId: String = "",
         ) : Seeker
 
         @Serializable

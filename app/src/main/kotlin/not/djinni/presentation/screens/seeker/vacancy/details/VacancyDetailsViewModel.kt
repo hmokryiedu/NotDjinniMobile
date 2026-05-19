@@ -9,7 +9,6 @@ import not.djinni.core.extension.toFormattedFullDate
 import not.djinni.domain.repository.ApplicationRepository
 import not.djinni.domain.repository.SeekerRepository
 import not.djinni.domain.repository.VacancyRepository
-import not.djinni.model.seeker.SeekerProfile
 import not.djinni.model.seeker.vacancy.Vacancy
 import not.djinni.presentation.core.StateViewModel
 import not.djinni.presentation.core.components.base.model.SnackBarData
@@ -46,9 +45,7 @@ internal class VacancyDetailsViewModel(
             VacancyDetailsAction.NavigateBack -> _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateBack)
             VacancyDetailsAction.ToggleFavorite -> toggleFavorite()
             VacancyDetailsAction.HideApplyBottomSheet -> updateState { copy(currentAlert = null, selectedCoverLetterTemplate = null) }
-            is VacancyDetailsAction.OpenCoverLetterTemplates -> {
-                _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateToCoverLetterTemplates(action.resultKeyId))
-            }
+            VacancyDetailsAction.OpenCoverLetterTemplates -> _sideEffect.tryEmit(VacancyDetailsSideEffect.NavigateToCoverLetterTemplates)
             is VacancyDetailsAction.ApplyCoverLetterTemplate -> {
                 updateState { copy(selectedCoverLetterTemplate = action.coverLetter) }
             }
@@ -68,7 +65,18 @@ internal class VacancyDetailsViewModel(
                 .onSuccess { vacancy ->
                     val profile = seekerRepository.getProfile()
                     val displayData = vacancy.toDisplayData()
-                    val eligibility = profile?.let { calculateEligibility(vacancy, it) }
+                    val eligibility = profile?.let {
+                        calculateEligibility(
+                            vacancy = vacancy,
+                            profile = it,
+                            salaryHintProvider = { desiredSalary ->
+                                stringProvider.getString(
+                                    R.string.vacancy_salary_is_below_your_expectations,
+                                    desiredSalary
+                                )
+                            }
+                        )
+                    }
                     val isApplied = applicationRepository.isAppliedToVacancy(vacancyId)
                     updateState {
                         copy(
@@ -92,7 +100,7 @@ internal class VacancyDetailsViewModel(
     private fun handleApply() {
         val state = mutableState.value.apply { if (isApplied) return }
         val contentState = state.contentState
-        if (contentState is VacancyDetailsContentState.Data && contentState.eligibility?.canApply == true) {
+        if (contentState is VacancyDetailsContentState.Data && contentState.eligibility.isApplyAvailable()) {
             val alert = VacancyDetailsAlert.Applying
             updateState { copy(currentAlert = alert) }
         }
@@ -154,24 +162,6 @@ internal class VacancyDetailsViewModel(
 
     private fun hideAlert() {
         updateState { copy(currentAlert = null) }
-    }
-
-    private fun calculateEligibility(vacancy: Vacancy, profile: SeekerProfile): EligibilityState {
-        val experienceMatch = vacancy.minExperienceYears == null ||
-                profile.experienceYears >= vacancy.minExperienceYears
-        val salaryMatch = vacancy.salaryMax >= profile.desiredSalary
-        val salaryHint = stringProvider.getString(
-            R.string.vacancy_salary_is_below_your_expectations,
-            profile.desiredSalary
-        )
-            .toTextData()
-            .takeIf { !salaryMatch }
-        return EligibilityState(
-            canApply = experienceMatch,
-            experienceMatch = experienceMatch,
-            salaryMatch = salaryMatch,
-            salaryHint = salaryHint
-        )
     }
 
     private fun Vacancy.toDisplayData(): VacancyDisplayData {

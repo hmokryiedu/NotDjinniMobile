@@ -110,7 +110,7 @@ private fun Content(
         val experienceState = rememberTextFieldState(state.experienceYears)
 
         FullscreenColumn {
-            TopBar()
+            TopBar(onBack = { onAction(CreateVacancyAction.NavigateBack) })
             Column(
                 modifier = Modifier
                     .imePadding()
@@ -238,13 +238,22 @@ private fun Content(
 }
 
 @Composable
-private fun TopBar() {
+private fun TopBar(onBack: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = NotDjinniTheme.offsets.small),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Icon(
+            modifier = Modifier
+                .size(ICON_SIZE)
+                .clickableNoRipple(onClick = onBack),
+            imageVector = NotDjinniIcons.back,
+            contentDescription = null,
+            tint = NotDjinniTheme.colors.onBackground
+        )
+        HorizontalSpacer(NotDjinniTheme.offsets.small)
         NotDjinniText(
             data = R.string.create_vacancy_title.toTextData(),
             style = NotDjinniTheme.typography.title2.copy(fontWeight = FontWeight.Bold),
