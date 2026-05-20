@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 @Stable
 @Serializable
 sealed interface Screens : NavKey {
-
     @Serializable
     data object Splash : Screens
 
@@ -19,7 +18,6 @@ sealed interface Screens : NavKey {
 
     @Serializable
     sealed interface Public : Screens {
-
         @Serializable
         data object Main : Public
 
@@ -29,7 +27,6 @@ sealed interface Screens : NavKey {
 
     @Serializable
     sealed interface Seeker : Screens {
-
         @Serializable
         data object Main : Seeker
 
@@ -45,7 +42,7 @@ sealed interface Screens : NavKey {
         @Serializable
         data class CoverLetterTemplates(
             val vacancyId: Long,
-            val resultKeyId: String = "",
+            val resultKey: String,
         ) : Seeker
 
         @Serializable
@@ -69,7 +66,6 @@ sealed interface Screens : NavKey {
 
     @Serializable
     sealed interface Employer : Screens {
-
         @Serializable
         data object Main : Employer
 

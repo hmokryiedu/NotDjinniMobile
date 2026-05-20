@@ -2,81 +2,68 @@ package not.djinni.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import kotlinx.serialization.json.Json
+import androidx.compose.runtime.remember
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.rememberNavBackStack
 import not.djinni.presentation.navigation.controller.Screens
 
 @Stable
-class NavigationController private constructor(initialKey: Screens) {
-
-    private val _stack = mutableStateListOf(initialKey)
-    private val navResultStore = NavResultStore()
-    val stack: SnapshotStateList<Screens> = _stack
-
-    fun navigate(key: Screens) {
-        _stack.add(key)
+class NavigationController(
+    val stack: NavBackStack<Screens>,
+    private val onRootBack: () -> Unit,
+) {
+    fun navigate(route: Screens) {
+        stack.add(route)
     }
 
-    fun popBackStack() {
-        _stack.removeLastOrNull()
-    }
-
-    fun replaceAll(key: Screens) {
-        _stack.clear()
-        _stack.add(key)
-    }
-
-    fun popUpTo(key: Screens, to: Screens, inclusive: Boolean = false) {
-        val index = _stack.lastIndexOf(to)
-        if (index != -1) {
-            val removeFrom = if (inclusive) index else index + 1
-            _stack.removeRange(removeFrom, _stack.size)
+    fun popBackStack(): Boolean {
+        if (stack.size > 1) {
+            stack.removeLastOrNull()
+            return true
         }
-        _stack.add(key)
+        onRootBack()
+        return false
     }
 
-    fun <T> navigateForResult(key: Screens, resultKey: NavResultKey<T>) {
-        navigate(key)
+    fun replaceAll(route: Screens) {
+        stack.clear()
+        stack.add(route)
     }
 
-    fun <T> popWithResult(resultKey: NavResultKey<T>, value: T) {
-        navResultStore.put(resultKey.id, resultKey.contract.encode(value))
-        popBackStack()
-    }
+    fun popUpTo(key: Screens, to: Screens, inclusive: Boolean = false): Boolean {
+        val index = stack.lastIndexOf(to)
+        if (index == -1) return false
 
-    fun <T> consumeResult(resultKey: NavResultKey<T>): T? {
-        val encoded = navResultStore.consume(resultKey.id) ?: return null
-        return resultKey.contract.decode(encoded)
+        val removeFrom = if (inclusive) index else index + 1
+        if (removeFrom < stack.size) {
+            for (stackIndex in stack.lastIndex downTo removeFrom) {
+                stack.removeAt(stackIndex)
+            }
+        }
+        if (stack.isEmpty()) stack.add(to)
+        stack.add(key)
+        return true
     }
 
     companion object {
         @Composable
-        fun rememberNavigationController(initialKey: Screens): NavigationController {
-            return rememberSaveable(
-                saver = listSaver(
-                    save = {
-                        listOf(
-                            it.stack.map(Json::encodeToString),
-                            it.navResultStore.snapshot().toList()
-                        )
-                    },
-                    restore = {
-                        @Suppress("UNCHECKED_CAST")
-                        val stack = it[0] as List<String>
-                        @Suppress("UNCHECKED_CAST")
-                        val pendingResults = it[1] as List<Pair<String, String>>
-                        NavigationController(initialKey).apply {
-                            _stack.clear()
-                            _stack.addAll(stack.map(Json::decodeFromString))
-                            pendingResults.forEach { (key, value) -> navResultStore.put(key, value) }
-                        }
-                    }
-                ),
-                init = { NavigationController(initialKey) }
-            )
+        fun rememberNavigationController(
+            startRoute: Screens = Screens.Splash,
+            onRootBack: () -> Unit = {},
+        ): NavigationController {
+            val stack = rememberScreensNavBackStack(startRoute)
+            return remember(onRootBack, stack) {
+                NavigationController(
+                    stack = stack,
+                    onRootBack = onRootBack,
+                )
+            }
+        }
+
+        @Composable
+        @Suppress("UNCHECKED_CAST")
+        private fun rememberScreensNavBackStack(route: Screens): NavBackStack<Screens> {
+            return rememberNavBackStack(route) as NavBackStack<Screens>
         }
     }
 }

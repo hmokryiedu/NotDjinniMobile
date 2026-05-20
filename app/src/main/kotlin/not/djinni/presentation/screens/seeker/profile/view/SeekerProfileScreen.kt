@@ -12,9 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -40,7 +41,6 @@ import not.djinni.presentation.core.extension.toDisplayName
 import not.djinni.presentation.core.extension.toTextData
 import not.djinni.presentation.theme.NotDjinniIcons
 import not.djinni.presentation.theme.NotDjinniTheme
-import androidx.compose.material3.Icon
 
 @Composable
 internal fun SeekerProfileScreen(
@@ -48,13 +48,9 @@ internal fun SeekerProfileScreen(
     onChangeRole: () -> Unit,
     onEditProfile: () -> Unit,
     onLogout: () -> Unit,
-    isProfileUpdated: Boolean,
 ) {
     Screen<SeekerProfileViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
-        LaunchedEffect(isProfileUpdated) {
-            if (isProfileUpdated) viewModel.refreshProfile()
-        }
 
         Content(
             state = state,
@@ -68,6 +64,10 @@ internal fun SeekerProfileScreen(
                 SeekerProfileSideEffect.NavigateToEditProfile -> onEditProfile()
                 SeekerProfileSideEffect.NavigateToAuth -> onLogout()
             }
+        }
+
+        LaunchedEffect(Unit) {
+            viewModel.sendAction(SeekerProfileAction.LoadProfile)
         }
     }
 }
@@ -85,7 +85,7 @@ private fun Content(
         VerticalSpacer(NotDjinniTheme.offsets.medium)
         when {
             state.isLoading -> LoadingContent()
-            state.hasError -> ErrorContent(onRetry = { onAction(SeekerProfileAction.Retry) })
+            state.hasError -> ErrorContent(onRetry = { onAction(SeekerProfileAction.LoadProfile) })
             else -> ProfileContent(
                 user = state.user ?: return@FullscreenColumn,
                 profile = state.profile ?: return@FullscreenColumn,

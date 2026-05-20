@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import not.djinni.presentation.navigation.controller.authEntry
 import not.djinni.presentation.navigation.controller.employerEntry
@@ -37,7 +38,8 @@ fun NotDjinniNavDisplay(
         },
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator()
+            rememberViewModelStoreNavEntryDecorator(),
+            rememberResultEventBusNavEntryDecorator(),
         ),
         predictivePopTransitionSpec = {
             fadeIn(tween(ANIMATION_DURATION)) togetherWith

@@ -5,5 +5,5 @@ internal sealed interface SeekerProfileAction {
     data object ChangeRole : SeekerProfileAction
     data object EditProfile : SeekerProfileAction
     data object Logout : SeekerProfileAction
-    data object Retry : SeekerProfileAction
+    data object LoadProfile : SeekerProfileAction
 }

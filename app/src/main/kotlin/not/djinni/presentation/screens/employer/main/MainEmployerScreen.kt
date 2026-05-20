@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -50,6 +51,7 @@ internal fun MainEmployerScreen(
                 is MainEmployerSideEffect.NavigateToVacancyDetails -> {
                     onVacancyClick(effect.vacancyId)
                 }
+
                 MainEmployerSideEffect.NavigateToProfile -> onProfileClick()
                 MainEmployerSideEffect.NavigateToCreateVacancy -> onCreateVacancyClick()
             }
@@ -77,6 +79,7 @@ private fun Content(
                 style = NotDjinniTheme.typography.title1Bold,
                 color = NotDjinniTheme.colors.onBackground,
             )
+            Spacer(Modifier.weight(1f))
             Row(
                 horizontalArrangement = Arrangement.spacedBy(NotDjinniTheme.offsets.small),
                 verticalAlignment = Alignment.CenterVertically
@@ -119,21 +122,14 @@ private fun Content(
 
 @Composable
 private fun CreateVacancyButton(onClick: () -> Unit) {
-    Box(
+    Icon(
         modifier = Modifier
-            .size(PROFILE_BUTTON_SIZE)
-            .clip(CircleShape)
-            .background(NotDjinniTheme.colors.primary)
-            .clickableNoRipple(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            modifier = Modifier.size(PROFILE_ICON_SIZE),
-            imageVector = NotDjinniIcons.plus,
-            contentDescription = null,
-            tint = NotDjinniTheme.colors.onPrimary
-        )
-    }
+            .clickableNoRipple(onClick = onClick)
+            .size(PROFILE_ICON_SIZE),
+        imageVector = NotDjinniIcons.plus,
+        contentDescription = null,
+        tint = NotDjinniTheme.colors.primary
+    )
 }
 
 @Composable

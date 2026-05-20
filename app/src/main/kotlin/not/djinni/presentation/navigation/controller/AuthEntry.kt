@@ -10,7 +10,7 @@ fun EntryProviderScope<Screens>.authEntry(
 ) {
     entry<Screens.Auth> {
         AuthScreen(
-            onNext = { controller.replaceAll(Screens.ChooseRole) },
+            onNext = { controller.navigate(Screens.ChooseRole) },
             onPublic = { controller.replaceAll(Screens.Public.Main) },
         )
     }

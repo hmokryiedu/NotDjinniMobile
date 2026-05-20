@@ -57,7 +57,7 @@ internal fun VacancyDetailsScreen(
     ) { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
 
-        ResultEffect<String> { coverLetter ->
+        ResultEffect<String>(coverLetterResultKey(vacancyId)) { coverLetter ->
             viewModel.sendAction(VacancyDetailsAction.ApplyCoverLetterTemplate(coverLetter))
         }
 
@@ -97,6 +97,8 @@ internal fun VacancyDetailsScreen(
         }
     }
 }
+
+private fun coverLetterResultKey(vacancyId: Long): String = "cover_letter_result_$vacancyId"
 
 @Composable
 private fun Content(

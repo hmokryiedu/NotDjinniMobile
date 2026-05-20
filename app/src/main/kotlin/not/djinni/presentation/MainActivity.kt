@@ -20,7 +20,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import not.djinni.presentation.navigation.NavigationController.Companion.rememberNavigationController
 import not.djinni.presentation.navigation.NotDjinniNavDisplay
-import not.djinni.presentation.navigation.controller.Screens
 import not.djinni.presentation.theme.NotDjinniTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -43,7 +42,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val view = LocalView.current
             NotDjinniTheme {
-                val controller = rememberNavigationController(Screens.Splash)
+                val controller = rememberNavigationController(
+                    onRootBack = this@MainActivity::finish,
+                )
 
                 NotDjinniNavDisplay(
                     modifier = Modifier

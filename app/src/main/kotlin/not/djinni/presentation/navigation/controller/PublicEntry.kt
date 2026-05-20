@@ -19,7 +19,7 @@ fun EntryProviderScope<Screens>.publicEntry(
     entry<Screens.Public.VacancyDetails> { entry ->
         PublicVacancyDetailsScreen(
             vacancyId = entry.vacancyId,
-            onNavigateBack = controller::popBackStack,
+            onNavigateBack = { controller.popBackStack() },
         )
     }
 }

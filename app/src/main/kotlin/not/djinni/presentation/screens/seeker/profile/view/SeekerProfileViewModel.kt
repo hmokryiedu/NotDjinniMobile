@@ -20,10 +20,6 @@ internal class SeekerProfileViewModel(
     private val _sideEffect = mutableSideEffect<SeekerProfileSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
 
-    init {
-        loadProfile()
-    }
-
     fun sendAction(action: SeekerProfileAction) {
         when (action) {
             SeekerProfileAction.NavigateBack -> {
@@ -36,11 +32,9 @@ internal class SeekerProfileViewModel(
                 _sideEffect.tryEmit(SeekerProfileSideEffect.NavigateToEditProfile)
             }
             SeekerProfileAction.Logout -> logOut()
-            SeekerProfileAction.Retry -> loadProfile()
+            SeekerProfileAction.LoadProfile -> loadProfile()
         }
     }
-
-    fun refreshProfile() = loadProfile()
 
     private fun logOut() {
         launch {

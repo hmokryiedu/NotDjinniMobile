@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.result.LocalResultEventBus
 import not.djinni.R
 import not.djinni.presentation.core.Screen
 import not.djinni.presentation.core.components.base.FullscreenColumn
@@ -43,11 +44,12 @@ import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
 internal fun CoverLetterTemplatesScreen(
+    resultKey: String,
     onBack: () -> Unit,
-    onApply: (String) -> Unit,
 ) {
     Screen<CoverLetterTemplatesViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val resultEventBus = LocalResultEventBus.current
 
         Content(
             state = state,
@@ -59,7 +61,10 @@ internal fun CoverLetterTemplatesScreen(
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
                 CoverLetterTemplatesSideEffect.NavigateBack -> onBack()
-                is CoverLetterTemplatesSideEffect.ApplyTemplate -> onApply(effect.message)
+                is CoverLetterTemplatesSideEffect.ApplyTemplate -> {
+                    resultEventBus.sendResult(resultKey, effect.message)
+                    onBack()
+                }
             }
         }
     }
