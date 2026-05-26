@@ -6,10 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +28,7 @@ import not.djinni.R
 import not.djinni.presentation.core.Screen
 import not.djinni.presentation.core.components.base.FullscreenColumn
 import not.djinni.presentation.core.components.base.NotDjinniText
+import not.djinni.presentation.core.components.base.NotDjinniTextField
 import not.djinni.presentation.core.components.base.VacancyCard
 import not.djinni.presentation.core.components.base.VerticalSpacer
 import not.djinni.presentation.core.extension.clickableNoRipple
@@ -40,9 +45,15 @@ internal fun MainEmployerScreen(
 ) {
     Screen<MainEmployerViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val searchState = rememberTextFieldState()
+
+        LaunchedEffect(searchState.text) {
+            viewModel.sendAction(MainEmployerAction.Search(searchState.text.toString()))
+        }
 
         Content(
             state = state,
+            searchState = searchState,
             onAction = viewModel::sendAction,
         )
 
@@ -57,17 +68,17 @@ internal fun MainEmployerScreen(
             }
         }
 
-        LaunchedEffect(Unit) {
-            viewModel.sendAction(MainEmployerAction.LoadData)
-        }
     }
 }
 
 @Composable
 private fun Content(
     state: MainEmployerState,
+    searchState: TextFieldState = rememberTextFieldState(),
     onAction: (MainEmployerAction) -> Unit = {},
 ) {
+    val lazyListState = rememberLazyListState()
+
     FullscreenColumn {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -89,6 +100,12 @@ private fun Content(
             }
         }
         VerticalSpacer(NotDjinniTheme.offsets.medium)
+        NotDjinniTextField(
+            modifier = Modifier.fillMaxWidth(),
+            state = searchState,
+            placeholder = R.string.vacancy_search_placeholder.toTextData(),
+        )
+        VerticalSpacer(NotDjinniTheme.offsets.medium)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -97,12 +114,18 @@ private fun Content(
             if (state.vacanciesListState is VacanciesListState.Empty) {
                 NotDjinniText(
                     modifier = Modifier.align(Alignment.Center),
-                    data = R.string.employer_no_vacancies.toTextData(),
+                    data = if (state.searchQuery.isBlank()) {
+                        R.string.employer_no_vacancies.toTextData()
+                    } else {
+                        R.string.vacancy_no_results.toTextData()
+                    },
                     style = NotDjinniTheme.typography.body2,
                     color = NotDjinniTheme.colors.onBackground.copy(alpha = 0.6f),
                 )
             }
             LazyColumn(
+                modifier = Modifier.imePadding(),
+                state = lazyListState,
                 verticalArrangement = Arrangement.spacedBy(NotDjinniTheme.offsets.small)
             ) {
                 items(
@@ -117,6 +140,11 @@ private fun Content(
                 }
             }
         }
+    }
+
+    LaunchedEffect(state.vacanciesListState.items) {
+        if (state.vacanciesListState.items.isEmpty()) return@LaunchedEffect
+        lazyListState.scrollToItem(0)
     }
 }
 

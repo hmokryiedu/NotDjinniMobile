@@ -6,6 +6,7 @@ import not.djinni.presentation.core.components.base.model.VacancyCardData
 @Immutable
 internal data class MainEmployerState(
     val vacanciesListState: VacanciesListState = VacanciesListState.Empty,
+    val searchQuery: String = "",
 )
 
 sealed class VacanciesListState {

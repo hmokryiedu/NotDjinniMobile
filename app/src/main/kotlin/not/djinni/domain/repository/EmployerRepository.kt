@@ -10,5 +10,5 @@ interface EmployerRepository {
     suspend fun createProfile(companyId: Long, role: String): EmployerProfile
     suspend fun updateProfileRole(role: String): EmployerProfile
 
-    suspend fun getEmployerVacancies(): Result<List<Vacancy>>
+    suspend fun getEmployerVacancies(search: String? = null): Result<List<Vacancy>>
 }

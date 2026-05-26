@@ -1,6 +1,12 @@
+@file:OptIn(FlowPreview::class)
+
 package not.djinni.presentation.screens.employer.main
 
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import not.djinni.R
 import not.djinni.core.extension.mutableSideEffect
 import not.djinni.domain.repository.EmployerRepository
@@ -20,10 +26,20 @@ internal class MainEmployerViewModel(
 
     private val _sideEffect = mutableSideEffect<MainEmployerSideEffect>()
     val sideEffect = _sideEffect.asSharedFlow()
+    private val _searchQuery = MutableStateFlow("")
+
+    init {
+        collectVacancies()
+    }
 
     fun sendAction(action: MainEmployerAction) {
         when (action) {
-            is MainEmployerAction.LoadData -> loadVacancies()
+            is MainEmployerAction.LoadData -> loadVacancies(search = state.value.searchQuery.takeIf { it.isNotBlank() })
+            is MainEmployerAction.Search -> {
+                val query = action.query.trim()
+                updateState { copy(searchQuery = query) }
+                _searchQuery.tryEmit(query)
+            }
             is MainEmployerAction.OpenVacancy -> {
                 _sideEffect.tryEmit(MainEmployerSideEffect.NavigateToVacancyDetails(action.vacancyId))
             }
@@ -38,13 +54,24 @@ internal class MainEmployerViewModel(
         }
     }
 
-    private fun loadVacancies() {
+    private fun collectVacancies() {
+        launch {
+            _searchQuery
+                .debounce(SEARCH_DEBOUNCE_MS)
+                .distinctUntilChanged()
+                .collect { query ->
+                    loadVacancies(search = query.takeIf { it.isNotBlank() })
+                }
+        }
+    }
+
+    private fun loadVacancies(search: String? = null) {
         launch {
             updateState {
                 val isCurrentVacancyListEmpty = vacanciesListState is VacanciesListState.Empty
                 copy(vacanciesListState = if (isCurrentVacancyListEmpty) VacanciesListState.Loading else vacanciesListState)
             }
-            val state = employerRepository.getEmployerVacancies().fold(
+            val state = employerRepository.getEmployerVacancies(search = search).fold(
                 onSuccess = { VacanciesListState.Data(it.map { vacancy -> vacancy.toCardData() }) },
                 onFailure = { VacanciesListState.Empty }
             )
@@ -69,5 +96,9 @@ internal class MainEmployerViewModel(
             employmentType = employmentType.toDisplayName(),
             isFavorite = isFavorite
         )
+    }
+
+    private companion object {
+        const val SEARCH_DEBOUNCE_MS = 200L
     }
 }

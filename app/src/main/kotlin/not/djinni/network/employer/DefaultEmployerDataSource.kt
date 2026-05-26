@@ -41,9 +41,10 @@ internal class DefaultEmployerDataSource(
     override suspend fun getVacancies(
         limit: Int,
         offset: Int,
+        search: String?,
     ): NetworkResponse<VacancyListResponse> {
         return httpClient
-            .get(Employer.Vacancies(limit = limit, offset = offset))
+            .get(Employer.Vacancies(limit = limit, offset = offset, search = search))
             .networkResponse<VacancyListResponse>()
     }
 }

@@ -17,5 +17,6 @@ class Employer {
         val parent: Employer = Employer(),
         val limit: Int? = null,
         val offset: Int? = null,
+        val search: String? = null,
     )
 }

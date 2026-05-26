@@ -16,5 +16,6 @@ interface EmployerDataSource {
     suspend fun getVacancies(
         limit: Int = 20,
         offset: Int = 0,
+        search: String? = null,
     ): NetworkResponse<VacancyListResponse>
 }

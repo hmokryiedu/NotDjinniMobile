@@ -39,8 +39,8 @@ class DefaultEmployerRepository(
         }
     }
 
-    override suspend fun getEmployerVacancies(): Result<List<Vacancy>> = runCatching {
-        when (val response = remoteDataSource.getVacancies()) {
+    override suspend fun getEmployerVacancies(search: String?): Result<List<Vacancy>> = runCatching {
+        when (val response = remoteDataSource.getVacancies(search = search)) {
             is NetworkResponse.Success -> response.data.vacancies.map(VacancyDetailsResponse::toDomain)
             is NetworkResponse.Error -> throw Exception("Failed to load vacancies")
         }
