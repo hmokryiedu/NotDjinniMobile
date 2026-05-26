@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.result.ResultEffect
 import not.djinni.R
 import not.djinni.presentation.core.Screen
 import not.djinni.presentation.core.components.base.FullscreenColumn
@@ -39,6 +40,7 @@ import not.djinni.presentation.theme.NotDjinniTheme
 
 @Composable
 internal fun MainEmployerScreen(
+    vacancyCreatedResultKey: String,
     onVacancyClick: (Long) -> Unit = {},
     onProfileClick: () -> Unit = {},
     onCreateVacancyClick: () -> Unit = {},
@@ -46,6 +48,12 @@ internal fun MainEmployerScreen(
     Screen<MainEmployerViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
         val searchState = rememberTextFieldState()
+
+        ResultEffect<Boolean>(vacancyCreatedResultKey) { isVacancyCreated ->
+            if (isVacancyCreated) {
+                viewModel.sendAction(MainEmployerAction.LoadData)
+            }
+        }
 
         LaunchedEffect(searchState.text) {
             viewModel.sendAction(MainEmployerAction.Search(searchState.text.toString()))

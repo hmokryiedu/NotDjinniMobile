@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.result.LocalResultEventBus
 import not.djinni.R
 import not.djinni.presentation.core.Screen
 import not.djinni.presentation.core.components.base.AlertContainer
@@ -48,6 +49,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun CreateVacancyScreen(
+    vacancyCreatedResultKey: String,
     sourceVacancyId: Long?,
     onNavigateBack: () -> Unit,
     onNavigateToDetails: (Long) -> Unit,
@@ -56,6 +58,7 @@ internal fun CreateVacancyScreen(
         parameters = { parametersOf(sourceVacancyId) }
     ) { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
+        val resultEventBus = LocalResultEventBus.current
 
         Content(
             state = state,
@@ -91,7 +94,10 @@ internal fun CreateVacancyScreen(
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
                 CreateVacancySideEffect.NavigateBack -> onNavigateBack()
-                is CreateVacancySideEffect.NavigateToDetails -> onNavigateToDetails(effect.vacancyId)
+                is CreateVacancySideEffect.NavigateToDetails -> {
+                    resultEventBus.sendResult(vacancyCreatedResultKey, true)
+                    onNavigateToDetails(effect.vacancyId)
+                }
             }
         }
     }

@@ -21,6 +21,7 @@ fun EntryProviderScope<Screens>.employerEntry(
     }
     entry<Screens.Employer.Main> {
         MainEmployerScreen(
+            vacancyCreatedResultKey = VACANCY_CREATED_RESULT_KEY,
             onVacancyClick = { vacancyId ->
                 controller.navigate(Screens.Employer.VacancyDetails(vacancyId = vacancyId))
             },
@@ -60,6 +61,7 @@ fun EntryProviderScope<Screens>.employerEntry(
     }
     entry<Screens.Employer.CreateVacancy> { entry ->
         CreateVacancyScreen(
+            vacancyCreatedResultKey = VACANCY_CREATED_RESULT_KEY,
             sourceVacancyId = entry.sourceVacancyId,
             onNavigateBack = { controller.popBackStack() },
             onNavigateToDetails = { vacancyId ->
@@ -81,3 +83,5 @@ fun EntryProviderScope<Screens>.employerEntry(
         )
     }
 }
+
+private const val VACANCY_CREATED_RESULT_KEY = "vacancy_created_result"
