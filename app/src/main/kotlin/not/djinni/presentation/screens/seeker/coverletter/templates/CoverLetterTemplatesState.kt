@@ -6,8 +6,10 @@ import androidx.compose.runtime.Immutable
 internal data class CoverLetterTemplatesState(
     val contentState: CoverLetterTemplatesContentState = CoverLetterTemplatesContentState.Loading,
     val selectedTemplate: CoverLetterTemplateDisplayData? = null,
+    val deleteCandidateTemplate: CoverLetterTemplateDisplayData? = null,
     val isEditing: Boolean = false,
     val editingMessage: String = "",
+    val isDeleteConfirmationVisible: Boolean = false,
 )
 
 @Immutable

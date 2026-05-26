@@ -10,6 +10,8 @@ import not.djinni.domain.usecase.coverletter.GetCoverLetterTemplateUseCase
 import not.djinni.domain.usecase.coverletter.GetCoverLetterTemplatesUseCase
 import not.djinni.domain.usecase.coverletter.UpdateCoverLetterTemplateUseCase
 import not.djinni.presentation.core.StateViewModel
+import not.djinni.presentation.core.components.base.model.SnackBarData
+import not.djinni.presentation.core.extension.toTextData
 import not.djinni.utils.string.StringProvider
 import org.koin.android.annotation.KoinViewModel
 
@@ -52,14 +54,22 @@ internal class CoverLetterTemplatesViewModel(
                 updateState { copy(editingMessage = action.message) }
             }
             CoverLetterTemplatesAction.Save -> saveTemplate()
-            CoverLetterTemplatesAction.Delete -> deleteTemplate()
+            is CoverLetterTemplatesAction.RequestDelete -> {
+                requestDelete(action.id)
+            }
+            CoverLetterTemplatesAction.DismissDeleteConfirmation -> {
+                updateState { copy(deleteCandidateTemplate = null, isDeleteConfirmationVisible = false) }
+            }
+            CoverLetterTemplatesAction.ConfirmDelete -> deleteTemplate()
             CoverLetterTemplatesAction.Apply -> applyTemplate()
             CoverLetterTemplatesAction.DismissDialog -> {
                 updateState {
                     copy(
                         selectedTemplate = null,
+                        deleteCandidateTemplate = null,
                         isEditing = false,
-                        editingMessage = ""
+                        editingMessage = "",
+                        isDeleteConfirmationVisible = false,
                     )
                 }
             }
@@ -129,23 +139,54 @@ internal class CoverLetterTemplatesViewModel(
                 }
                 loadTemplates()
             }
+            result.onFailure {
+                showSnackBar(
+                    SnackBarData(
+                        message = (it.message ?: stringProvider.getString(R.string.cover_letter_templates_save_error)).toTextData()
+                    )
+                )
+            }
         }
     }
 
     private fun deleteTemplate() {
-        val template = mutableState.value.selectedTemplate ?: return
+        val template = mutableState.value.deleteCandidateTemplate ?: return
         launch {
             deleteTemplateUseCase(template.id)
                 .onSuccess {
                     updateState {
                         copy(
                             selectedTemplate = null,
+                            deleteCandidateTemplate = null,
                             isEditing = false,
-                            editingMessage = ""
+                            editingMessage = "",
+                            isDeleteConfirmationVisible = false
                         )
                     }
                     loadTemplates()
                 }
+                .onFailure {
+                    updateState { copy(deleteCandidateTemplate = null, isDeleteConfirmationVisible = false) }
+                    showSnackBar(
+                        SnackBarData(
+                            message = (it.message ?: stringProvider.getString(R.string.cover_letter_templates_delete_error)).toTextData()
+                        )
+                    )
+                }
+        }
+    }
+
+    private fun requestDelete(id: Long) {
+        val currentData = (mutableState.value.contentState as? CoverLetterTemplatesContentState.Data)?.templates
+        val targetTemplate = when {
+            mutableState.value.selectedTemplate?.id == id -> mutableState.value.selectedTemplate
+            else -> currentData?.firstOrNull { it.id == id }
+        } ?: return
+        updateState {
+            copy(
+                deleteCandidateTemplate = targetTemplate,
+                isDeleteConfirmationVisible = true
+            )
         }
     }
 

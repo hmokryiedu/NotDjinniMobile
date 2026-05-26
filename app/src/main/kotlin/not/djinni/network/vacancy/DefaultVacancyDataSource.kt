@@ -8,6 +8,7 @@ import io.ktor.client.request.setBody
 import not.djinni.network.common.extension.networkResponse
 import not.djinni.network.common.response.MessageResponse
 import not.djinni.network.common.response.NetworkResponse
+import not.djinni.network.application.request.ApplicationStatusRequest
 import not.djinni.network.vacancy.request.CreateVacancyRequest
 import not.djinni.network.vacancy.resource.FavoriteVacancy
 import not.djinni.network.vacancy.resource.Vacancy
@@ -56,10 +57,17 @@ internal class DefaultVacancyDataSource(
 
     override suspend fun getAppliedVacancies(
         limit: Int,
-        offset: Int
+        offset: Int,
+        statuses: List<ApplicationStatusRequest>
     ): NetworkResponse<VacancyListResponse> {
         return httpClient
-            .get(Vacancy.Applied(limit = limit, offset = offset))
+            .get(
+                Vacancy.Applied(
+                    limit = limit,
+                    offset = offset,
+                    application_status = statuses.takeIf { it.isNotEmpty() }
+                )
+            )
             .networkResponse<VacancyListResponse>()
     }
 

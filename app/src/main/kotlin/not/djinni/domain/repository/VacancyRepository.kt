@@ -1,6 +1,7 @@
 package not.djinni.domain.repository
 
 import kotlinx.coroutines.flow.SharedFlow
+import not.djinni.model.application.ApplicationStatus
 import not.djinni.model.seeker.vacancy.EmploymentType
 import not.djinni.model.seeker.vacancy.JobCategoryCode
 import not.djinni.model.seeker.vacancy.Vacancy
@@ -17,7 +18,7 @@ interface VacancyRepository {
     suspend fun getVacancyById(id: Long): Result<Vacancy>
     suspend fun getPublicVacancies(query: String?): Result<List<Vacancy>>
     suspend fun getPublicVacancyById(id: Long): Result<Vacancy>
-    suspend fun getAppliedVacancies(): Result<List<Vacancy>>
+    suspend fun getAppliedVacancies(statuses: List<ApplicationStatus> = emptyList()): Result<List<Vacancy>>
     suspend fun getFavoriteVacancies(): Result<List<Vacancy>>
     suspend fun addFavoriteVacancy(id: Long): Result<Unit>
     suspend fun removeFavoriteVacancy(id: Long): Result<Unit>

@@ -2,7 +2,9 @@
 
 package not.djinni.model.seeker.vacancy
 
+import not.djinni.model.application.ApplicationStatus
 import not.djinni.model.company.Company
+import not.djinni.network.application.response.ApplicationStatusResponse
 import not.djinni.network.vacancy.response.EmploymentTypeResponse
 import not.djinni.network.vacancy.response.JobCategoryCodeResponse
 import not.djinni.network.vacancy.response.VacancyDetailsResponse
@@ -11,6 +13,8 @@ import kotlin.time.ExperimentalTime
 
 fun VacancyDetailsResponse.toDomain(): Vacancy = Vacancy(
     id = id,
+    applicationId = applicationId,
+    applicationStatus = applicationStatus?.toDomain(),
     company = Company(
         id = company.id,
         name = company.name,
@@ -88,4 +92,15 @@ fun EmploymentType.toResponse(): EmploymentTypeResponse = when (this) {
     EmploymentType.TEMPORARY -> EmploymentTypeResponse.TEMPORARY
     EmploymentType.INTERNSHIP -> EmploymentTypeResponse.INTERNSHIP
     EmploymentType.FREELANCE -> EmploymentTypeResponse.FREELANCE
+}
+
+private fun ApplicationStatusResponse.toDomain(): ApplicationStatus = when (this) {
+    ApplicationStatusResponse.APPLIED -> ApplicationStatus.APPLIED
+    ApplicationStatusResponse.REVIEWING -> ApplicationStatus.REVIEWING
+    ApplicationStatusResponse.INTERVIEW -> ApplicationStatus.INTERVIEW
+    ApplicationStatusResponse.TEST_TASK -> ApplicationStatus.TEST_TASK
+    ApplicationStatusResponse.OFFER -> ApplicationStatus.OFFER
+    ApplicationStatusResponse.HIRED -> ApplicationStatus.HIRED
+    ApplicationStatusResponse.REJECTED -> ApplicationStatus.REJECTED
+    ApplicationStatusResponse.WITHDRAWN -> ApplicationStatus.WITHDRAWN
 }

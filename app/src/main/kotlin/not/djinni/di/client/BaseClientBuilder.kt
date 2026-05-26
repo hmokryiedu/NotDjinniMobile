@@ -46,9 +46,8 @@ open class BaseClientBuilder {
 
     protected fun HttpClientConfig<*>.installDefaultRequest() {
         install(DefaultRequest) {
-            host = "192.168.0.81"
-            port = 8080
-            url { protocol = URLProtocol.HTTP }
+            host = "notdjinni.duckdns.org"
+            url { protocol = URLProtocol.HTTPS }
             contentType(ContentType.Application.Json)
         }
     }

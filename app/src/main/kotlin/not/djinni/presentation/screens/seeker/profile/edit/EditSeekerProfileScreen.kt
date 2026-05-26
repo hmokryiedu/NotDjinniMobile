@@ -39,7 +39,7 @@ import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -551,7 +551,47 @@ private fun DatePickerAlert(
     state: DateRangePickerState,
     onDismissRequest: () -> Unit,
 ) {
+    val datePickerColors = DatePickerDefaults.colors(
+        containerColor = NotDjinniTheme.colors.background,
+        titleContentColor = NotDjinniTheme.colors.onBackground,
+        headlineContentColor = NotDjinniTheme.colors.onBackground,
+        weekdayContentColor = NotDjinniTheme.colors.onSurface,
+        subheadContentColor = NotDjinniTheme.colors.onSurface,
+        navigationContentColor = NotDjinniTheme.colors.onSurface,
+        yearContentColor = NotDjinniTheme.colors.onSurface,
+        currentYearContentColor = NotDjinniTheme.colors.onSurface,
+        selectedYearContainerColor = NotDjinniTheme.colors.primary,
+        selectedYearContentColor = NotDjinniTheme.colors.onPrimary,
+        dayContentColor = NotDjinniTheme.colors.onSurface,
+        disabledDayContentColor = NotDjinniTheme.colors.onSurface.copy(alpha = 0.38f),
+        selectedDayContainerColor = NotDjinniTheme.colors.primary,
+        selectedDayContentColor = NotDjinniTheme.colors.onPrimary,
+        todayContentColor = NotDjinniTheme.colors.onSurface,
+        todayDateBorderColor = NotDjinniTheme.colors.onSurface,
+        dayInSelectionRangeContainerColor = NotDjinniTheme.colors.primary.copy(alpha = 0.18f),
+        dayInSelectionRangeContentColor = NotDjinniTheme.colors.onSurface,
+        dividerColor = NotDjinniTheme.colors.onSurface,
+        dateTextFieldColors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = NotDjinniTheme.colors.onSurface,
+            unfocusedTextColor = NotDjinniTheme.colors.onSurface,
+            disabledTextColor = NotDjinniTheme.colors.onSurface.copy(alpha = 0.38f),
+            focusedBorderColor = NotDjinniTheme.colors.onSurface,
+            unfocusedBorderColor = NotDjinniTheme.colors.onSurface,
+            disabledBorderColor = NotDjinniTheme.colors.onSurface.copy(alpha = 0.38f),
+            focusedLabelColor = NotDjinniTheme.colors.onBackground,
+            unfocusedLabelColor = NotDjinniTheme.colors.onBackground,
+            disabledLabelColor = NotDjinniTheme.colors.onSurface.copy(alpha = 0.38f),
+            cursorColor = NotDjinniTheme.colors.primary,
+            errorTextColor = NotDjinniTheme.colors.error,
+            errorBorderColor = NotDjinniTheme.colors.error,
+            errorLabelColor = NotDjinniTheme.colors.error,
+            errorSupportingTextColor = NotDjinniTheme.colors.error,
+            errorCursorColor = NotDjinniTheme.colors.error,
+        ),
+    )
+
     DatePickerDialog(
+        colors = datePickerColors,
         onDismissRequest = onDismissRequest,
         confirmButton = {
             NotDjinniButton(
@@ -569,27 +609,7 @@ private fun DatePickerAlert(
     ) {
         DateRangePicker(
             dateFormatter = DatePickerDefaults.dateFormatter(DatePickerDefaults.YearMonthSkeleton),
-            colors = DatePickerDefaults.colors(
-                containerColor = NotDjinniTheme.colors.background,
-                titleContentColor = NotDjinniTheme.colors.onBackground,
-                headlineContentColor = NotDjinniTheme.colors.onBackground,
-                weekdayContentColor = NotDjinniTheme.colors.onSurface,
-                subheadContentColor = NotDjinniTheme.colors.onSurface,
-                dayInSelectionRangeContainerColor = NotDjinniTheme.colors.primary.copy(alpha = 0.1f),
-                dayInSelectionRangeContentColor = NotDjinniTheme.colors.onSurface,
-                todayDateBorderColor = NotDjinniTheme.colors.onSurface,
-                dividerColor = NotDjinniTheme.colors.onSurface.copy(alpha = 0.5f),
-                dateTextFieldColors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = NotDjinniTheme.colors.onSurface,
-                    unfocusedIndicatorColor = NotDjinniTheme.colors.onSurface,
-                    focusedLabelColor = NotDjinniTheme.colors.onBackground,
-                    unfocusedLabelColor = NotDjinniTheme.colors.onBackground,
-                    cursorColor = NotDjinniTheme.colors.primary,
-                ),
-                selectedDayContainerColor = NotDjinniTheme.colors.primary.copy(0.2f),
-                selectedDayContentColor = NotDjinniTheme.colors.onPrimary,
-                todayContentColor = NotDjinniTheme.colors.onSurface,
-            ),
+            colors = datePickerColors,
             title = {
                 NotDjinniText(
                     modifier = Modifier.padding(NotDjinniTheme.offsets.small),

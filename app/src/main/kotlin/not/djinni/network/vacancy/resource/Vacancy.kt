@@ -2,6 +2,7 @@ package not.djinni.network.vacancy.resource
 
 import io.ktor.resources.Resource
 import kotlinx.serialization.Serializable
+import not.djinni.network.application.request.ApplicationStatusRequest
 
 @Serializable
 @Resource("/vacancy")
@@ -20,5 +21,6 @@ class Vacancy(
         val parent: Vacancy = Vacancy(),
         val limit: Int? = null,
         val offset: Int? = null,
+        val application_status: List<ApplicationStatusRequest>? = null,
     )
 }

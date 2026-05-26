@@ -147,7 +147,7 @@
     <string name="vacancy_details_posted">Posted: %s</string>
     <string name="vacancy_details_updated">Last updated: %s</string>
     <string name="vacancy_details_error">Failed to load vacancy details</string>
-    <string name="vacancy_cannot_apply">You don\'t meet the experience requirements</string>
+    <string name="vacancy_cannot_apply_generic">You can\'t apply to this vacancy right now</string>
     <string name="vacancy_salary_is_below_your_expectations">Salary is below your expectations ($%d)</string>
     <string name="vacancy_years_experience">%d+ years experience</string>
 
@@ -165,8 +165,11 @@
     <string name="vacancy_last_updated">Last updated: </string>
 
     <!--Eligibility-->
-    <string name="eligibility_experience_match">Your experience matches the requirements</string>
-    <string name="eligibility_experience_mismatch">Vacancy requires more experience than you have</string>
+    <string name="eligibility_general_match">You are eligible to apply</string>
+    <string name="eligibility_experience_mismatch_with_years">Vacancy requires at least %d years of experience</string>
+    <string name="vacancy_missing_category_warning">Vacancy category is not specified</string>
+    <string name="vacancy_category_mismatch_blocker">Your job category does not match this vacancy</string>
+    <string name="vacancy_status_not_active_blocker">Vacancy is not active</string>
     <string name="vacancy_salary_below_hint">Salary is below your expectations ($%d)</string>
 
     <!--Vacancy Status-->
@@ -184,6 +187,8 @@
     <string name="profile_title">Profile</string>
     <string name="profile_logout">Logout</string>
     <string name="profile_change_role">Change Role</string>
+    <string name="profile_edit_role">Edit Role</string>
+    <string name="profile_choose_role">Choose Role</string>
     <string name="profile_user_section">Account</string>
     <string name="profile_details_section">Details</string>
     <string name="profile_name">Name</string>
@@ -235,7 +240,7 @@
     <string name="application_status_hired">Hired</string>
     <string name="application_status_rejected">Rejected</string>
     <string name="application_status_withdrawn">Withdrawn</string>
-    <string name="cover_letter_templates_title">Cover Letter Templates</string>
+    <string name="cover_letter_templates_title">Templates</string>
     <string name="cover_letter_templates_empty">No templates yet</string>
     <string name="cover_letter_templates_create">Create Template</string>
     <string name="cover_letter_templates_dialog_title">Template</string>
@@ -280,5 +285,23 @@
     <string name="application_seeker_vacancy_details">Vacancy Details</string>
     <string name="application_details_withdraw">Withdraw</string>
     <string name="application_details_withdraw_success">Application withdrawn successfully</string>
+    <string name="application_details_withdraw_error">Failed to withdraw application</string>
+    <string name="application_details_withdraw_confirm_title">Withdraw Application</string>
+    <string name="application_details_withdraw_confirm_message">Do you really want to withdraw this application?</string>
+    <string name="applied_vacancies_filter_placeholder">Select status filters</string>
+    <string name="applied_vacancies_filter_button">Edit status filters</string>
+    <string name="applied_vacancies_filter_dialog_title">Filter by status</string>
+    <string name="applied_vacancies_missing_application_id">Application details are unavailable for this item</string>
+    <string name="cover_letter_templates_save_error">Failed to save template</string>
+    <string name="cover_letter_templates_delete_error">Failed to delete template</string>
+    <string name="cover_letter_templates_delete_confirm_title">Delete Template</string>
+    <string name="cover_letter_templates_delete_confirm_message">Delete this template?</string>
+    <string name="profile_logout_confirm_title">Logout</string>
+    <string name="profile_logout_confirm_message">Do you really want to logout?</string>
+    <string name="favorite_vacancy_added_success">Added to favorites</string>
+    <string name="favorite_vacancy_removed_success">Removed from favorites</string>
+    <string name="favorite_vacancy_update_error">Failed to update favorite state</string>
+    <string name="favorite_vacancy_remove_error">Failed to remove from favorites</string>
+    <string name="apply_vacancy_error">Failed to submit application</string>
 
 </resources>

@@ -4,12 +4,14 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import not.djinni.domain.repository.FavoriteVacancyChange
 import not.djinni.domain.repository.VacancyRepository
+import not.djinni.model.application.ApplicationStatus
 import not.djinni.model.seeker.vacancy.EmploymentType
 import not.djinni.model.seeker.vacancy.JobCategoryCode
 import not.djinni.model.seeker.vacancy.Vacancy
 import not.djinni.model.seeker.vacancy.toDomain
 import not.djinni.model.seeker.vacancy.toResponse
 import not.djinni.network.common.response.NetworkResponse
+import not.djinni.network.application.request.ApplicationStatusRequest
 import not.djinni.network.vacancy.VacancyDataSource
 import not.djinni.network.vacancy.request.CreateVacancyRequest
 import not.djinni.network.vacancy.response.VacancyDetailsResponse
@@ -52,8 +54,8 @@ class DefaultVacancyRepository(
         }
     }
 
-    override suspend fun getAppliedVacancies(): Result<List<Vacancy>> = runCatching {
-        when (val response = dataSource.getAppliedVacancies()) {
+    override suspend fun getAppliedVacancies(statuses: List<ApplicationStatus>): Result<List<Vacancy>> = runCatching {
+        when (val response = dataSource.getAppliedVacancies(statuses = statuses.map { it.toStatusRequest() })) {
             is NetworkResponse.Success -> response.data.vacancies.map(VacancyDetailsResponse::toDomain)
             is NetworkResponse.Error -> throw Exception(response.error)
         }
@@ -109,5 +111,16 @@ class DefaultVacancyRepository(
             is NetworkResponse.Success -> response.data.toDomain()
             is NetworkResponse.Error -> throw Exception(response.error)
         }
+    }
+
+    private fun ApplicationStatus.toStatusRequest(): ApplicationStatusRequest = when (this) {
+        ApplicationStatus.APPLIED -> ApplicationStatusRequest.APPLIED
+        ApplicationStatus.REVIEWING -> ApplicationStatusRequest.REVIEWING
+        ApplicationStatus.INTERVIEW -> ApplicationStatusRequest.INTERVIEW
+        ApplicationStatus.TEST_TASK -> ApplicationStatusRequest.TEST_TASK
+        ApplicationStatus.OFFER -> ApplicationStatusRequest.OFFER
+        ApplicationStatus.HIRED -> ApplicationStatusRequest.HIRED
+        ApplicationStatus.REJECTED -> ApplicationStatusRequest.REJECTED
+        ApplicationStatus.WITHDRAWN -> ApplicationStatusRequest.WITHDRAWN
     }
 }

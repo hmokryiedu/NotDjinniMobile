@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -80,7 +81,7 @@ private fun Content(
     FullscreenColumn {
         ProfileHeader(
             onBack = { onAction(SeekerProfileAction.NavigateBack) },
-            onLogout = { onAction(SeekerProfileAction.Logout) }
+            onLogout = { onAction(SeekerProfileAction.RequestLogout) }
         )
         VerticalSpacer(NotDjinniTheme.offsets.medium)
         when {
@@ -91,6 +92,31 @@ private fun Content(
                 profile = state.profile ?: return@FullscreenColumn,
                 onEditProfile = { onAction(SeekerProfileAction.EditProfile) },
                 onChangeRole = { onAction(SeekerProfileAction.ChangeRole) }
+            )
+        }
+        if (state.isLogoutConfirmationVisible) {
+            AlertDialog(
+                onDismissRequest = { onAction(SeekerProfileAction.DismissLogoutConfirmation) },
+                shape = NotDjinniTheme.shapes.large,
+                containerColor = NotDjinniTheme.colors.surface,
+                titleContentColor = NotDjinniTheme.colors.onSurface,
+                textContentColor = NotDjinniTheme.colors.onSurface,
+                title = { NotDjinniText(data = R.string.profile_logout_confirm_title.toTextData(), style = NotDjinniTheme.typography.title2) },
+                text = { NotDjinniText(data = R.string.profile_logout_confirm_message.toTextData(), style = NotDjinniTheme.typography.body2) },
+                confirmButton = {
+                    NotDjinniButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        data = ButtonData(text = R.string.profile_logout.toTextData()),
+                        onClick = { onAction(SeekerProfileAction.ConfirmLogout) },
+                    )
+                },
+                dismissButton = {
+                    NotDjinniButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        data = ButtonData(text = R.string.cancel.toTextData()),
+                        onClick = { onAction(SeekerProfileAction.DismissLogoutConfirmation) },
+                    )
+                }
             )
         }
     }

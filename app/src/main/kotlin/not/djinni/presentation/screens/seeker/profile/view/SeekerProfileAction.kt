@@ -4,6 +4,8 @@ internal sealed interface SeekerProfileAction {
     data object NavigateBack : SeekerProfileAction
     data object ChangeRole : SeekerProfileAction
     data object EditProfile : SeekerProfileAction
-    data object Logout : SeekerProfileAction
+    data object RequestLogout : SeekerProfileAction
+    data object ConfirmLogout : SeekerProfileAction
+    data object DismissLogoutConfirmation : SeekerProfileAction
     data object LoadProfile : SeekerProfileAction
 }

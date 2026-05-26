@@ -291,27 +291,29 @@ private fun EligibilitySection(eligibility: EligibilityState) {
             )
             .padding(NotDjinniTheme.offsets.medium)
     ) {
-        EligibilityItem(
-            isMatch = eligibility.experienceMatch,
-            matchText = R.string.eligibility_experience_match.toTextData(),
-            mismatchText = R.string.eligibility_experience_mismatch.toTextData()
-        )
-        eligibility.salaryHint?.let {
-            VerticalSpacer(NotDjinniTheme.offsets.small)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    modifier = Modifier.size(ELIGIBILITY_ICON_SIZE),
-                    imageVector = NotDjinniIcons.check,
-                    contentDescription = null,
-                    tint = NotDjinniTheme.colors.primary
-                )
-                HorizontalSpacer(NotDjinniTheme.offsets.small)
-                NotDjinniText(
-                    data = it,
-                    style = NotDjinniTheme.typography.body2,
-                    color = NotDjinniTheme.colors.primary
-                )
+        eligibility.blockers.forEachIndexed { index, blocker ->
+            EligibilityItem(
+                isMatch = false,
+                text = blocker
+            )
+            if (index != eligibility.blockers.lastIndex || eligibility.warnings.isNotEmpty()) {
+                VerticalSpacer(NotDjinniTheme.offsets.small)
             }
+        }
+        eligibility.warnings.forEachIndexed { index, warning ->
+            EligibilityItem(
+                isMatch = true,
+                text = warning
+            )
+            if (index != eligibility.warnings.lastIndex) {
+                VerticalSpacer(NotDjinniTheme.offsets.small)
+            }
+        }
+        if (eligibility.blockers.isEmpty() && eligibility.warnings.isEmpty()) {
+            EligibilityItem(
+                isMatch = true,
+                text = R.string.eligibility_general_match.toTextData()
+            )
         }
     }
 }
@@ -319,12 +321,10 @@ private fun EligibilitySection(eligibility: EligibilityState) {
 @Composable
 private fun EligibilityItem(
     isMatch: Boolean,
-    matchText: not.djinni.presentation.core.components.base.model.TextData,
-    mismatchText: not.djinni.presentation.core.components.base.model.TextData,
+    text: not.djinni.presentation.core.components.base.model.TextData,
 ) {
     val icon = if (isMatch) NotDjinniIcons.check else NotDjinniIcons.close
     val color = if (isMatch) NotDjinniTheme.colors.onSurface else NotDjinniTheme.colors.error
-    val text = if (isMatch) matchText else mismatchText
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
@@ -441,7 +441,7 @@ private fun ApplySection(
 
             else -> {
                 NotDjinniText(
-                    data = R.string.vacancy_cannot_apply.toTextData(),
+                    data = R.string.vacancy_cannot_apply_generic.toTextData(),
                     style = NotDjinniTheme.typography.body1,
                     textAlign = TextAlign.Center,
                     color = NotDjinniTheme.colors.error
@@ -474,8 +474,8 @@ private fun Preview() {
                 ),
                 eligibility = EligibilityState(
                     canApply = true,
-                    experienceMatch = true,
-                    salaryMatch = false,
+                    blockers = emptyList(),
+                    warnings = listOf("Salary is below your expectations (\$10000)".toTextData()),
                     salaryHint = "Salary is below your expectations (\$10000)".toTextData()
                 )
             )

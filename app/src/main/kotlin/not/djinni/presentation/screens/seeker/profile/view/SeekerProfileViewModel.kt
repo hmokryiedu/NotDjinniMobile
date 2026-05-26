@@ -31,13 +31,16 @@ internal class SeekerProfileViewModel(
             SeekerProfileAction.EditProfile -> {
                 _sideEffect.tryEmit(SeekerProfileSideEffect.NavigateToEditProfile)
             }
-            SeekerProfileAction.Logout -> logOut()
+            SeekerProfileAction.RequestLogout -> updateState { copy(isLogoutConfirmationVisible = true) }
+            SeekerProfileAction.DismissLogoutConfirmation -> updateState { copy(isLogoutConfirmationVisible = false) }
+            SeekerProfileAction.ConfirmLogout -> logOut()
             SeekerProfileAction.LoadProfile -> loadProfile()
         }
     }
 
     private fun logOut() {
         launch {
+            updateState { copy(isLogoutConfirmationVisible = false) }
             authRepository.logOut()
             _sideEffect.emit(SeekerProfileSideEffect.NavigateToAuth)
         }

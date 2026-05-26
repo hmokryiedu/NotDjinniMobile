@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,6 +33,7 @@ import not.djinni.presentation.core.components.base.FullscreenColumn
 import not.djinni.presentation.core.components.base.HorizontalSpacer
 import not.djinni.presentation.core.components.base.NotDjinniButton
 import not.djinni.presentation.core.components.base.NotDjinniText
+import not.djinni.presentation.core.components.base.OutlinedNotDjinniButton
 import not.djinni.presentation.core.components.base.VerticalSpacer
 import not.djinni.presentation.core.components.base.model.ButtonData
 import not.djinni.presentation.core.extension.clickableNoRipple
@@ -84,9 +86,36 @@ private fun Content(
                 modifier = Modifier.fillMaxSize(),
                 state = state.contentState,
                 isWithdrawing = state.isWithdrawing,
-                onWithdraw = { onAction(ApplicationDetailsAction.Withdraw) }
+                onWithdraw = { onAction(ApplicationDetailsAction.RequestWithdraw) }
             )
         }
+    }
+    if (state.isWithdrawConfirmationVisible) {
+        AlertDialog(
+            onDismissRequest = { onAction(ApplicationDetailsAction.DismissWithdrawDialog) },
+            containerColor = NotDjinniTheme.colors.surface,
+            titleContentColor = NotDjinniTheme.colors.onSurface,
+            textContentColor = NotDjinniTheme.colors.onSurface,
+            shape = NotDjinniTheme.shapes.regular,
+            title = { NotDjinniText(data = R.string.application_details_withdraw_confirm_title.toTextData(), style = NotDjinniTheme.typography.title2) },
+            text = { NotDjinniText(data = R.string.application_details_withdraw_confirm_message.toTextData(), style = NotDjinniTheme.typography.body2) },
+            confirmButton = {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    OutlinedNotDjinniButton(
+                        modifier = Modifier.weight(1f),
+                        data = ButtonData(text = R.string.cancel.toTextData()),
+                        onClick = { onAction(ApplicationDetailsAction.DismissWithdrawDialog) }
+                    )
+                    HorizontalSpacer(NotDjinniTheme.offsets.small)
+                    NotDjinniButton(
+                        modifier = Modifier.weight(1f),
+                        data = ButtonData(text = R.string.application_details_withdraw.toTextData()),
+                        onClick = { onAction(ApplicationDetailsAction.ConfirmWithdraw) }
+                    )
+                }
+            },
+            dismissButton = null
+        )
     }
 }
 

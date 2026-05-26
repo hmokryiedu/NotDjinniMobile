@@ -40,6 +40,7 @@
 - Use `AlertContainer` before showing alert/sheet UI that depends on lifecycle state.
 - Use `ModalBottomSheet` with `containerColor = NotDjinniTheme.colors.surface` and `contentColor = NotDjinniTheme.colors.onSurface`.
 - Use `clickableNoRipple` for project-style clickable elements.
+- All new popup, dialog, and sheet UI must follow NotDjinni design system: use NotDjinniTheme colors, typography, offsets, shapes, NotDjinniText/base components, whole-row hit targets for option rows, and clickableNoRipple for project-style no-ripple selection.
 - Use `performWithTimeout` through existing button components; do not duplicate double-click protection.
 - Use `Screen<VM>` wrapper for ViewModel-backed screens so loading overlay and snackbar behavior stay consistent.
 - Render screen state as explicit loading, error, empty, and data branches where state model supports it.

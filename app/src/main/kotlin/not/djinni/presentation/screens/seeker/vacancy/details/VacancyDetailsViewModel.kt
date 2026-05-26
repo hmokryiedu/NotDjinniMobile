@@ -74,7 +74,19 @@ internal class VacancyDetailsViewModel(
                                     R.string.vacancy_salary_is_below_your_expectations,
                                     desiredSalary
                                 )
-                            }
+                            },
+                            missingCategoryWarningProvider = {
+                                stringProvider.getString(R.string.vacancy_missing_category_warning)
+                            },
+                            categoryMismatchBlockerProvider = {
+                                stringProvider.getString(R.string.vacancy_category_mismatch_blocker)
+                            },
+                            inactiveVacancyBlockerProvider = {
+                                stringProvider.getString(R.string.vacancy_status_not_active_blocker)
+                            },
+                            insufficientExperienceBlockerProvider = { minYears ->
+                                stringProvider.getString(R.string.eligibility_experience_mismatch_with_years, minYears)
+                            },
                         )
                     }
                     val isApplied = applicationRepository.isAppliedToVacancy(vacancyId)
@@ -131,6 +143,14 @@ internal class VacancyDetailsViewModel(
                     loadVacancyDetails()
                     _sideEffect.tryEmit(VacancyDetailsSideEffect.ApplicationSuccess)
                 }
+                .onFailure {
+                    hideAlert()
+                    showSnackBar(
+                        SnackBarData(
+                            message = (it.message ?: stringProvider.getString(R.string.apply_vacancy_error)).toTextData()
+                        )
+                    )
+                }
         }
     }
 
@@ -156,6 +176,22 @@ internal class VacancyDetailsViewModel(
                         )
                     )
                 }
+                showSnackBar(
+                    SnackBarData(
+                        message = if (vacancy.isFavorite) {
+                            R.string.favorite_vacancy_removed_success.toTextData()
+                        } else {
+                            R.string.favorite_vacancy_added_success.toTextData()
+                        }
+                    )
+                )
+            }
+            result.onFailure {
+                showSnackBar(
+                    SnackBarData(
+                        message = (it.message ?: stringProvider.getString(R.string.favorite_vacancy_update_error)).toTextData()
+                    )
+                )
             }
         }
     }

@@ -9,12 +9,14 @@ import not.djinni.presentation.core.StateViewModel
 import not.djinni.presentation.core.components.base.model.SnackBarData
 import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.toTextData
+import not.djinni.utils.string.StringProvider
 import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.InjectedParam
 
 @KoinViewModel
 internal class ApplicationDetailsViewModel(
     @InjectedParam private val applicationId: Long,
+    private val stringProvider: StringProvider,
     private val getApplicationDetailsUseCase: GetApplicationDetailsUseCase,
     private val withdrawApplicationUseCase: WithdrawApplicationUseCase,
 ) : StateViewModel<ApplicationDetailsState>(ApplicationDetailsState()) {
@@ -29,7 +31,13 @@ internal class ApplicationDetailsViewModel(
     fun sendAction(action: ApplicationDetailsAction) {
         when (action) {
             ApplicationDetailsAction.NavigateBack -> navigateBack()
-            ApplicationDetailsAction.Withdraw -> withdraw()
+            ApplicationDetailsAction.RequestWithdraw -> {
+                updateState { copy(isWithdrawConfirmationVisible = true) }
+            }
+            ApplicationDetailsAction.DismissWithdrawDialog -> {
+                updateState { copy(isWithdrawConfirmationVisible = false) }
+            }
+            ApplicationDetailsAction.ConfirmWithdraw -> withdraw()
             ApplicationDetailsAction.ShowWithdrawSuccessSnackBar -> {
                 showSnackBar(
                     SnackBarData(message = R.string.application_details_withdraw_success.toTextData())
@@ -60,11 +68,18 @@ internal class ApplicationDetailsViewModel(
 
     private fun withdraw() {
         launch {
-            updateState { copy(isWithdrawing = true) }
+            updateState { copy(isWithdrawing = true, isWithdrawConfirmationVisible = false) }
             withdrawApplicationUseCase(applicationId)
                 .onSuccess {
                     _sideEffect.emit(ApplicationDetailsSideEffect.WithdrawSuccess)
                     loadApplicationDetails()
+                }
+                .onFailure {
+                    showSnackBar(
+                        SnackBarData(
+                            message = (it.message ?: stringProvider.getString(R.string.application_details_withdraw_error)).toTextData()
+                        )
+                    )
                 }
             updateState { copy(isWithdrawing = false) }
         }

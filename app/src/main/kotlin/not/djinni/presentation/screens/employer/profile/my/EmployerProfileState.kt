@@ -13,4 +13,5 @@ internal data class EmployerProfileState(
     val editingRole: String = "",
     val isRoleDialogVisible: Boolean = false,
     val isSavingRole: Boolean = false,
+    val isLogoutConfirmationVisible: Boolean = false,
 )

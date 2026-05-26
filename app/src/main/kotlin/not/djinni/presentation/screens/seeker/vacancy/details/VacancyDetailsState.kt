@@ -3,6 +3,7 @@ package not.djinni.presentation.screens.seeker.vacancy.details
 import androidx.compose.runtime.Immutable
 import not.djinni.model.seeker.SeekerProfile
 import not.djinni.model.seeker.vacancy.Vacancy
+import not.djinni.model.seeker.vacancy.VacancyStatusCode
 import not.djinni.presentation.core.components.base.model.TextData
 import not.djinni.presentation.core.extension.toTextData
 import not.djinni.presentation.screens.seeker.vacancy.details.alert.VacancyDetailsAlert
@@ -44,28 +45,52 @@ internal data class VacancyDisplayData(
 @Immutable
 internal data class EligibilityState(
     val canApply: Boolean,
-    val experienceMatch: Boolean,
-    val salaryMatch: Boolean,
+    val blockers: List<TextData>,
+    val warnings: List<TextData>,
     val salaryHint: TextData?,
 )
 
-internal fun EligibilityState?.isApplyAvailable(): Boolean = this?.canApply == true
+internal fun EligibilityState?.isApplyAvailable(): Boolean = this?.canApply == true && this.blockers.isEmpty()
 
 internal fun calculateEligibility(
     vacancy: Vacancy,
     profile: SeekerProfile,
     salaryHintProvider: (Int) -> String,
+    missingCategoryWarningProvider: () -> String,
+    categoryMismatchBlockerProvider: () -> String,
+    inactiveVacancyBlockerProvider: () -> String,
+    insufficientExperienceBlockerProvider: (Int) -> String,
 ): EligibilityState {
-    val experienceMatch = vacancy.minExperienceYears == null ||
-            profile.experienceYears >= vacancy.minExperienceYears
+    val blockers = mutableListOf<TextData>()
+    val warnings = mutableListOf<TextData>()
+
+    if (vacancy.status != VacancyStatusCode.ACTIVE) {
+        blockers += inactiveVacancyBlockerProvider().toTextData()
+    }
+
+    if (vacancy.category == null) {
+        warnings += missingCategoryWarningProvider().toTextData()
+    } else if (profile.jobCategory != vacancy.category) {
+        blockers += categoryMismatchBlockerProvider().toTextData()
+    }
+
+    val minExperience = vacancy.minExperienceYears
+    if (minExperience != null && minExperience > 0 && profile.experienceYears < minExperience) {
+        blockers += insufficientExperienceBlockerProvider(minExperience).toTextData()
+    }
+
     val salaryMatch = vacancy.salaryMax >= profile.desiredSalary
     val salaryHint = salaryHintProvider(profile.desiredSalary)
         .toTextData()
         .takeIf { !salaryMatch }
+    if (salaryHint != null) {
+        warnings += salaryHint
+    }
+
     return EligibilityState(
-        canApply = experienceMatch,
-        experienceMatch = experienceMatch,
-        salaryMatch = salaryMatch,
+        canApply = blockers.isEmpty(),
+        blockers = blockers,
+        warnings = warnings,
         salaryHint = salaryHint
     )
 }

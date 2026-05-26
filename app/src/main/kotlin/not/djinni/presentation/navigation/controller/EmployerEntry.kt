@@ -76,7 +76,8 @@ fun EntryProviderScope<Screens>.employerEntry(
     entry<Screens.Employer.Profile> {
         EmployerProfileScreen(
             onBack = { controller.popBackStack() },
-            onLogout = { controller.replaceAll(Screens.Auth) }
+            onLogout = { controller.replaceAll(Screens.Auth) },
+            onChooseRole = { controller.replaceAll(Screens.ChooseRole) }
         )
     }
 }

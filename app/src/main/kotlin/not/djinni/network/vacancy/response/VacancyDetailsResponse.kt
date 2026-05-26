@@ -5,6 +5,7 @@ package not.djinni.network.vacancy.response
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import not.djinni.network.application.response.ApplicationStatusResponse
 import not.djinni.network.employer.response.CompanyResponse
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -13,6 +14,10 @@ import kotlin.time.Instant
 data class VacancyDetailsResponse(
     @SerialName("id")
     val id: Long,
+    @SerialName("application_id")
+    val applicationId: Long? = null,
+    @SerialName("application_status")
+    val applicationStatus: ApplicationStatusResponse? = null,
     @SerialName("company")
     val company: CompanyResponse,
     @SerialName("title")

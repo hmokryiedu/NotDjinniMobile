@@ -25,18 +25,13 @@ internal class ChooseRoleViewModel(
 
     fun sendAction(action: ChooseRoleAction) {
         when (action) {
-            is ChooseRoleAction.SelectRole -> selectRole(action.role)
-            ChooseRoleAction.ProceedToMain -> proceedToMain()
+            is ChooseRoleAction.ConfirmRole -> confirmRole(action.role)
         }
     }
 
-    fun selectRole(role: Role) {
+    fun confirmRole(role: Role) {
         updateState { copy(selectedRole = role) }
-    }
-
-    fun proceedToMain() {
         launch(loadingEnabled = true) {
-            val role = state.value.selectedRole ?: return@launch
             sessionDataStore.setCurrentRole(role)
             val event = when (role) {
                 Role.SEEKER -> seekerRepository.getProfile()

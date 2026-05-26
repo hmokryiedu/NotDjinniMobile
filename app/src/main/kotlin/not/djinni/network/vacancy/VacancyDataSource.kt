@@ -2,6 +2,7 @@ package not.djinni.network.vacancy
 
 import not.djinni.network.common.response.NetworkResponse
 import not.djinni.network.common.response.MessageResponse
+import not.djinni.network.application.request.ApplicationStatusRequest
 import not.djinni.network.vacancy.request.CreateVacancyRequest
 import not.djinni.network.vacancy.response.VacancyDetailsResponse
 import not.djinni.network.vacancy.response.VacancyListResponse
@@ -27,6 +28,7 @@ interface VacancyDataSource {
     suspend fun getAppliedVacancies(
         limit: Int = 60,
         offset: Int = 0,
+        statuses: List<ApplicationStatusRequest> = emptyList(),
     ): NetworkResponse<VacancyListResponse>
 
     suspend fun getFavoriteVacancies(

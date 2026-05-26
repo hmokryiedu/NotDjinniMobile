@@ -10,4 +10,5 @@ internal data class SeekerProfileState(
     val profile: SeekerProfile? = null,
     val isLoading: Boolean = true,
     val hasError: Boolean = false,
+    val isLogoutConfirmationVisible: Boolean = false,
 )

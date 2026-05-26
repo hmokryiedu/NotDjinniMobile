@@ -182,6 +182,11 @@ private fun DataContent(
                 postedDate = vacancy.postedDate,
                 updatedDate = vacancy.updatedDate
             )
+            VerticalSpacer(NotDjinniTheme.offsets.small)
+            VacancyViewsSection(
+                viewsCount = vacancy.viewsCount,
+                applicationsCount = vacancy.applicationsCount
+            )
             VerticalSpacer(NotDjinniTheme.offsets.large)
         }
         NotDjinniButton(
@@ -290,6 +295,40 @@ private fun DateInfoSection(
 }
 
 @Composable
+private fun VacancyViewsSection(
+    viewsCount: TextData,
+    applicationsCount: TextData,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            modifier = Modifier.size(20.dp),
+            imageVector = NotDjinniIcons.eye,
+            contentDescription = null,
+            tint = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA)
+        )
+        HorizontalSpacer(NotDjinniTheme.offsets.small)
+        NotDjinniText(
+            data = viewsCount,
+            style = NotDjinniTheme.typography.body2,
+            color = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA)
+        )
+        HorizontalSpacer(NotDjinniTheme.offsets.medium)
+        Icon(
+            modifier = Modifier.size(20.dp),
+            imageVector = NotDjinniIcons.case,
+            contentDescription = null,
+            tint = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA)
+        )
+        HorizontalSpacer(NotDjinniTheme.offsets.small)
+        NotDjinniText(
+            data = applicationsCount,
+            style = NotDjinniTheme.typography.body2,
+            color = NotDjinniTheme.colors.onBackground.copy(alpha = SECONDARY_TEXT_ALPHA)
+        )
+    }
+}
+
+@Composable
 @Preview
 private fun Preview() {
     NotDjinniTheme {
@@ -305,7 +344,9 @@ private fun Preview() {
                     category = "Software Development".toTextData(),
                     status = "Active".toTextData(),
                     postedDate = "Dec 1, 2025".toTextData(),
-                    updatedDate = "Dec 1, 2025".toTextData()
+                    updatedDate = "Dec 1, 2025".toTextData(),
+                    viewsCount = "128".toTextData(),
+                    applicationsCount = "12".toTextData()
                 )
             )
         )

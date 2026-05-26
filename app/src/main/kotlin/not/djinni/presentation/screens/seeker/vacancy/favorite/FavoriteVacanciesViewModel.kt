@@ -7,6 +7,7 @@ import not.djinni.core.extension.mutableSideEffect
 import not.djinni.domain.repository.VacancyRepository
 import not.djinni.model.seeker.vacancy.Vacancy
 import not.djinni.presentation.core.StateViewModel
+import not.djinni.presentation.core.components.base.model.SnackBarData
 import not.djinni.presentation.core.components.base.model.VacancyCardData
 import not.djinni.presentation.core.extension.toDisplayName
 import not.djinni.presentation.core.extension.toTextData
@@ -67,7 +68,17 @@ internal class FavoriteVacanciesViewModel(
     private fun removeFavorite(vacancyId: Long) {
         launch {
             vacancyRepository.removeFavoriteVacancy(vacancyId)
-                .onSuccess { removeVacancyFromState(vacancyId) }
+                .onSuccess {
+                    removeVacancyFromState(vacancyId)
+                    showSnackBar(SnackBarData(message = R.string.favorite_vacancy_removed_success.toTextData()))
+                }
+                .onFailure {
+                    showSnackBar(
+                        SnackBarData(
+                            message = (it.message ?: stringProvider.getString(R.string.favorite_vacancy_remove_error)).toTextData()
+                        )
+                    )
+                }
         }
     }
 

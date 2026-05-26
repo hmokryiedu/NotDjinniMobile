@@ -1,6 +1,5 @@
 package not.djinni.presentation.screens.seeker.coverletter.templates
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,11 +18,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -57,6 +60,7 @@ internal fun CoverLetterTemplatesScreen(
         )
 
         TemplateDialog(state = state, onAction = viewModel::sendAction)
+        DeleteTemplateDialog(state = state, onAction = viewModel::sendAction)
 
         viewModel.sideEffect.collectAsEffect { effect ->
             when (effect) {
@@ -92,15 +96,24 @@ private fun Content(
             }
 
             is CoverLetterTemplatesContentState.Error -> {
-                ErrorState(message = contentState.message, onRetry = { onAction(CoverLetterTemplatesAction.Load) })
+                ErrorState(
+                    message = contentState.message,
+                    onRetry = { onAction(CoverLetterTemplatesAction.Load) })
             }
 
             is CoverLetterTemplatesContentState.Data -> {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(NotDjinniTheme.offsets.small)
                 ) {
-                    items(contentState.templates, key = { it.id }) { item ->
-                        TemplateItem(item = item, onClick = { onAction(CoverLetterTemplatesAction.OpenTemplate(item.id)) })
+                    items(
+                        contentState.templates,
+                        key = { it.id }
+                    ) { item ->
+                        TemplateItem(
+                            item = item,
+                            onClick = { onAction(CoverLetterTemplatesAction.OpenTemplate(item.id)) },
+                            onDelete = { onAction(CoverLetterTemplatesAction.RequestDelete(item.id)) }
+                        )
                     }
                 }
             }
@@ -120,7 +133,9 @@ private fun TopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            modifier = Modifier.size(24.dp).clickableNoRipple(onClick = onBack),
+            modifier = Modifier
+                .size(24.dp)
+                .clickableNoRipple(onClick = onBack),
             imageVector = NotDjinniIcons.back,
             contentDescription = null,
             tint = NotDjinniTheme.colors.onBackground
@@ -133,7 +148,9 @@ private fun TopBar(
         )
         Box(modifier = Modifier.weight(1f))
         Icon(
-            modifier = Modifier.size(24.dp).clickableNoRipple(onClick = onAdd),
+            modifier = Modifier
+                .size(24.dp)
+                .clickableNoRipple(onClick = onAdd),
             imageVector = NotDjinniIcons.plus,
             contentDescription = null,
             tint = NotDjinniTheme.colors.onBackground
@@ -145,8 +162,9 @@ private fun TopBar(
 private fun TemplateItem(
     item: CoverLetterTemplateDisplayData,
     onClick: () -> Unit,
+    onDelete: () -> Unit,
 ) {
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .border(
@@ -158,19 +176,74 @@ private fun TemplateItem(
                 color = NotDjinniTheme.colors.highlightedContainer,
                 shape = NotDjinniTheme.shapes.small
             )
-            .clickable(onClick = onClick)
+            .clickableNoRipple(onClick = onClick)
             .padding(
                 horizontal = NotDjinniTheme.offsets.medium,
                 vertical = NotDjinniTheme.offsets.small
-            )
+            ),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         NotDjinniText(
+            modifier = Modifier.weight(1f),
             data = item.message.toTextData(),
             style = NotDjinniTheme.typography.body2,
             color = NotDjinniTheme.colors.onBackground,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis
         )
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clickableNoRipple(onClick = onDelete),
+            contentAlignment = Alignment.TopEnd
+        ) {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                imageVector = Icons.Outlined.Delete,
+                contentDescription = null,
+                tint = NotDjinniTheme.colors.error
+            )
+        }
+    }
+}
+
+@Composable
+private fun TemplateMessageInput(
+    value: String,
+    onValueChange: (String) -> Unit,
+) {
+    val focusRequester = remember { FocusRequester() }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .imePadding(),
+        verticalArrangement = Arrangement.spacedBy(NotDjinniTheme.offsets.small)
+    ) {
+        BasicTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .border(
+                    width = 1.dp,
+                    color = NotDjinniTheme.colors.onSurface,
+                    shape = NotDjinniTheme.shapes.small
+                )
+                .background(
+                    color = NotDjinniTheme.colors.primary.copy(alpha = 0.3f),
+                    shape = NotDjinniTheme.shapes.small
+                )
+                .padding(
+                    horizontal = NotDjinniTheme.offsets.medium,
+                    vertical = NotDjinniTheme.offsets.small
+                ),
+            value = value,
+            onValueChange = onValueChange,
+            textStyle = NotDjinniTheme.typography.body1.copy(color = NotDjinniTheme.colors.onSurface)
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 }
 
@@ -225,7 +298,6 @@ private fun TemplateDialog(
     if (state.selectedTemplate == null && !state.isEditing) return
     AlertDialog(
         onDismissRequest = { onAction(CoverLetterTemplatesAction.DismissDialog) },
-        properties = DialogProperties(dismissOnClickOutside = true),
         containerColor = NotDjinniTheme.colors.surface,
         titleContentColor = NotDjinniTheme.colors.onSurface,
         textContentColor = NotDjinniTheme.colors.onSurface,
@@ -244,7 +316,15 @@ private fun TemplateDialog(
                     Icon(
                         modifier = Modifier
                             .size(24.dp)
-                            .clickableNoRipple(onClick = { onAction(CoverLetterTemplatesAction.Delete) }),
+                            .clickableNoRipple(
+                                onClick = {
+                                    onAction(
+                                        CoverLetterTemplatesAction.RequestDelete(
+                                            state.selectedTemplate.id
+                                        )
+                                    )
+                                }
+                            ),
                         imageVector = Icons.Outlined.Delete,
                         contentDescription = null,
                         tint = NotDjinniTheme.colors.error
@@ -254,11 +334,9 @@ private fun TemplateDialog(
         },
         text = {
             if (state.isEditing) {
-                BasicTextField(
-                    modifier = Modifier.fillMaxWidth(),
+                TemplateMessageInput(
                     value = state.editingMessage,
                     onValueChange = { onAction(CoverLetterTemplatesAction.UpdateEditingMessage(it)) },
-                    textStyle = NotDjinniTheme.typography.body1.copy(color = NotDjinniTheme.colors.onSurface)
                 )
             } else {
                 NotDjinniText(
@@ -280,6 +358,7 @@ private fun TemplateDialog(
                         onClick = { onAction(CoverLetterTemplatesAction.Save) }
                     )
                 }
+
                 state.selectedTemplate != null -> {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -300,5 +379,50 @@ private fun TemplateDialog(
             }
         },
         dismissButton = null
+    )
+}
+
+@Composable
+private fun DeleteTemplateDialog(
+    state: CoverLetterTemplatesState,
+    onAction: (CoverLetterTemplatesAction) -> Unit,
+) {
+    if (!state.isDeleteConfirmationVisible) return
+    AlertDialog(
+        onDismissRequest = { onAction(CoverLetterTemplatesAction.DismissDeleteConfirmation) },
+        containerColor = NotDjinniTheme.colors.surface,
+        titleContentColor = NotDjinniTheme.colors.onSurface,
+        textContentColor = NotDjinniTheme.colors.onSurface,
+        title = {
+            NotDjinniText(
+                data = R.string.cover_letter_templates_delete_confirm_title.toTextData(),
+                style = NotDjinniTheme.typography.title2,
+                color = NotDjinniTheme.colors.onSurface
+            )
+        },
+        text = {
+            NotDjinniText(
+                data = R.string.cover_letter_templates_delete_confirm_message.toTextData(),
+                style = NotDjinniTheme.typography.body2,
+                color = NotDjinniTheme.colors.onSurface
+            )
+        },
+        confirmButton = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(NotDjinniTheme.offsets.small)
+            ) {
+                NotDjinniButton(
+                    modifier = Modifier.weight(1f),
+                    data = ButtonData(text = R.string.cancel.toTextData()),
+                    onClick = { onAction(CoverLetterTemplatesAction.DismissDeleteConfirmation) }
+                )
+                NotDjinniButton(
+                    modifier = Modifier.weight(1f),
+                    data = ButtonData(text = R.string.delete.toTextData()),
+                    onClick = { onAction(CoverLetterTemplatesAction.ConfirmDelete) }
+                )
+            }
+        }
     )
 }

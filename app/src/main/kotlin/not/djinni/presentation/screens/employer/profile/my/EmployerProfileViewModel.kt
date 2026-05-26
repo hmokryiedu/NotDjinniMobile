@@ -33,10 +33,13 @@ internal class EmployerProfileViewModel(
                     editingRole = profile?.role.orEmpty(),
                 )
             }
+            EmployerProfileAction.ChooseRole -> navigateToChooseRole()
             EmployerProfileAction.DismissRoleEditor -> updateState { copy(isRoleDialogVisible = false) }
             is EmployerProfileAction.UpdateEditingRole -> updateState { copy(editingRole = action.value) }
             EmployerProfileAction.SaveRole -> saveRole()
-            EmployerProfileAction.Logout -> logOut()
+            EmployerProfileAction.RequestLogout -> updateState { copy(isLogoutConfirmationVisible = true) }
+            EmployerProfileAction.DismissLogoutConfirmation -> updateState { copy(isLogoutConfirmationVisible = false) }
+            EmployerProfileAction.ConfirmLogout -> logOut()
             EmployerProfileAction.Retry -> loadProfile()
         }
     }
@@ -59,6 +62,7 @@ internal class EmployerProfileViewModel(
 
     private fun logOut() {
         launch {
+            updateState { copy(isLogoutConfirmationVisible = false) }
             authRepository.logOut()
             _sideEffect.emit(EmployerProfileSideEffect.NavigateToAuth)
         }
@@ -67,6 +71,12 @@ internal class EmployerProfileViewModel(
     private fun navigateBack() {
         launch {
             _sideEffect.emit(EmployerProfileSideEffect.NavigateBack)
+        }
+    }
+
+    private fun navigateToChooseRole() {
+        launch {
+            _sideEffect.emit(EmployerProfileSideEffect.NavigateToChooseRole)
         }
     }
 

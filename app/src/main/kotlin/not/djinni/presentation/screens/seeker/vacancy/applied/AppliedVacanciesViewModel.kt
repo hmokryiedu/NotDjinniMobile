@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import not.djinni.R
 import not.djinni.core.extension.mutableSideEffect
 import not.djinni.domain.repository.VacancyRepository
+import not.djinni.model.application.ApplicationStatus
 import not.djinni.model.seeker.vacancy.Vacancy
 import not.djinni.presentation.core.StateViewModel
 import not.djinni.presentation.core.components.base.model.VacancyCardData
@@ -31,16 +32,19 @@ internal class AppliedVacanciesViewModel(
         when (action) {
             AppliedVacanciesAction.Load -> loadVacancies()
             AppliedVacanciesAction.NavigateBack -> _sideEffect.tryEmit(AppliedVacanciesSideEffect.NavigateBack)
-            is AppliedVacanciesAction.OpenVacancy -> _sideEffect.tryEmit(
-                AppliedVacanciesSideEffect.NavigateToVacancyDetails(action.vacancyId)
-            )
+            is AppliedVacanciesAction.OpenVacancy -> openVacancy(vacancyId = action.vacancyId)
+            AppliedVacanciesAction.OpenStatusFilter -> openStatusFilter()
+            AppliedVacanciesAction.DismissStatusFilter -> closeStatusFilter()
+            is AppliedVacanciesAction.ToggleDraftStatus -> toggleDraftStatus(action.status)
+            is AppliedVacanciesAction.RemoveSelectedStatus -> removeSelectedStatus(action.status)
         }
     }
 
     private fun loadVacancies() {
         launch {
             updateState { copy(contentState = AppliedVacanciesContentState.Loading) }
-            vacancyRepository.getAppliedVacancies()
+            val statuses = mutableState.value.selectedStatuses.toList()
+            vacancyRepository.getAppliedVacancies(statuses = statuses)
                 .onSuccess { vacancies ->
                     val contentState = if (vacancies.isEmpty()) {
                         AppliedVacanciesContentState.Empty
@@ -61,7 +65,12 @@ internal class AppliedVacanciesViewModel(
         }
     }
 
-    private fun Vacancy.toCardData(): VacancyCardData {
+    private fun Vacancy.toCardData(): AppliedVacancyCardData = AppliedVacancyCardData(
+        vacancy = toVacancyCardData(),
+        status = applicationStatus ?: ApplicationStatus.APPLIED
+    )
+
+    private fun Vacancy.toVacancyCardData(): VacancyCardData {
         val salaryRange = stringProvider.getString(R.string.vacancy_salary_range, salaryMin, salaryMax)
         val minExperienceYears = if (minExperienceYears == null || minExperienceYears <= 0) {
             stringProvider.getString(R.string.vacancy_no_experience_required)
@@ -78,4 +87,37 @@ internal class AppliedVacanciesViewModel(
             isFavorite = isFavorite
         )
     }
+
+    private fun openVacancy(vacancyId: Long) {
+        _sideEffect.tryEmit(AppliedVacanciesSideEffect.NavigateToVacancyDetails(vacancyId))
+    }
+
+    private fun openStatusFilter() {
+        updateState { copy(isStatusFilterVisible = true, draftStatuses = selectedStatuses) }
+    }
+
+    private fun closeStatusFilter() {
+        val previousStatuses = mutableState.value.selectedStatuses
+        val nextStatuses = mutableState.value.draftStatuses
+        updateState { copy(isStatusFilterVisible = false, selectedStatuses = nextStatuses) }
+        if (previousStatuses != nextStatuses) {
+            loadVacancies()
+        }
+    }
+
+    private fun toggleDraftStatus(status: ApplicationStatus) {
+        updateState {
+            val updated = draftStatuses.toMutableSet().apply {
+                if (contains(status)) remove(status) else add(status)
+            }
+            copy(draftStatuses = updated)
+        }
+    }
+
+    private fun removeSelectedStatus(status: ApplicationStatus) {
+        val updated = mutableState.value.selectedStatuses - status
+        updateState { copy(selectedStatuses = updated, draftStatuses = updated) }
+        loadVacancies()
+    }
+
 }

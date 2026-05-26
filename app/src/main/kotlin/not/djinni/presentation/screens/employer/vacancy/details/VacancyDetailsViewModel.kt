@@ -68,7 +68,9 @@ internal class VacancyDetailsViewModel(
             category = category?.toDisplayName(),
             status = status.toDisplayName(),
             postedDate = createdAt.toFormattedFullDate().toTextData(),
-            updatedDate = updatedAt.toFormattedFullDate().toTextData()
+            updatedDate = updatedAt.toFormattedFullDate().toTextData(),
+            viewsCount = viewsCount.toString().toTextData(),
+            applicationsCount = applicationsCount.toString().toTextData()
         )
     }
 

@@ -26,4 +26,6 @@ internal data class VacancyDisplayData(
     val status: TextData,
     val postedDate: TextData,
     val updatedDate: TextData,
+    val viewsCount: TextData,
+    val applicationsCount: TextData,
 )

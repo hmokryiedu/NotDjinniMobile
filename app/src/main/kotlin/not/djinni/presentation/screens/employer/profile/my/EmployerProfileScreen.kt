@@ -52,6 +52,7 @@ import not.djinni.presentation.theme.NotDjinniTheme
 internal fun EmployerProfileScreen(
     onBack: () -> Unit,
     onLogout: () -> Unit,
+    onChooseRole: () -> Unit,
 ) {
     Screen<EmployerProfileViewModel> { viewModel ->
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -65,6 +66,7 @@ internal fun EmployerProfileScreen(
             when (effect) {
                 EmployerProfileSideEffect.NavigateBack -> onBack()
                 EmployerProfileSideEffect.NavigateToAuth -> onLogout()
+                EmployerProfileSideEffect.NavigateToChooseRole -> onChooseRole()
             }
         }
     }
@@ -78,7 +80,7 @@ private fun Content(
     FullscreenColumn {
         ProfileHeader(
             onBack = { onAction(EmployerProfileAction.NavigateBack) },
-            onLogout = { onAction(EmployerProfileAction.Logout) }
+            onLogout = { onAction(EmployerProfileAction.RequestLogout) }
         )
         VerticalSpacer(NotDjinniTheme.offsets.medium)
         when {
@@ -87,11 +89,49 @@ private fun Content(
             else -> ProfileContent(
                 user = state.user ?: return@FullscreenColumn,
                 profile = state.profile ?: return@FullscreenColumn,
-                onChangeRole = { onAction(EmployerProfileAction.ShowRoleEditor) }
+                onEditRole = { onAction(EmployerProfileAction.ShowRoleEditor) },
+                onChooseRole = { onAction(EmployerProfileAction.ChooseRole) }
             )
         }
         if (state.isRoleDialogVisible) {
             RoleEditDialog(state = state, onAction = onAction)
+        }
+        if (state.isLogoutConfirmationVisible) {
+            AlertDialog(
+                onDismissRequest = { onAction(EmployerProfileAction.DismissLogoutConfirmation) },
+                shape = NotDjinniTheme.shapes.large,
+                containerColor = NotDjinniTheme.colors.surface,
+                titleContentColor = NotDjinniTheme.colors.onSurface,
+                textContentColor = NotDjinniTheme.colors.onSurface,
+                title = {
+                    NotDjinniText(
+                        data = R.string.profile_logout_confirm_title.toTextData(),
+                        style = NotDjinniTheme.typography.title2,
+                        color = NotDjinniTheme.colors.onSurface
+                    )
+                },
+                text = {
+                    NotDjinniText(
+                        data = R.string.profile_logout_confirm_message.toTextData(),
+                        style = NotDjinniTheme.typography.body2,
+                        color = NotDjinniTheme.colors.onSurface
+                    )
+                },
+                confirmButton = {
+                    NotDjinniButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        data = ButtonData(text = R.string.profile_logout.toTextData()),
+                        onClick = { onAction(EmployerProfileAction.ConfirmLogout) },
+                    )
+                },
+                dismissButton = {
+                    NotDjinniButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        data = ButtonData(text = R.string.cancel.toTextData()),
+                        onClick = { onAction(EmployerProfileAction.DismissLogoutConfirmation) },
+                    )
+                }
+            )
         }
     }
 }
@@ -226,7 +266,8 @@ private fun ErrorContent(onRetry: () -> Unit) {
 private fun ProfileContent(
     user: User,
     profile: EmployerProfile,
-    onChangeRole: () -> Unit,
+    onEditRole: () -> Unit,
+    onChooseRole: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -261,8 +302,14 @@ private fun ProfileContent(
         VerticalSpacer(NotDjinniTheme.offsets.large)
         NotDjinniButton(
             modifier = Modifier.fillMaxWidth(),
-            data = ButtonData(text = R.string.profile_change_role.toTextData()),
-            onClick = onChangeRole
+            data = ButtonData(text = R.string.profile_edit_role.toTextData()),
+            onClick = onEditRole
+        )
+        VerticalSpacer(NotDjinniTheme.offsets.small)
+        NotDjinniButton(
+            modifier = Modifier.fillMaxWidth(),
+            data = ButtonData(text = R.string.profile_choose_role.toTextData()),
+            onClick = onChooseRole
         )
         VerticalSpacer(NotDjinniTheme.offsets.medium)
     }
